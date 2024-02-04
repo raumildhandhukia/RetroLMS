@@ -14,6 +14,18 @@ app.use(
   })
 );
 
+//Importing Routes Files
+const adminRoutes = require('./routes/adminRoutes');
+const instructorRoutes = require('./routes/instructorRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const commonRoutes = require('./routes/commonRoutes');
+
+//Defining Route Paths
+app.use('/admin', adminRoutes);
+app.use('/instructors', instructorRoutes);
+app.use('/students', studentRoutes);
+app.use('/', commonRoutes);
+
 // Example RESTful endpoint
 app.get("/", (req, res) => {
   res.send({
