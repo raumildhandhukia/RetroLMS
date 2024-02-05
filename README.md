@@ -71,6 +71,11 @@ Gamification has become a popular strategy for increasing engagement and motivat
 
 - MIT
 
-### Acknowledgments
+### Additional Files
 
--
+- Gdrive: https://drive.google.com/drive/folders/1sVtsGzyVhjRRi4JoHtT2J1x5uu5Vs_Yv?usp=drive_link
+
+### Scrum Board 
+
+- Taiga: https://tree.taiga.io/project/sergroup14-asugame/
+
