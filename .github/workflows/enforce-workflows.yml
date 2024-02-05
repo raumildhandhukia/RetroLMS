@@ -1,0 +1,23 @@
+name: Enforce Workflow Rules
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  enforce-branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check source and target branches
+        run: |
+          SOURCE_BRANCH=${{ github.event.pull_request.head.ref }}
+          TARGET_BRANCH=${{ github.event.pull_request.base.ref }}
+
+          if [ "$SOURCE_BRANCH" != "develop" ] && [ "$TARGET_BRANCH" == "master" ]; then
+            echo "Invalid pull request: Feature branches can only be pulled to 'develop'"
+            exit 1
+          fi
