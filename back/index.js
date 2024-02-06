@@ -1,5 +1,12 @@
+// Load Environment Variables
+require('dotenv').config();
+
 const express = require("express");
 const cors = require("cors");
+const mongooseConnection = require('./db');
+
+
+
 const app = express();
 
 const PORT = process.env.PORT || 8080;
@@ -13,6 +20,18 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
+
+//Importing Routes Files
+const adminRoutes = require('./routes/adminRoutes');
+const instructorRoutes = require('./routes/instructorRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const commonRoutes = require('./routes/commonRoutes');
+
+//Defining Route Paths
+app.use('/admin', adminRoutes);
+app.use('/instructors', instructorRoutes);
+app.use('/students', studentRoutes);
+app.use('/', commonRoutes);
 
 // Example RESTful endpoint
 app.get("/", (req, res) => {
