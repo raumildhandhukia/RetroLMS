@@ -1,0 +1,43 @@
+[
+    {
+    "_comment": "User Object",
+    "id": 123,
+    "username": "Abc@gmail.com",
+    "password":"12345678",
+    "role":"student",
+    "profile":{
+        "firstName": "Abc",
+        "lastName":"Xyz",
+        "email": "Abc@gmail.com"
+    },
+    "timestamp": 38393
+    },
+    {
+        "_comment": "Student Object",
+        "id": "S123",
+        "enrolledCourses":["SER517","SER515", "SER502"],
+        "timestamp": 37489
+    },
+    {
+        "_comment": "Course Object with cart schema yet to create",
+        "courseId": "SER515",
+        "instructortId": "C456",
+        "Title": "Software Design",
+        "Task":["T123","T124","T125","T126"]
+    },
+    {
+        "_comment": "Task Object",
+        "Id": "T123",
+        "Title": "Task1",
+        "Description":"solve 1 leetcode",
+        "Points": 10,
+        "SubmissionId": "ST1233"
+    },
+
+    {
+        "_comment": "Submission Object",
+        "Id": "Sub123",
+        "userId":"S123",
+        "points_recevied": 7
+    }
+]
