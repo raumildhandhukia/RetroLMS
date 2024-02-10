@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
     username: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: true },
     role: {
-      type: Strinxg,
+      type: String,
       enum: ["student", "instructor", "admin"],
       required: true,
     },
@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema(
       email: {
         type: String,
         unique: true,
-        sparse: true,
         match: [/.+\@.+\..+/, "Please fill a valid email address"],
       },
     },

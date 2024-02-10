@@ -5,8 +5,6 @@ const express = require("express");
 const cors = require("cors");
 const mongooseConnection = require('./db');
 
-
-
 const app = express();
 
 const PORT = process.env.PORT || 8080;
@@ -26,12 +24,14 @@ const adminRoutes = require('./routes/adminRoutes');
 const instructorRoutes = require('./routes/instructorRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const commonRoutes = require('./routes/commonRoutes');
+const authRoutes = require("./routes/authRoutes");
 
 //Defining Route Paths
 app.use('/admin', adminRoutes);
 app.use('/instructors', instructorRoutes);
 app.use('/students', studentRoutes);
 app.use('/', commonRoutes);
+app.use('', authRoutes);
 
 // Example RESTful endpoint
 app.get("/", (req, res) => {
@@ -39,6 +39,7 @@ app.get("/", (req, res) => {
     message: "Setting up NodeJS backend.",
   });
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
