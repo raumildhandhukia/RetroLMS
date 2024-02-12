@@ -7,18 +7,19 @@ const studentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
       index: true
-    }
-    // enrolledCourses: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Course"
-    //   },
-    // ]
-    // academicDetails: {
-    //   type: Map,
-    //   of: String, // Example: {"gradeLevel": "Junior", "major": "Computer Science"}
-    // }
-    
+    },
+    enrolledCourses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course"
+      }
+    ],
+    completedTask: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Task"
+      }
+    ],
   },
   {
     timestamps: true
