@@ -1,7 +1,7 @@
 import React from 'react';
-import './Login.css';
+import './App.css';
 
-const Login: React.FC = () => {
+const App: React.FC = () => {
 
   const handleLogin = (credentials: { username: string, password: string }) => {
     // Perform authentication logic here...
@@ -58,4 +58,4 @@ const Login: React.FC = () => {
           </div>
         </div>
   );}
-export default Login;
+export default App;

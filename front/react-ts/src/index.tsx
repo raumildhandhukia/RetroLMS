@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Login from './Login';
+import App from './App';
 import { BrowserRouter, Route, Routes } from"react-router-dom";
-import InstructorDashboard from "./InstructorDashboard";
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -12,10 +11,8 @@ const root = ReactDOM.createRoot(
 root.render(
       <BrowserRouter>
           <Routes>
-              <Route index element={<Login />} />
-              <Route path="/" element={<Login />} />
-              <Route path="/instructorDashboard" element={<InstructorDashboard />} />
-              <Route path="/courses" element={<InstructorDashboard />} />
+              <Route index element={<App />} />
+              <Route path="/" element={<App />} />
           </Routes>
       </BrowserRouter>
 );
