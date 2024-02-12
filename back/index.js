@@ -5,6 +5,8 @@ const express = require("express");
 const cors = require("cors");
 const mongooseConnection = require('./db');
 
+const dbController = require('./controllers/dbController');
+
 const app = express();
 
 const PORT = process.env.PORT || 8080;
@@ -19,6 +21,10 @@ app.use(
   })
 );
 
+// Connect to MongoDB Atlas
+dbController.connectToDatabase();
+
+
 //Importing Routes Files
 const adminRoutes = require('./routes/adminRoutes');
 const instructorRoutes = require('./routes/instructorRoutes');
@@ -28,8 +34,8 @@ const authRoutes = require("./routes/authRoutes");
 
 //Defining Route Paths
 app.use('/admin', adminRoutes);
-app.use('/instructors', instructorRoutes);
-app.use('/students', studentRoutes);
+app.use('/instructor', instructorRoutes);
+app.use('/student', studentRoutes);
 app.use('/', commonRoutes);
 app.use('', authRoutes);
 
