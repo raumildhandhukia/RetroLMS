@@ -1,12 +1,5 @@
 import React from 'react';
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Routes, Route,
-} from "react-router-dom";
-import StudentPage from './Components/Student/StudentPage';
-import { Link } from 'react-router-dom';
-
 const App: React.FC = () => {
 
   const handleLogin = (credentials: { username: string, password: string }) => {

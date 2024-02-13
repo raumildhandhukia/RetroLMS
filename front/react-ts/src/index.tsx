@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import { BrowserRouter, Route, Routes } from"react-router-dom";
 import reportWebVitals from './reportWebVitals';
+import InstructorDashboard from "./InstructorDashboard";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,6 +14,8 @@ root.render(
           <Routes>
               <Route index element={<App />} />
               <Route path="/" element={<App />} />
+              <Route path="/instructorDashboard" element={<InstructorDashboard />} />
+              <Route path="/courses" element={<InstructorDashboard />} />
           </Routes>
       </BrowserRouter>
 );
