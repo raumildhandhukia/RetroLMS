@@ -63,22 +63,8 @@ const sampleStudents: Student[] = [
   const shopItems = [
     { name: 'Item 1', price: 20 },
     { name: 'Item 2', price: 30 },
-    { name: 'Item 3', price: 15 },
-    { name: 'Item 1', price: 20 },
-    { name: 'Item 2', price: 30 },
-    { name: 'Item 3', price: 15 },
-    { name: 'Item 1', price: 20 },
-    { name: 'Item 2', price: 30 },
-    { name: 'Item 3', price: 15 },
-    { name: 'Item 1', price: 20 },
-    { name: 'Item 2', price: 30 },
-    { name: 'Item 3', price: 20 },
-    { name: 'Item 1', price: 20 },
-    { name: 'Item 2', price: 300 },
-    { name: 'Item 3', price: 150 },
-    
+    { name: 'Item 3', price: 15 }
   ];
-  
 
 const StudentPage: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -189,15 +175,6 @@ return (
           </table>
         </div>
       </div>
-
-      {selectedItem && (
-        <div>
-          <h3>Selected Item: {selectedItem}</h3>
-          <button onClick={() => handleBuyItem(selectedItem, 50)}>
-            Confirm Purchase
-          </button>
-        </div>
-      )}
     </div>
   );
 };
