@@ -5,9 +5,13 @@ const express = require("express");
 const cors = require("cors");
 const mongooseConnection = require('./db');
 
+<<<<<<< HEAD
 //Require the auth middleware
 const authMiddleware = require('./middleware/authMiddleware');
 
+=======
+const dbController = require('./controllers/dbController');
+>>>>>>> develop
 
 const app = express();
 
@@ -23,6 +27,10 @@ app.use(
   })
 );
 
+// Connect to MongoDB Atlas
+dbController.connectToDatabase();
+
+
 //Importing Routes Files
 const adminRoutes = require('./routes/adminRoutes');
 const instructorRoutes = require('./routes/instructorRoutes');
@@ -32,9 +40,11 @@ const authRoutes = require('./routes/authRoutes')
 
 //Defining Route Paths
 app.use('/admin', authMiddleware, adminRoutes);
-app.use('/instructors',authMiddleware, instructorRoutes);
-app.use('/students', authMiddleware, studentRoutes);
+app.use('/instructor',authMiddleware, instructorRoutes);
+app.use('/student', authMiddleware, studentRoutes);
 app.use('/', authMiddleware, commonRoutes);
+app.use('', authRoutes);
+
 
 // Example RESTful endpoint
 app.get("/", (req, res) => {
@@ -42,6 +52,7 @@ app.get("/", (req, res) => {
     message: "Setting up NodeJS backend.",
   });
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
