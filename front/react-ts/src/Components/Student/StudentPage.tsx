@@ -14,7 +14,7 @@ const sampleStudent: Student = {
   id: 1,
   name: 'Vamsi',
   email: 'vamsi.kolapalli@gmail.com',
-  currencyBalance: 150,
+  currencyBalance: 10,
   submittedTasks: ['Task 1', 'Task 2', 'Task 3', 'Task 4', 'Task 5', 'Task 6'],
   earnedCurrency: { 'Task 1': 20, 'Task 2': 30, 'Task 3': 10, 'Task 4': 20, 'Task 5': 30, 'Task 6': 10, 'Task 7': 20, 'Task 8': 30, 'Task 9': 10 },
 };
@@ -62,8 +62,8 @@ const sampleStudents: Student[] = [
   ];
   const shopItems = [
     { name: 'Item 1', price: 20 },
-    { name: 'Item 2', price: 30 },
-    { name: 'Item 3', price: 15 }
+    { name: 'Item 2', price: 10 },
+    { name: 'Item 3', price: 5 }
   ];
 
 const StudentPage: React.FC = () => {
@@ -76,7 +76,7 @@ const StudentPage: React.FC = () => {
       alert(`Bought ${itemName} for ${itemPrice} currency`);
       sampleStudent.currencyBalance -= itemPrice;
     } else {
-      console.log('coming here')
+      console.log('Reached here')
       alert(`Insufficient funds`);
     }
   };

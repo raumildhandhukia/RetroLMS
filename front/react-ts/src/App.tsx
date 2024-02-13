@@ -16,7 +16,9 @@ const App: React.FC = () => {
     console.log(role);
     // You need to implement this function
     if (role === 'student') {
+      // We need to integrate student page here
     } else if (role === 'instructor') {
+      // We need to integrate Instructor page here
     } else {
       // Handle invalid credentials or role here
       window.location.href="http://localhost:3000/instructorDashboard";
@@ -24,7 +26,7 @@ const App: React.FC = () => {
     }
   };
 
-  // Dummy function to determine role based on username (for illustration purposes)
+  // Function to determine role based on username
   const determineRole = (username: string): string => {
     if (username==="rohith") {
       console.log("hello rohith");

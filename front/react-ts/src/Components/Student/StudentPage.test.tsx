@@ -7,21 +7,11 @@ const sampleStudent = {
   id: 1,
   name: 'Vamsi',
   email: 'vamsi.kolapalli@gmail.com',
-  currencyBalance: 150,
+  currencyBalance: 10,
   submittedTasks: ['Task 1', 'Task 2', 'Task 3'],
   earnedCurrency: { 'Task 1': 20, 'Task 2': 30, 'Task 3': 10 },
 };
 
-const sampleStudents = [
-  {
-    id: 1,
-    name: 'Vamsi',
-    email: 'vamsi.kolapalli@gmail.com',
-    currencyBalance: 150,
-    submittedTasks: ['Task 1', 'Task 2', 'Task 3'],
-    earnedCurrency: { 'Task 1': 20, 'Task 2': 30, 'Task 3': 10 },
-  },
-];
 
 const shopItems = [
   { name: 'Item 1', price: 20 }
@@ -62,8 +52,16 @@ describe('StudentPage', () => {
   it('handles item purchase correctly', () => {
     render(<StudentPage />);
     const buyButtons = screen.getAllByText('Buy');
+    fireEvent.click(buyButtons[2]);
+    expect(window.alert).toHaveBeenCalledWith('Bought Item 3 for 5 currency');
+   
+  });
+
+  it('handles item purchase incorrectly', () => {
+    render(<StudentPage />);
+    const buyButtons = screen.getAllByText('Buy');
     fireEvent.click(buyButtons[0]);
-    expect(window.alert).toHaveBeenCalledWith('Bought Item 1 for 20 currency');
+    expect(window.alert).toHaveBeenCalledWith('Insufficient funds');
    
   });
 });
