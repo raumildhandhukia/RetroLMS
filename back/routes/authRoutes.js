@@ -67,7 +67,7 @@ router.post('/login', async (req, res) => {
 })
 
 
-router.get('/logout', async (req, res) => {
+router.get('/logout', authMiddleware, async (req, res) => {
 
     //clear the JWT token
     res.clearCookie('jwt', { httpOnly: true });

@@ -19,12 +19,13 @@ const authMiddleware = (req, res, next) => {
             return res.status(401).json({ message: 'Unauthorized: Invalid token' });
         } else {
             // Extract the role from the decoded token
-            const { role } = decoded;
-
+            const { role } = decoded.role
+            const {username} = decoded.username
             // Check if the role is one of the allowed values
             if (['admin', 'instructor', 'student'].includes(role)) {
                 // Add the role to the request object
                 req.role = role;
+                req.username = username;
                 next(); // Pass the request to the next middleware or route handler
             } else {
                 // If role is invalid, send an unauthorized response
