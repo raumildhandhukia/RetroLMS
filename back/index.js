@@ -5,6 +5,8 @@ const express = require("express");
 const cors = require("cors");
 const mongooseConnection = require('./db');
 
+//Require the auth middleware
+const authMiddleware = require('./middleware/authMiddleware');
 
 
 const app = express();
@@ -26,12 +28,13 @@ const adminRoutes = require('./routes/adminRoutes');
 const instructorRoutes = require('./routes/instructorRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const commonRoutes = require('./routes/commonRoutes');
+const authRoutes = require('./routes/authRoutes')
 
 //Defining Route Paths
-app.use('/admin', adminRoutes);
-app.use('/instructors', instructorRoutes);
-app.use('/students', studentRoutes);
-app.use('/', commonRoutes);
+app.use('/admin', authMiddleware, adminRoutes);
+app.use('/instructors',authMiddleware, instructorRoutes);
+app.use('/students', authMiddleware, studentRoutes);
+app.use('/', authMiddleware, commonRoutes);
 
 // Example RESTful endpoint
 app.get("/", (req, res) => {
