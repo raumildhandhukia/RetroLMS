@@ -56,7 +56,6 @@ router.post('/login', async (req, res) => {
 
         // Create a JWT token with user role and expiration time
         const token = jwt.sign({ username, role: user.role }, secretKey, { expiresIn: '1m' });
-
         // You may also create a refresh token if needed
         // const refreshToken = createRefreshToken();
 
@@ -65,7 +64,16 @@ router.post('/login', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
-
 })
+
+
+router.get('/logout', async (req, res) => {
+
+    //clear the JWT token
+    res.clearCookie('jwt', { httpOnly: true });
+
+    res.redirect('/login')
+})
+
 
 module.exports = router;
