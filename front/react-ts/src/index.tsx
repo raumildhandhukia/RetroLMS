@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 // import { BrowserRouter, Route, Routes } from"react-router-dom";
 import reportWebVitals from './reportWebVitals';
+import InstructorDashboard from "./InstructorDashboard";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

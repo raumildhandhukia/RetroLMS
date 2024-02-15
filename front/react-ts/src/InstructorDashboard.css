@@ -1,0 +1,133 @@
+/* Add your CSS styles here */
+body {
+    background-image: url('https://github.com/raumildhandhukia/CanvasGamificationTeam14/blob/d91887c9548b762f590179cb2f9484ea057bf52a/front/react-ts/src/ASU_logo.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Styles for navigation bar */
+.logo {
+    width: 100px; /* Adjust width as needed */
+    height: 40px; /* Maintain aspect ratio */
+}
+
+.navbar {
+    background-color: dodgerblue;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar h1 {
+    margin: 0;
+}
+
+/* Styles for dropdown menu */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Styles for courses button */
+.courses-btn, .logout-btn, .add-course-btn  {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.courses-btn:hover, .logout-btn:hover, .add-course-btn:hover {
+    background-color: #218838;
+}
+
+/* Styles for dashboard */
+.dashboard {
+    padding: 20px;
+}
+
+/* Styles for leaderboard sections */
+.leaderboard-section {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #212529;
+    display: block;
+}
+
+.leaderboard-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-section h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.leaderboard-section p {
+    margin: 5px 0;
+}
+
+/* Styles for course details page */
+.course-details {
+    padding: 20px;
+}
+
+/* Styles for course details table */
+.course-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.course-table td {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.course-table td:first-child {
+    font-weight: bold;
+    width: 30%;
+}
+
