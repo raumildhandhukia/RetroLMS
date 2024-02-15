@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const authMiddleware = require("../middleware/authMiddleware.js");
 
 router.use(cookieParser());
 
@@ -77,7 +78,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/logout", authMiddleware, async (req, res) => {
+router.get("/logout", async (req, res) => {
   //clear the JWT token
   res.clearCookie("jwt", { httpOnly: true });
 

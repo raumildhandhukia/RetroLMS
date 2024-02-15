@@ -37,7 +37,7 @@ const authRoutes = require("./routes/authRoutes");
 app.use("/admin", authMiddleware, adminRoutes);
 app.use("/instructor", authMiddleware, instructorRoutes);
 app.use("/student", authMiddleware, studentRoutes);
-app.use("/", authMiddleware, commonRoutes);
+// app.use("/", authMiddleware, commonRoutes);
 app.use("", authRoutes);
 
 // Example RESTful endpoint
