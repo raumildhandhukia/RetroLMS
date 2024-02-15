@@ -37,11 +37,11 @@ const App: React.FC = () => {
     }
   };
   return (
-        <div id="NewRootRoot" className="center-container">
-          <div className="login-container">
+        <div id="NewRootRoot" className="flex justify-center items-center min-h-[100vh] bg-white">
+          <div className="flex flex-col items-center w-full max-w-[400px] rounded-lg shadow border-2 border-black bg-gray-100">
             <img src="https://file.rendit.io/n/mWZVWPIwAmEIOBF3b0E9.png" alt="Arizona State University"
-                 className="logo"></img>
-            <div className="form-container">
+                 className="logo rounded-t-lg"></img>
+            <div className="form-container px-4 pb-4">
               <h1 className="form-title">Sign In</h1>
               <div className="form-group">
                 <label htmlFor="asuriteId" className="form-label">ASURITE User ID</label>
@@ -58,7 +58,7 @@ const App: React.FC = () => {
                 const password = formData.get('password') as string;
                 handleLogin({username, password});
               }}>
-                <button className="form-button" type="submit">Sign In</button>
+                <button className="bg-[#8C1D40]/95 hover:bg-[#69293d] p-2 rounded-md text-white mt-4" type="submit">Sign In</button>
               </form>
             </div>
           </div>

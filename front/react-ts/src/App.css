@@ -107,13 +107,3 @@ body {
   border: 1px solid #000;
   background-color: #e5e5e5;
 }
-
-.form-button {
-  background-color: #red-700;
-  color: #fff;
-  padding: 8px;
-  width: 100%;
-  cursor: pointer;
-  border: none;
-  border-radius: 4px;
-}
