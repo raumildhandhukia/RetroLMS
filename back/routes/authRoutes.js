@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const cookieParser = require("cookie-parser");
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
@@ -22,7 +23,6 @@ router.post('/signup', async (req, res) => {
         });
         // Save the user to the database
         await newUser.save();
-
         res.status(201).json({ 
             message: `Role: ${role}, Username: ${username}. User created successfully.`
         });
@@ -54,12 +54,14 @@ router.post('/login', async (req, res) => {
         }
 
         // Create a JWT token with user role and expiration time
+        
         const token = jwt.sign({ username, role: user.role }, secretKey, { expiresIn: '1m' });
 
         // You may also create a refresh token if needed
         // const refreshToken = createRefreshToken();
-
-        res.json({ token });
+        res.cookie("jwt", token, { httpOnly: true });
+        res.json({ success: true });
+        // res.json({ token });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
