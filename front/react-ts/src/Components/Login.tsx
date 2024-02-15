@@ -77,11 +77,10 @@ const Login: React.FC = () => {
   };
 
   return (
-        <div id="NewRootRoot" className="center-container">
-          <div className="login-container">
-            <img src="https://file.rendit.io/n/mWZVWPIwAmEIOBF3b0E9.png" alt="Arizona State University"
-                 className="logo"></img>
-            <div className="form-container">
+        <div id="NewRootRoot" className="flex justify-center items-center min-h-[100vh] bg-white">
+          <div className="flex flex-col items-center w-full max-w-[400px] rounded-lg shadow border-2 border-black bg-gray-100">
+            <img src="https://file.rendit.io/n/mWZVWPIwAmEIOBF3b0E9.png" alt="Arizona State University" className="logo rounded-t-lg py-4 px-2 bg-asu-gold" />
+            <div className="form-container p-6 pt-0">
               <h1 className="form-title">Sign In</h1>
               <div className="form-group">
                 <label htmlFor="username" className="form-label">ASURITE User ID</label>
@@ -101,7 +100,9 @@ const Login: React.FC = () => {
                 e.preventDefault();
                 handleLogin();
               }}>
-                <button className="form-button" type="submit">Sign In</button>
+                <button className="bg-asu-maroon/90 hover:bg-asu-maroon p-2 rounded-md text-white mt-4" type="submit">
+                  Sign In
+                </button>
               </form>
             </div>
           </div>
