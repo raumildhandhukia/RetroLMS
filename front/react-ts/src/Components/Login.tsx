@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
 
 interface Credentials {
   username: string;
@@ -11,6 +12,31 @@ interface Credentials {
 // }
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        // Make a request to the server to check the authentication status
+        const response = await fetch('http://localhost:8080/check-auth', {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        });
+
+        if (response.ok) {
+          // User is authenticated, redirect to the landing page
+          navigate('/courses');
+        } else {
+          // User is not authenticated, continue rendering the login page
+          console.log('User not authenticated');
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+      }
+    };
+
+    checkAuthentication();
+  }, [navigate]);
+
   const [credentials, setCredentials] = useState<Credentials>({ username: '', password: '' });
 
   const handleLogin = async () => {
@@ -21,6 +47,7 @@ const Login: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(credentials),
       });
 
