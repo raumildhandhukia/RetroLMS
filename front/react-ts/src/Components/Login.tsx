@@ -121,9 +121,9 @@ const Login: React.FC = () => {
             <img 
               src="https://file.rendit.io/n/mWZVWPIwAmEIOBF3b0E9.png"
               alt="Arizona State University" 
-              className="logo rounded-t-lg py-4 px-2 bg-asu-gold"
+              className="rounded-t-lg py-4 px-2 bg-asu-gold"
             ></img>
-            <div className="form-container p-6 pt-0">
+            <div className="form-container p-6">
               <h1 className="form-title">Sign In</h1>
               <div className="form-group">
                 <label htmlFor="username" className="form-label">ASURITE User ID</label>
@@ -148,21 +148,6 @@ const Login: React.FC = () => {
                 </button>
               </form>
             </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder=""
-              className="form-input"
-              value={credentials.password}
-              onChange={(e) =>
-                setCredentials({ ...credentials, password: e.target.value })
-              }
-            ></input>
           </div>
           <form
             onSubmit={(e) => {
