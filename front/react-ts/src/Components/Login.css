@@ -16,6 +16,17 @@ body {
   }
 }
 
+.validation-message {
+  color: #D8000C; /* Bright red color for high visibility */
+  background-color: #FFD2D2; /* Light red/pink background for contrast */
+  border: 1px solid #D8000C; /* Border to match the text color */
+  padding: 10px; /* Some padding to give space around the text */
+  margin-top: 10px; /* Margin to separate the message from other elements */
+  border-radius: 5px; /* Rounded corners for a softer look */
+  font-size: 0.9rem; /* Slightly smaller font size than the default */
+  text-align: left; /* Align text to the left */
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
