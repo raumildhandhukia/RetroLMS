@@ -23,5 +23,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/Components/Student/Login.test.tsx", "src/Components/Student/Login.tsx"  ]
 }

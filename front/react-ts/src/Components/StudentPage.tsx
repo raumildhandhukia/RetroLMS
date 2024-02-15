@@ -81,6 +81,24 @@ const sampleStudents: Student[] = [
   
 
 const StudentPage: React.FC = () => {
+  const fetchData = async () => {
+    try {
+      // Call your API here
+      const response = await fetch('your-api-endpoint');
+      const data = await response.json();
+
+      // Do something with the data (e.g., update state)
+      console.log('API response:', data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // useEffect(() => {
+  //   // Call the fetchData function when the component mounts
+  //   fetchData();
+  // }, []);
+
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   const handleBuyItem = (itemName: string, itemPrice: number) => {
