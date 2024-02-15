@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const authMiddleware = require("../middleware/authMiddleware.js");
 
 router.use(cookieParser());
 
@@ -76,6 +77,14 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+router.get("/logout", async (req, res) => {
+  //clear the JWT token
+  res.clearCookie("jwt", { httpOnly: true });
+
+  res.redirect("/login");
+});
+
 router.get("/check-auth", (req, res) => {
   // Retrieve the JWT from the request cookies
   const token = req.cookies && req.cookies["jwt"];
