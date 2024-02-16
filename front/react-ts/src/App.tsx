@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom"
 import Login from './Components/Login'
 import StudentPage from './Components/StudentPage'
 import InstructorDashboard from "./InstructorDashboard";
+import Dashboard from "./Components/Dashboard";
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
     <BrowserRouter>
       <main>
         <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/courses" element={<StudentPage />} />
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
