@@ -49,7 +49,7 @@ const Login: React.FC = () => {
 
         if (response.ok) {
           // User is authenticated, redirect to the landing page
-          navigate("/courses");
+          navigate("/dashboard");
         } else {
           // User is not authenticated, continue rendering the login page
           console.log("User not authenticated");
@@ -112,7 +112,7 @@ const Login: React.FC = () => {
   };
 
   const redirectToRole = () => {
-    window.location.href = "/courses";
+    window.location.href = "/dashboard";
   };
 
   return (
