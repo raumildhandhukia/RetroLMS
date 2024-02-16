@@ -116,44 +116,38 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div id="NewRootRoot" className="center-container">
-      <div className="login-container">
-        <img
-          src="https://file.rendit.io/n/mWZVWPIwAmEIOBF3b0E9.png"
-          alt="Arizona State University"
-          className="logo"
-        ></img>
-        <div className="form-container">
-          <h1 className="form-title">Sign In</h1>
-          <div className="form-group">
-            <label htmlFor="username" className="form-label">
-              ASURITE User ID
-            </label>
-            <input
-              id="username"
-              type="text"
-              placeholder=""
-              className="form-input"
-              value={credentials.username}
-              onChange={(e) =>
-                setCredentials({ ...credentials, username: e.target.value })
-              }
-            ></input>
-          </div>
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder=""
-              className="form-input"
-              value={credentials.password}
-              onChange={(e) =>
-                setCredentials({ ...credentials, password: e.target.value })
-              }
-            ></input>
+        <div id="NewRootRoot" className="flex justify-center items-center min-h-[100vh] bg-white">
+          <div className="flex flex-col items-center w-full max-w-[400px] rounded-lg shadow border-2 border-black bg-gray-100">
+            <img 
+              src="https://file.rendit.io/n/mWZVWPIwAmEIOBF3b0E9.png"
+              alt="Arizona State University" 
+              className="rounded-t-lg py-4 px-2 bg-asu-gold"
+            ></img>
+            <div className="form-container p-6">
+              <h1 className="form-title">Sign In</h1>
+              <div className="form-group">
+                <label htmlFor="username" className="form-label">ASURITE User ID</label>
+                <input id="username" type="text" placeholder="" className="form-input"
+                        value={credentials.username}
+                        onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}>        
+                </input>
+              </div>
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">Password</label>
+                <input id="password" type="password" placeholder="" className="form-input"
+                      value={credentials.password}
+                      onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}>
+                </input>
+              </div>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                handleLogin();
+              }}>
+                <button className="bg-asu-maroon/90 hover:bg-asu-maroon p-2 rounded-md text-white mt-4" type="submit">
+                  Sign In
+                </button>
+              </form>
+            </div>
           </div>
           <form
             onSubmit={(e) => {
@@ -167,8 +161,6 @@ const Login: React.FC = () => {
             {validationMessage && <div className="validation-message">{validationMessage}</div>}
           </form>
         </div>
-      </div>
-    </div>
   );
 };
 

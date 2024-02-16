@@ -7,6 +7,7 @@ import InstructorDashboard from "./InstructorDashboard";
 
 function App() {
   return (
+
     <BrowserRouter>
       <main>
         <Routes>
@@ -20,4 +21,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
