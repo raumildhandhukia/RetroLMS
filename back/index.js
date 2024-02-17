@@ -9,6 +9,7 @@ const authMiddleware = require("./middleware/authMiddleware");
 const dbController = require("./controllers/dbController");
 
 const app = express();
+module.exports = app;
 
 const PORT = process.env.PORT || 8080;
 
