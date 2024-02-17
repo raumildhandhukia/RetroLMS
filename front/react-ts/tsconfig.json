@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "types": ["react", "react-dom", "react-router-dom"],
     "lib": [
       "dom",
       "dom.iterable",
@@ -22,5 +23,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/Components/Student/Login.test.tsx", "src/Components/Student/Login.tsx"  ]
 }

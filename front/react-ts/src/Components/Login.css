@@ -1,0 +1,116 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.validation-message {
+  color: #D8000C; /* Bright red color for high visibility */
+  background-color: #FFD2D2; /* Light red/pink background for contrast */
+  border: 1px solid #D8000C; /* Border to match the text color */
+  padding: 10px; /* Some padding to give space around the text */
+  margin-top: 10px; /* Margin to separate the message from other elements */
+  border-radius: 5px; /* Rounded corners for a softer look */
+  font-size: 0.9rem; /* Slightly smaller font size than the default */
+  text-align: left; /* Align text to the left */
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* Reset some default styles */
+body, h1, p, div, input, button {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f2f2f2;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+  max-width: 400px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  font-weight: light;
+  color: #000;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.form-label {
+  font-weight: bold;
+}
+
+.form-input {
+  padding: 8px;
+  width: 100%;
+  border: 1px solid #000;
+  background-color: #e5e5e5;
+}
