@@ -5,18 +5,22 @@ const courseSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  InstructorId: {
+  instructorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Instructor'
   },
-  Cart: {
+  cart: {
     type: String,
     required: true
   },
-  Task:[{
+  task:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Task'
-  }]
+  }],
+  courseKey:{ // SER517 will be used for capstone project
+    type: String,
+    required: true
+  }
 });
 
 const Course = mongoose.model('Course', courseSchema);

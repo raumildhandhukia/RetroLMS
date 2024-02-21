@@ -2,18 +2,26 @@ const mongoose = require("mongoose");
 
 const submissionModel = new mongoose.Schema(
   {
-    studentId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student'
-      },
-      taskId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Task'
-      },
-      points_recevied:{
-        type: Number,
-        require: true
-      }
+    studentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      require: true,
+    },
+    taskId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Task",
+      require: true,
+    },
+    points_recevied: {
+      type: Number,
+    },
+    current_state:{
+      type: Boolean,
+      require: true
+    }
+  },
+  {
+    timestamps: true,
   }
 );
 

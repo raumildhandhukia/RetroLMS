@@ -2,18 +2,18 @@ const mongoose = require("mongoose");
 
 const instructorSchema = new mongoose.Schema(
   {
-    userId: {
+    instructorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
       index: true,
     },
-    // coursesTeaching: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Course"
-    //   },
-    // ]
+    coursesTeaching: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course"
+      },
+    ]
   },
   {
     timestamps: true,
