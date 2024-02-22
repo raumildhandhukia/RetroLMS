@@ -18,16 +18,21 @@ async function generateRespectiveObject(role, userId) {
     const newMod = new Admin({
       userId,
     });
+    await newMod.save();
+    return newMod.id;
   } else if (role == "instructor") {
     const newMod = new Instructor({
       userId,
     });
+    await newMod.save();
+    return newMod.id;
   } else {
     const newMod = new Student({
       userId,
     });
+    await newMod.save();
+    return newMod.id;
   }
-  await newMod.save();
 }
 
 router.post("/signup", async (req, res) => {
@@ -51,9 +56,9 @@ router.post("/signup", async (req, res) => {
     });
     // Save the user to the database
     await newUser.save();
-    generateRespectiveObject(role, newUser.id);
+    const roleId = await generateRespectiveObject(role, newUser.id);
     res.status(201).json({
-      message: `Role: ${role}, Username: ${username}. User created successfully.`,
+      message: `Role: ${role}, Username: ${username}. User created successfully. ${role}_ID = ${roleId}`,
     });
   } catch (error) {
     console.error(error);

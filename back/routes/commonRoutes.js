@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/userModel");
+const Course = require("../models/courseModel");
 const Student = require("../models/studentModel");
 const Instructor = require("../models/instructorModel");
 const router = express.Router();
@@ -18,7 +19,7 @@ router.get("/leaderboard", (req, res) => {
 //not working, wait for PR
 router.put("/courses", async (req, res) => {
   try {
-    const { title, instructorId, cart } = req.body;
+    const { title, instructorId, courseKey } = req.body;
     // Check if the user already exists
     const existingCourse = await User.findOne({ title });
     if (existingCourse) {
@@ -30,7 +31,7 @@ router.put("/courses", async (req, res) => {
     const newCourse = new Course({
       title,
       instructorId,
-      cart,
+      courseKey,
     });
     // Save the user to the database
     await newCourse.save();
