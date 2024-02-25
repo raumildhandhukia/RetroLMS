@@ -16,35 +16,57 @@ router.get("/leaderboard", (req, res) => {
   });
 });
 
-//not working, wait for PR
+
+//This route should be used to create as well as update the course
 router.put("/courses", async (req, res) => {
+
   try {
     const { title, instructorId, courseKey } = req.body;
-    // Check if the user already exists
-    const existingCourse = await User.findOne({ title });
-    if (existingCourse) {
-      return res
-        .status(400)
-        .json({ message: `Course: ${title} already exists` });
+
+    // Check if the user is authorized (has the role of admin or instructor)
+    if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
+      return res.status(403).json({ message: 'Unauthorized access' });
     }
-    // Create a new user
+  
+
+    // Check if the course already exists
+    let existingCourse = await Course.findOne({ title });
+
+    if (existingCourse) {
+      // Update existing course
+      existingCourse.instructorId = instructorId;
+      existingCourse.courseKey = courseKey;
+      await existingCourse.save();
+
+      return res.status(200).json({
+        message: `Course '${title}' updated successfully`,
+        course: existingCourse,
+      });
+    }
+
+    // Create a new course if it doesn't exist
     const newCourse = new Course({
       title,
       instructorId,
       courseKey,
     });
-    // Save the user to the database
+
+    // Save the new course to the database
     await newCourse.save();
+
     res.status(201).json({
-      message: `Course: ${title} created successfully.`,
+      message: `Course '${title}' created successfully`,
+      course: newCourse,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating/creating course:", error);
     res.status(500).json({
       message: "Internal Server Error",
     });
   }
 });
+
+
 
 //not working, wait for PR
 router.get("/courses", async (req, res) => {
@@ -116,5 +138,7 @@ router.get("/profile", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+router.put("/course", async (req, res) => {});
 
 module.exports = router;
