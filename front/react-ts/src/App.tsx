@@ -5,6 +5,7 @@ import Login from './Components/Login'
 import StudentPage from './Components/StudentPage'
 import InstructorDashboard from "./InstructorDashboard";
 import Dashboard from "./Components/Dashboard";
+import EightBitArrowButton from "./Components/Buttons/EightBitArrowButton";
 
 function App() {
   return (
@@ -12,7 +13,11 @@ function App() {
     <BrowserRouter>
       <main>
         <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<EightBitArrowButton onClick={() => {
+                              console.log("Hello")
+                            }}>
+                                Button Name Here
+                            </EightBitArrowButton>} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/courses" element={<StudentPage />} />
