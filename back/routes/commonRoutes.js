@@ -19,8 +19,7 @@ router.get("/leaderboard", (req, res) => {
 router.put("/courses", async (req, res) => {
   try {
     const { title, instructorId, courseKey } = req.body;
-    // Check if the user already exists
-    const existingCourse = await User.findOne({ title });
+    const existingCourse = await Course.findOne({ title });
     if (existingCourse) {
       return res
         .status(400)
@@ -77,11 +76,8 @@ router.get("/courses", async (req, res) => {
 // Route to add a course to the student
 router.post("/add-course", async (req, res) => {
   try {
-    jwt = req.cookies && req.cookies.jwt;
-    const decoded = JWT.decode(jwt);
-    const username = decoded.username;
+    const { courseId, username } = req.body;
     const user = await User.findOne({ username });
-    const { courseId } = req.body;
 
     // Check if the course exists
     const course = await Course.findById(courseId);
