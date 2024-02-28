@@ -16,8 +16,6 @@ router.get("/leaderboard", (req, res) => {
   });
 });
 
-
-//This route should be used to create as well as update the course
 router.put("/courses", async (req, res) => {
 
   try {
@@ -28,7 +26,6 @@ router.put("/courses", async (req, res) => {
       return res.status(403).json({ message: 'Unauthorized access' });
     }
   
-
     // Check if the course already exists
     let existingCourse = await Course.findOne({ title });
 
@@ -66,55 +63,59 @@ router.put("/courses", async (req, res) => {
   }
 });
 
-
-
-//not working, wait for PR
 router.get("/courses", async (req, res) => {
   try {
-    jwt = res.cookies && res.cookies.jwt;
+    jwt = req.cookies && req.cookies.jwt;
     const decoded = JWT.decode(jwt);
     const username = decoded.username;
     const user = await User.findOne({ username });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (user.role === "student") {
+      // If the user is a student, fetch enrolled courses
+      const student = await Student.findOne({
+        userId: user.id,
+      }).populate("enrolledCourses");
+      return res.status(200).json({ courses: student.enrolledCourses });
+    } else if (user.role === "instructor") {
+      // If the user is an instructor, fetch courses based on instructorId
+      const instructorId = await Instructor.findOne({
+        userId: user.id,
+      });
+      const courses = await Course.find({ instructorId });
+      return res.status(200).json({ courses });
+    } else {
+      return res.status(400).json({ message: "Invalid user role" });
     }
-
-    let courses;
-
-    switch (user.role) {
-      case "student":
-        courses = await Student.findOne({ userId: user._id }).populate(
-          "enrolledCourses"
-        );
-        break;
-
-      case "instructor":
-        courses = await Instructor.findOne({ userId: user._id }).populate(
-          "coursesTeaching"
-        );
-        break;
-
-      default:
-        return res.status(400).json({ message: "Invalid role error" });
-    }
-
-    if (!courses) {
-      return res.status(404).json({ message: "Courses not found" });
-    }
-
-    courses =
-      user.role === "student"
-        ? courses.enrolledCourses
-        : courses.coursesTeaching;
-
-    res.status(200).json({
-      username: username,
-      courses: courses,
-    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Route to add a course to the student
+router.post("/add-course", async (req, res) => {
+  try {
+    const { courseId, username } = req.body;
+    const user = await User.findOne({ username });
+
+    // Check if the course exists
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    // Update the student's enrolledCourses array
+    const updatedStudent = await Student.findOneAndUpdate(
+      { userId: user.id },
+      { $addToSet: { enrolledCourses: courseId } },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .json({ message: "Course added successfully", student: updatedStudent });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
