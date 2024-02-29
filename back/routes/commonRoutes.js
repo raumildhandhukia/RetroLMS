@@ -7,6 +7,8 @@ const router = express.Router();
 const cookieParser = require("cookie-parser");
 const JWT = require("jsonwebtoken");
 router.use(cookieParser());
+const taskController = require('../controllers/task');
+
 
 // Route for all users to view the leaderboard
 router.get("/leaderboard", (req, res) => {
@@ -121,5 +123,12 @@ router.get("/profile", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+
+// Routes for Task
+
+router.post('/task/create',taskController.addTask);
+router.put('/task/update/:id',taskController.updateTask);
+router.post('/task/create/:id',taskController.deleteTask);
 
 module.exports = router;
