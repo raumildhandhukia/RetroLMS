@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const instructorSchema = new mongoose.Schema(
   {
-    instructorId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -11,9 +11,9 @@ const instructorSchema = new mongoose.Schema(
     coursesTeaching: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Course"
+        ref: "Course",
       },
-    ]
+    ],
   },
   {
     timestamps: true,
