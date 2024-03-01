@@ -47,7 +47,11 @@ exports.updateTask = async (req, res) => {
 
 exports.getAllTask = async (req, res) => {
   try {
-    const tasks = await Task.find().populate('courseId submissionId');
+    let query = {};
+    if (req.body.userId) {
+      query.userId = req.body.userId;
+    }
+    const tasks = await Task.find(query).populate('courseId submissionId');
     res.status(200).json(tasks);
   } catch (err) {
     res.status(500).json({ message: err.message });
