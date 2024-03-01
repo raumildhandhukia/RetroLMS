@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { JSXElementConstructor, ReactElement, useState } from 'react';
+import { BrowserRouter as Router, Route, Link, useParams, Routes, Outlet } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
+import CoursesSidebar from './CoursesSidebar';
 import { CircleUser, LogOut } from 'lucide-react';
 import Card from './Card';
+import asulogo from '../../asu.png'
 import {Link} from "react-router-dom";
 
 export interface Course {
@@ -15,7 +18,7 @@ export interface Course {
 }
 
 export interface ISidebarItem {
-    name: "Account" | "Logout";
+    name: "Account" | "Logout" | "MyCourses";
 }
 
 const details= "SER 517: Software Factory Capstone (2024 Spring)\n" +
@@ -55,25 +58,55 @@ const Dashboard: React.FC = () => {
 
     const sidebarItems: ISidebarItem[] = [
         { name: "Account" },
-        { name: "Account" },
-        { name: "Account" },
-        { name: "Account" },
-        { name: "Logout" },
+        { name: "MyCourses" },
+        { name: "Logout" }
     ]
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
+    const handleCloseSidebar = () => {
+        setSidebarOpen(false);
+    };
+    const handleIconClick = (iconName: string) => {
+        // Handle the click of a particular icon
+        switch (iconName) {
+            case 'Account':
+                setSelectedComponent(<div>Account Component</div>);
+                break;
+            case 'MyCourses':
+                setSelectedComponent(<CoursesSidebar onClose={handleCloseSidebar} />);
+                setSidebarOpen(!isSidebarOpen);
+                break;
+            case 'Logout':
+                setSelectedComponent(<div>Logout Component</div>);
+                break;
+            default:
+                setSelectedComponent(null);
+                break;
+        }
+    };
 
     return (
         <div className="container flex">
           <div className="w-20 bg-gray-100 h-lvh flex flex-col">
+             <img src={asulogo} />
               {sidebarItems.map(sidebarItem =>
-                  <SidebarItem name={sidebarItem.name} />
+                  <SidebarItem key={sidebarItem.name} name={sidebarItem.name} onClick={handleIconClick} />
               )}
           </div>
+           {isSidebarOpen && (
+                <div className="overlay">
+                    {selectedComponent}
+                </div>
+            )}
             <div className="flex flex-1 p-10 flex-col">
                 <p className="text-3xl">Dashboard</p>
                 <div className='w-full flex flex-wrap mt-10'>
                     {coursesData.map(course => <Card {...course} />)}
                 </div>
             </div>
+            <Routes>
+                <Route path="/dashboard/home" element={<Outlet />} />
+            </Routes>
         </div>
 
     );
