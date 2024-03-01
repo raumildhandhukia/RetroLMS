@@ -127,15 +127,15 @@ const CourseDetailPage: React.FC = () => {
     const location = useLocation();
     //const { course } = location.state as { course: Course }; // Type casting for TypeScript
     // @ts-ignore
-    const course = coursesData[id];
+    const course = coursesData[1];
     return (
         <div className="container flex">
-            <div className="w-20 bg-gray-100 h-lvh flex flex-col">
+            {/* <div className="w-20 bg-gray-100 h-lvh flex flex-col">
                 {sidebarItems.map(sidebarItem =>
-                    <SidebarItem name={sidebarItem.name} />
+                    <SidebarItem key={sidebarItem.name} name={sidebarItem.name} onClick={handleIconClick} />
                 )}
-            </div>
-            <div className="flex flex-1 p-10 flex-col">
+            </div> */}
+            <div className="flex flex-1 flex-col">
                 <h1 className="text-3xl">{course.title}</h1>
                 <p><strong>Term:</strong> {course.term}</p>
                 <p><strong>Instructor:</strong> {course.instructor.name} (<a href={`mailto:${course.instructor.email}`}>{course.instructor.email}</a>)</p>
