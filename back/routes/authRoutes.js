@@ -1,4 +1,7 @@
 const User = require("../models/userModel.js");
+const Instructor = require("../models/instructorModel.js");
+const Student = require("../models/studentModel.js");
+const Admin = require("../models/userModel.js");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
@@ -9,6 +12,28 @@ const authMiddleware = require("../middleware/authMiddleware.js");
 router.use(cookieParser());
 
 const secretKey = process.env.JWT_SECRET_KEY;
+
+async function generateRespectiveObject(role, userId) {
+  if (role == "admin") {
+    const newMod = new Admin({
+      userId,
+    });
+    await newMod.save();
+    return newMod.id;
+  } else if (role == "instructor") {
+    const newMod = new Instructor({
+      userId,
+    });
+    await newMod.save();
+    return newMod.id;
+  } else {
+    const newMod = new Student({
+      userId,
+    });
+    await newMod.save();
+    return newMod.id;
+  }
+}
 
 router.post("/signup", async (req, res) => {
   try {
@@ -31,8 +56,9 @@ router.post("/signup", async (req, res) => {
     });
     // Save the user to the database
     await newUser.save();
+    const roleId = await generateRespectiveObject(role, newUser.id);
     res.status(201).json({
-      message: `Role: ${role}, Username: ${username}. User created successfully.`,
+      message: `Role: ${role}, Username: ${username}. User created successfully. ${role}_ID = ${roleId}`,
     });
   } catch (error) {
     console.error(error);

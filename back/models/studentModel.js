@@ -2,27 +2,27 @@ const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema(
   {
-    studentId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true
+      index: true,
     },
     enrolledCourses: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Course"
-      }
+        ref: "Course",
+      },
     ],
     completedTask: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Task"
-      }
+        ref: "Task",
+      },
     ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
