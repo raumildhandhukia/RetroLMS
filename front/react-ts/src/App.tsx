@@ -13,8 +13,7 @@ function App() {
     <BrowserRouter>
       <main>
         <Routes>
-            {/* <Route path="/" element={<Login />} /> */}
-            <Route path="/" element={<EightBitArrowButton>Arrow Button</EightBitArrowButton>} />
+            <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/courses" element={<StudentPage />} />
