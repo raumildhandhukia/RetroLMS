@@ -33,6 +33,7 @@ const instructorRoutes = require("./routes/instructorRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const commonRoutes = require("./routes/commonRoutes");
 const authRoutes = require("./routes/authRoutes");
+const taskRoute = require("./routes/task");
 
 //Defining Route Paths
 app.use("/admin", authMiddleware, adminRoutes);

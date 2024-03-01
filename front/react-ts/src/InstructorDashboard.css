@@ -130,4 +130,8 @@ body {
     font-weight: bold;
     width: 30%;
 }
+/* App.css */
+.active-class {
+    background-color: #4b5563; /* Example active color */
+}
 

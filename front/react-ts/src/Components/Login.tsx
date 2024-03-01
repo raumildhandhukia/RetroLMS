@@ -29,6 +29,7 @@ const validateSignInInputs = (credentials:Credentials): ValidationResult => {
   
   // Validate password
   if (!passwordPattern.test(credentials.password)) {
+    console.log(passwordPattern.test(credentials.password))
     return { isValid: false, message: "Password should be minimum 8 characters long including numbers, and special characters." };
   }
   
