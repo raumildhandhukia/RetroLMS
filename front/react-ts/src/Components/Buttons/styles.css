@@ -57,3 +57,18 @@
     }
     height: 40px;
 }
+
+.misc {
+    background-image: linear-gradient(to right, black, grey);
+
+    &:after, &:before {
+        border-color: darkgrey;   
+    }
+}
+
+.misc:hover {
+    background-image: linear-gradient(to left, black, grey);
+    &:after, &:before {
+        border-color: black;   
+    }
+}

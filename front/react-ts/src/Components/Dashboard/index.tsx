@@ -7,6 +7,7 @@ import Card from './Card';
 import asulogo from '../../asu.png'
 import {Link} from "react-router-dom";
 import CourseDetailPage from '../../CourseDetailPage';
+import EightBitMiscButton from '../Buttons/EightBitMiscButton';
 
 export interface Course {
     id: number;
@@ -142,6 +143,7 @@ const Dashboard: React.FC = () => {
             <Routes>
                 <Route path="/dashboard/home" element={<Outlet />} />
             </Routes>
+            <EightBitMiscButton>hello</EightBitMiscButton>
         </div>
 
     );
