@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom"
 import Login from './Components/Login'
 import StudentPage from './Components/StudentPage'
 import InstructorDashboard from "./InstructorDashboard";
+import EightBitArrowButton from "./Components/Buttons/EightBitArrowButton";
 import Dashboard from "./Components/Dashboard/index";
 import CourseDetailPage from "./CourseDetailPage";
 import {CourseProvider} from "./CourseContext";
