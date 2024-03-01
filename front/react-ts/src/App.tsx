@@ -19,7 +19,6 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/courses" element={<StudentPage />} />
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
-            <Route path="/course/:id" element={<CourseDetailPage/>} />
         </Routes>
       </main>
     </BrowserRouter>

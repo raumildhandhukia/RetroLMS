@@ -1,11 +1,12 @@
 import React, { JSXElementConstructor, ReactElement, useState } from 'react';
-import { BrowserRouter as Router, Route, Link, useParams, Routes, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Route, useParams, Routes, Outlet } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
 import { CircleUser, LogOut } from 'lucide-react';
 import Card from './Card';
 import asulogo from '../../asu.png'
 import {Link} from "react-router-dom";
+import CourseDetailPage from '../../CourseDetailPage';
 
 export interface Course {
     id: number;
@@ -18,7 +19,7 @@ export interface Course {
 }
 
 export interface ISidebarItem {
-    name: "Account" | "Logout" | "MyCourses";
+    name: "Account" | "Logout" | "MyCourses" | "Dashboard";
 }
 
 const details= "SER 517: Software Factory Capstone (2024 Spring)\n" +
@@ -58,26 +59,46 @@ const Dashboard: React.FC = () => {
 
     const sidebarItems: ISidebarItem[] = [
         { name: "Account" },
+        { name: "Dashboard"},
         { name: "MyCourses" },
         { name: "Logout" }
     ]
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
+    const [selectedCourse, setSelectedCourse] = useState<string>('');
+    const [selectedItem, setSelectedItem] = useState<string>('Home');
+
     const handleCloseSidebar = () => {
         setSidebarOpen(false);
     };
+
+    const handleCourseClick = (description: string) => {
+        setSelectedCourse(description);
+        setSelectedItem('Home');
+    };
+
+    const menuItems = ['Home', 'Tasks', 'LeaderBoard', 'BuyItems'];
+
+    const handleItemClick = (item: string) => {
+        setSelectedItem(item);
+    };
+    
     const handleIconClick = (iconName: string) => {
-        // Handle the click of a particular icon
         switch (iconName) {
             case 'Account':
                 setSelectedComponent(<div>Account Component</div>);
                 break;
             case 'MyCourses':
-                setSelectedComponent(<CoursesSidebar onClose={handleCloseSidebar} />);
+                setSelectedComponent(<CoursesSidebar onClose={handleCloseSidebar} courses={coursesData} onCourseClick={handleCourseClick}/>);
                 setSidebarOpen(!isSidebarOpen);
                 break;
             case 'Logout':
                 setSelectedComponent(<div>Logout Component</div>);
+                break;
+            case 'Dashboard':
+                setSelectedComponent(null);
+                setSelectedCourse('');
+                setSelectedItem('');
                 break;
             default:
                 setSelectedComponent(null);
@@ -99,10 +120,24 @@ const Dashboard: React.FC = () => {
                 </div>
             )}
             <div className="flex flex-1 p-10 flex-col">
+            {selectedCourse ? (<div>
+                    <p className='text-2xl'>{selectedCourse}</p>
+                <hr/>
+                <div className='main-content'>
+                    <div>
+                        {menuItems.map((item, index) => <div className='text-1xl custom-styling' onClick={() => handleItemClick(item)}>{item}</div>)}
+                    </div>
+                    <div className='detail-container'>
+                    {selectedItem === 'Home' && <CourseDetailPage />}
+                    </div>
+                </div>
+               
+            </div>) : (<div>
                 <p className="text-3xl">Dashboard</p>
                 <div className='w-full flex flex-wrap mt-10'>
-                    {coursesData.map(course => <Card {...course} />)}
+                    {coursesData.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
                 </div>
+            </div>) }
             </div>
             <Routes>
                 <Route path="/dashboard/home" element={<Outlet />} />

@@ -38,12 +38,41 @@ hr {
     color: #8c1d40;
 }
 .third-heading {
+    padding: 8px 0 8px 0px;
     width: fit-content;
     color: #8c1d40;
     cursor: pointer;
 }
 .third-heading:hover {
-    border-bottom: 2px solid #8c1d40; /* Add your preferred color */
+    text-decoration: underline;
   }
+
+.custom-styling {
+    width: fit-content;
+    display: block;
+    line-height: 1.3;
+    padding: 8px 0 8px 6px;
+    color: #8c1d40;
+    cursor: pointer;
+}
+
+.custom-styling:hover {
+    text-decoration: underline;
+}
+
+.text-2xl{
+    color:#8c1d40;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.detail-container {
+    width: -webkit-fill-available;
+    display: grid;
+    justify-content: center;
+}
 
   
