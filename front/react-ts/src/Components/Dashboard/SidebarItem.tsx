@@ -29,4 +29,5 @@ export default function SidebarItem(props: ISidebarItem) {
           </div>
       </Link>
     )
+  }
 }
