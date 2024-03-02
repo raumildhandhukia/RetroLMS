@@ -48,11 +48,27 @@ exports.updateTask = async (req, res) => {
 exports.getAllTask = async (req, res) => {
   try {
     let query = {};
-    if (req.body.userId) {
-      query.userId = req.body.userId;
-    }
-    const tasks = await Task.find(query).populate('courseId submissionId');
-    res.status(200).json(tasks);
+    jwt = req.cookies && req.cookies.jwt;
+    const decoded = JWT.decode(jwt);
+    const username = decoded.username;
+    const user = await User.findOne({ username });
+    if (user.role === "student") {
+      // If the user is a student, fetch enrolled courses
+      const student = await Student.findOne({
+        userId: user.id,
+      }).populate("enrolledCourses");
+      return res.status(200).json({ courses: student.enrolledCourses });
+    } else if (user.role === "instructor") {
+      // If the user is an instructor, fetch courses based on instructorId
+      const instructorId = await Instructor.findOne({
+        userId: user.id,
+      });
+      query.userId = userId;
+      const tasks = await Task.find(query).populate('courseId submissionId');
+      res.status(200).json(tasks);
+    } else {
+      return res.status(400).json({ message: "Invalid user role" });
+    }    
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
