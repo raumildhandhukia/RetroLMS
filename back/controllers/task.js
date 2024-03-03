@@ -45,7 +45,7 @@ exports.updateTask = async (req, res) => {
   }
 };
 
-exports.getAllTask = async (req, res) => {
+exports.getAllTasks = async (req, res) => {
   try {
     let query = {};
     jwt = req.cookies && req.cookies.jwt;
