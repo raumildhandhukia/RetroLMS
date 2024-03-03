@@ -5,18 +5,26 @@ const taskSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  Details: {
+  details: {
     type: String,
     required: true
   },
-  Points: {
+  point: {
     type: Number,
     required: true
   },
-  CourseId:{
+  courseId:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course'
-  }
+  },
+  deadline:{
+    type: Date
+  },
+  submissionId:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Submission'
+  }]
+
 });
 
 const Task = mongoose.model('Task', taskSchema);

@@ -8,12 +8,12 @@ const instructorSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // coursesTeaching: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Course"
-    //   },
-    // ]
+    coursesTeaching: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
   },
   {
     timestamps: true,

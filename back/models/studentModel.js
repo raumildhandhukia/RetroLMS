@@ -6,23 +6,23 @@ const studentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true
+      index: true,
     },
     enrolledCourses: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Course"
-      }
+        ref: "Course",
+      },
     ],
     completedTask: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Task"
-      }
+        ref: "Task",
+      },
     ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
