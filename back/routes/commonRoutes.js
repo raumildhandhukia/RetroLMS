@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 const JWT = require("jsonwebtoken");
 router.use(cookieParser());
 const taskController = require("../controllers/task");
-
+const middleware = require("../middleware/authMiddleware")
 // Route for all users to view the leaderboard
 router.get("/leaderboard", (req, res) => {
   // Logic to view the leaderboard
@@ -92,7 +92,7 @@ router.get("/courses", async (req, res) => {
 });
 
 // Route to add a course to the student
-router.post("/add-course", async (req, res) => {
+router.post("/add-course",middleware(['admin', 'instructor']),async (req, res) => {
   try {
     const { courseId, username } = req.body;
     const user = await User.findOne({ username });
