@@ -17,15 +17,14 @@ router.get("/leaderboard", (req, res) => {
 });
 
 router.put("/courses", async (req, res) => {
-
   try {
     const { title, instructorId, courseKey } = req.body;
 
     // Check if the user is authorized (has the role of admin or instructor)
-    if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
-      return res.status(403).json({ message: 'Unauthorized access' });
+    if (req.user.role !== "admin" && req.user.role !== "instructor") {
+      return res.status(403).json({ message: "Unauthorized access" });
     }
-  
+
     // Check if the course already exists
     let existingCourse = await Course.findOne({ title });
 
@@ -146,8 +145,8 @@ router.delete("/courses", async (req, res) => {
     const { title, instructorId, courseKey } = req.body;
 
     // Check if the user is authorized (has the role of admin or instructor)
-    if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
-      return res.status(403).json({ message: 'Unauthorized access' });
+    if (req.user.role !== "admin" && req.user.role !== "instructor") {
+      return res.status(403).json({ message: "Unauthorized access" });
     }
 
     // Find the course to be deleted based on the input
@@ -157,14 +156,14 @@ router.delete("/courses", async (req, res) => {
     } else if (instructorId && courseKey) {
       query = { instructorId, courseKey };
     } else {
-      return res.status(400).json({ message: 'Invalid input' });
+      return res.status(400).json({ message: "Invalid input" });
     }
 
     // Delete the course
     const deletedCourse = await Course.findOneAndDelete(query);
 
     if (!deletedCourse) {
-      return res.status(404).json({ message: 'Course not found' });
+      return res.status(404).json({ message: "Course not found" });
     }
 
     // Remove the deleted course from the enrolledCourses array of all students
@@ -173,12 +172,11 @@ router.delete("/courses", async (req, res) => {
       { $pull: { enrolledCourses: deletedCourse._id } }
     );
 
-    res.status(200).json({ message: 'Course deleted successfully' });
+    res.status(200).json({ message: "Course deleted successfully" });
   } catch (error) {
     console.error("Error deleting course:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
 
 module.exports = router;
