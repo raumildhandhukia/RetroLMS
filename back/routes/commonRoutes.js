@@ -7,7 +7,8 @@ const router = express.Router();
 const cookieParser = require("cookie-parser");
 const JWT = require("jsonwebtoken");
 router.use(cookieParser());
-
+const taskController = require("../controllers/task");
+const middleware = require("../middleware/authMiddleware")
 // Route for all users to view the leaderboard
 router.get("/leaderboard", (req, res) => {
   // Logic to view the leaderboard
@@ -91,7 +92,7 @@ router.get("/courses", async (req, res) => {
 });
 
 // Route to add a course to the student
-router.post("/add-course", async (req, res) => {
+router.post("/add-course",middleware(['admin', 'instructor']),async (req, res) => {
   try {
     const { courseId, username } = req.body;
     const user = await User.findOne({ username });
@@ -178,5 +179,20 @@ router.delete("/courses", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+// Routes for Task
+// Get all tasks
+router.get("/task/getAll", taskController.getAllTasks);
+
+// Get a single task by ID
+router.get("/task/get/:id", taskController.getTaskById);
+
+// Delete a single task by ID
+router.delete("/task/delete/:id", taskController.deleteTask);
+
+// Update a task by ID
+router.put("/task/update/:id", taskController.updateTask);
+// Create a task
+router.post("/task/create", taskController.addTask);
 
 module.exports = router;
