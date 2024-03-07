@@ -8,7 +8,12 @@ const cookieParser = require("cookie-parser");
 const JWT = require("jsonwebtoken");
 router.use(cookieParser());
 const taskController = require("../controllers/task");
+const courseController = require("../controllers/course");
+const itemController =  require("../controllers/item");
+
 const middleware = require("../middleware/authMiddleware")
+
+
 // Route for all users to view the leaderboard
 router.get("/leaderboard", (req, res) => {
   // Logic to view the leaderboard
@@ -17,107 +22,6 @@ router.get("/leaderboard", (req, res) => {
   });
 });
 
-router.put("/courses", async (req, res) => {
-  try {
-    const { title, instructorId, courseKey } = req.body;
-
-    // Check if the user is authorized (has the role of admin or instructor)
-    if (req.user.role !== "admin" && req.user.role !== "instructor") {
-      return res.status(403).json({ message: "Unauthorized access" });
-    }
-
-    // Check if the course already exists
-    let existingCourse = await Course.findOne({ title });
-
-    if (existingCourse) {
-      // Update existing course
-      existingCourse.instructorId = instructorId;
-      existingCourse.courseKey = courseKey;
-      await existingCourse.save();
-
-      return res.status(200).json({
-        message: `Course '${title}' updated successfully`,
-        course: existingCourse,
-      });
-    }
-
-    // Create a new course if it doesn't exist
-    const newCourse = new Course({
-      title,
-      instructorId,
-      courseKey,
-    });
-
-    // Save the new course to the database
-    await newCourse.save();
-
-    res.status(201).json({
-      message: `Course '${title}' created successfully`,
-      course: newCourse,
-    });
-  } catch (error) {
-    console.error("Error updating/creating course:", error);
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
-});
-
-router.get("/courses", async (req, res) => {
-  try {
-    jwt = req.cookies && req.cookies.jwt;
-    const decoded = JWT.decode(jwt);
-    const username = decoded.username;
-    const user = await User.findOne({ username });
-    if (user.role === "student") {
-      // If the user is a student, fetch enrolled courses
-      const student = await Student.findOne({
-        userId: user.id,
-      }).populate("enrolledCourses");
-      return res.status(200).json({ courses: student.enrolledCourses });
-    } else if (user.role === "instructor") {
-      // If the user is an instructor, fetch courses based on instructorId
-      const instructorId = await Instructor.findOne({
-        userId: user.id,
-      });
-      const courses = await Course.find({ instructorId });
-      return res.status(200).json({ courses });
-    } else {
-      return res.status(400).json({ message: "Invalid user role" });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-// Route to add a course to the student
-router.post("/add-course",middleware(['admin', 'instructor']),async (req, res) => {
-  try {
-    const { courseId, username } = req.body;
-    const user = await User.findOne({ username });
-
-    // Check if the course exists
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: "Course not found" });
-    }
-
-    // Update the student's enrolledCourses array
-    const updatedStudent = await Student.findOneAndUpdate(
-      { userId: user.id },
-      { $addToSet: { enrolledCourses: courseId } },
-      { new: true }
-    );
-
-    res
-      .status(200)
-      .json({ message: "Course added successfully", student: updatedStudent });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
 
 router.get("/profile", async (req, res) => {
   try {
@@ -140,47 +44,22 @@ router.get("/profile", async (req, res) => {
   }
 });
 
+
+
+router.post("/createcourse", middleware(['instructor','admin']), courseController.createCourse);
+
+router.get("/coursesById", courseController.getCourseByUserId);
+
+router.get("/getAllCourses",courseController.getAllCourses)
+
+// Route to add a course to the student
+router.post("/enrollstudent",middleware(['student']),courseController.enrollCourse)
+
 //Method to delete the course and also to remove it from the enrolledCourses array of all students.
-router.delete("/courses", async (req, res) => {
-  try {
-    const { title, instructorId, courseKey } = req.body;
+router.delete("/courses", middleware(['admin', 'instructor']),courseController.deleteCourse);
 
-    // Check if the user is authorized (has the role of admin or instructor)
-    if (req.user.role !== "admin" && req.user.role !== "instructor") {
-      return res.status(403).json({ message: "Unauthorized access" });
-    }
+// ================= Routes for Task =================== //
 
-    // Find the course to be deleted based on the input
-    let query = {};
-    if (title && instructorId) {
-      query = { title, instructorId };
-    } else if (instructorId && courseKey) {
-      query = { instructorId, courseKey };
-    } else {
-      return res.status(400).json({ message: "Invalid input" });
-    }
-
-    // Delete the course
-    const deletedCourse = await Course.findOneAndDelete(query);
-
-    if (!deletedCourse) {
-      return res.status(404).json({ message: "Course not found" });
-    }
-
-    // Remove the deleted course from the enrolledCourses array of all students
-    await Student.updateMany(
-      { enrolledCourses: deletedCourse._id },
-      { $pull: { enrolledCourses: deletedCourse._id } }
-    );
-
-    res.status(200).json({ message: "Course deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting course:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-// Routes for Task
 // Get all tasks
 router.get("/task/getAll", taskController.getAllTasks);
 
@@ -194,5 +73,21 @@ router.delete("/task/delete/:id", taskController.deleteTask);
 router.put("/task/update/:id", taskController.updateTask);
 // Create a task
 router.post("/task/create", taskController.addTask);
+
+
+// ======================= Routes for Items and Shop ====================== //
+
+// Route to create a new item
+router.post('/createitem', middleware(['admin', 'instructor']), itemController.createItem);
+
+// Route to update an item by ID
+router.patch('/items/:itemId',middleware(['admin', 'instructor']), itemController.updateItem);
+
+// Route to get all items for a given course ID
+router.get('/items/course/:courseId', middleware(['admin', 'instructor']), itemController.getItemsByCourse);
+
+// Route to get a single item by ID (assuming the filter by course ID is handled internally based on user's login and permissions)
+router.get('/items/:itemId', middleware(['admin', 'instructor']), itemController.getSingleItem);
+
 
 module.exports = router;
