@@ -11,13 +11,13 @@ exports.addTask = async (req, res) => {
       point: req.body.point,
       courseId: req.body.courseId,
       deadline: req.body.deadline,
-      submissionId: req.body.submissionId,
+      // submissionId: req.body.submissionId,
     };
 
     const taskItem = new Task(taskObj);
     const savedDoc = await taskItem.save();
     res.status(201).json({
-      message: `Task: ${title} created successfully.`,
+      message: `Task: ${taskObj.title} created successfully.`,
     });
   } catch (err) {
     console.error(err);
@@ -30,15 +30,17 @@ exports.addTask = async (req, res) => {
 exports.updateTask = async (req, res) => {
   const updates = req.body;
   if (Object.keys(updates).length === 0) {
-    return res.status(400).json({ message: 'Request body is empty' });
+    return res.status(400).json({ message: "Request body is empty" });
   }
 
   try {
-    const task = await Task.findByIdAndUpdate(req.params.id, updates, { new: true });
+    const task = await Task.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+    });
     if (task) {
       res.status(200).json(task);
     } else {
-      res.status(404).json({ message: 'Task not found' });
+      res.status(404).json({ message: "Task not found" });
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -64,11 +66,11 @@ exports.getAllTasks = async (req, res) => {
         userId: user.id,
       });
       query.userId = userId;
-      const tasks = await Task.find(query).populate('courseId submissionId');
+      const tasks = await Task.find(query).populate("courseId submissionId");
       res.status(200).json(tasks);
     } else {
       return res.status(400).json({ message: "Invalid user role" });
-    }    
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -78,9 +80,9 @@ exports.deleteTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
     if (task) {
-      res.status(200).json({ message: 'Task deleted successfully' });
+      res.status(200).json({ message: "Task deleted successfully" });
     } else {
-      res.status(404).json({ message: 'Task not found' });
+      res.status(404).json({ message: "Task not found" });
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -89,14 +91,26 @@ exports.deleteTask = async (req, res) => {
 
 exports.getTaskById = async (req, res) => {
   try {
-    const task = await Task.findById(req.params.id).populate('courseId submissionId');
+    const task = await Task.findById(req.params.id);
     if (task) {
       res.status(200).json(task);
     } else {
-      res.status(404).json({ message: 'Task not found' });
+      res.status(404).json({ message: "Task not found" });
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}
+};
 
+exports.getTaskBycourseId = async (req, res) => {
+  try {
+    const tasks = await Task.find({ courseId: req.body.courseId });
+    if (tasks) {
+      res.status(200).json(tasks);
+    } else {
+      res.status(404).json({ message: "Tasks not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

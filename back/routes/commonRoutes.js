@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 const JWT = require("jsonwebtoken");
 router.use(cookieParser());
 const taskController = require("../controllers/task");
-const middleware = require("../middleware/authMiddleware")
+const middleware = require("../middleware/authMiddleware");
 // Route for all users to view the leaderboard
 router.get("/leaderboard", (req, res) => {
   // Logic to view the leaderboard
@@ -92,32 +92,37 @@ router.get("/courses", async (req, res) => {
 });
 
 // Route to add a course to the student
-router.post("/add-course",middleware(['admin', 'instructor']),async (req, res) => {
-  try {
-    const { courseId, username } = req.body;
-    const user = await User.findOne({ username });
+router.post(
+  "/add-course",
+  middleware(["admin", "instructor"]),
+  async (req, res) => {
+    try {
+      const { courseId, username } = req.body;
+      const user = await User.findOne({ username });
 
-    // Check if the course exists
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: "Course not found" });
+      // Check if the course exists
+      const course = await Course.findById(courseId);
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      // Update the student's enrolledCourses array
+      const updatedStudent = await Student.findOneAndUpdate(
+        { userId: user.id },
+        { $addToSet: { enrolledCourses: courseId } },
+        { new: true }
+      );
+
+      res.status(200).json({
+        message: "Course added successfully",
+        student: updatedStudent,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
-
-    // Update the student's enrolledCourses array
-    const updatedStudent = await Student.findOneAndUpdate(
-      { userId: user.id },
-      { $addToSet: { enrolledCourses: courseId } },
-      { new: true }
-    );
-
-    res
-      .status(200)
-      .json({ message: "Course added successfully", student: updatedStudent });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
   }
-});
+);
 
 router.get("/profile", async (req, res) => {
   try {
@@ -194,5 +199,7 @@ router.delete("/task/delete/:id", taskController.deleteTask);
 router.put("/task/update/:id", taskController.updateTask);
 // Create a task
 router.post("/task/create", taskController.addTask);
+
+router.post("/task/all", taskController.getTaskBycourseId);
 
 module.exports = router;
