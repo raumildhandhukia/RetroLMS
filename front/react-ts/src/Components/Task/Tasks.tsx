@@ -4,9 +4,12 @@ import "nes.css/css/nes.min.css";
 import TaskList from "./TaskList";
 
 interface Task {
-  id: number;
+  _id: string;
   title: string;
   deadline: string;
+  details: string;
+  point: number;
+  course: string;
 }
 
 const Tasks: React.FC = () => {
@@ -31,8 +34,9 @@ const Tasks: React.FC = () => {
           throw new Error('Failed to fetch tasks');
         }
 
-        const data = await response.json();
-        setTasks(data); // Update tasks state with the received data
+        const tasks: Task[] = await response.json();
+        const updatedTasks = tasks.map(task => ({ ...task, course: courseName }));
+        setTasks(updatedTasks); // Update tasks state with the received data
       } catch (error) {
         console.error('Error fetching tasks:', error);
         // You can handle the error appropriately (e.g., show an error message)

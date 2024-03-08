@@ -91,9 +91,7 @@ exports.deleteTask = async (req, res) => {
 
 exports.getTaskById = async (req, res) => {
   try {
-    const task = await Task.findById(req.params.id).populate(
-      "courseId submissionId"
-    );
+    const task = await Task.findById(req.params.id);
     if (task) {
       res.status(200).json(task);
     } else {

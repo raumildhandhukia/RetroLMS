@@ -6,18 +6,18 @@ import './TaskDescription.css'; // Import custom styles
 
 interface TaskDescriptionProps {
   title: string;
-  description: string;
+  details: string;
   deadline: string;
-  points: number;
+  point: number;
   course: string;
 }
 
 const TaskDescription: React.FC<TaskDescriptionProps> = ({
   title,
-  description,
+  details,
   deadline,
-  points,
-  course,
+  point,
+  course
 }) => {
   return (
     <div className="task-description-container">
@@ -40,7 +40,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
               type="number"
               id="points_field"
               className="nes-input"
-              value={points}
+              value={point}
               readOnly
             />
           </div>
@@ -60,9 +60,9 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
           <textarea
             id="description_field"
             className="nes-textarea"
-            value={description}
+            value={details}
             readOnly
-            rows={Math.max(5, description.split('\n').length)}
+            rows={5}
           />
         </div>
       </div>
