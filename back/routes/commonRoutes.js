@@ -7,7 +7,8 @@ const router = express.Router();
 const cookieParser = require("cookie-parser");
 const JWT = require("jsonwebtoken");
 router.use(cookieParser());
-
+const taskController = require("../controllers/task");
+const middleware = require("../middleware/authMiddleware");
 // Route for all users to view the leaderboard
 router.get("/leaderboard", (req, res) => {
   // Logic to view the leaderboard
@@ -17,46 +18,27 @@ router.get("/leaderboard", (req, res) => {
 });
 
 router.put("/courses", async (req, res) => {
-
   try {
     const { title, instructorId, courseKey } = req.body;
-
-    // Check if the user is authorized (has the role of admin or instructor)
-    if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
-      return res.status(403).json({ message: 'Unauthorized access' });
-    }
-  
-    // Check if the course already exists
-    let existingCourse = await Course.findOne({ title });
-
+    const existingCourse = await Course.findOne({ title });
     if (existingCourse) {
-      // Update existing course
-      existingCourse.instructorId = instructorId;
-      existingCourse.courseKey = courseKey;
-      await existingCourse.save();
-
-      return res.status(200).json({
-        message: `Course '${title}' updated successfully`,
-        course: existingCourse,
-      });
+      return res
+        .status(400)
+        .json({ message: `Course: ${title} already exists` });
     }
-
-    // Create a new course if it doesn't exist
+    // Create a new user
     const newCourse = new Course({
       title,
       instructorId,
       courseKey,
     });
-
-    // Save the new course to the database
+    // Save the user to the database
     await newCourse.save();
-
     res.status(201).json({
-      message: `Course '${title}' created successfully`,
-      course: newCourse,
+      message: `Course: ${title} created successfully.`,
     });
   } catch (error) {
-    console.error("Error updating/creating course:", error);
+    console.error(error);
     res.status(500).json({
       message: "Internal Server Error",
     });
@@ -92,32 +74,37 @@ router.get("/courses", async (req, res) => {
 });
 
 // Route to add a course to the student
-router.post("/add-course", async (req, res) => {
-  try {
-    const { courseId, username } = req.body;
-    const user = await User.findOne({ username });
+router.post(
+  "/add-course",
+  middleware(["admin", "instructor"]),
+  async (req, res) => {
+    try {
+      const { courseId, username } = req.body;
+      const user = await User.findOne({ username });
 
-    // Check if the course exists
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: "Course not found" });
+      // Check if the course exists
+      const course = await Course.findById(courseId);
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      // Update the student's enrolledCourses array
+      const updatedStudent = await Student.findOneAndUpdate(
+        { userId: user.id },
+        { $addToSet: { enrolledCourses: courseId } },
+        { new: true }
+      );
+
+      res.status(200).json({
+        message: "Course added successfully",
+        student: updatedStudent,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
-
-    // Update the student's enrolledCourses array
-    const updatedStudent = await Student.findOneAndUpdate(
-      { userId: user.id },
-      { $addToSet: { enrolledCourses: courseId } },
-      { new: true }
-    );
-
-    res
-      .status(200)
-      .json({ message: "Course added successfully", student: updatedStudent });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
   }
-});
+);
 
 router.get("/profile", async (req, res) => {
   try {
@@ -146,8 +133,8 @@ router.delete("/courses", async (req, res) => {
     const { title, instructorId, courseKey } = req.body;
 
     // Check if the user is authorized (has the role of admin or instructor)
-    if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
-      return res.status(403).json({ message: 'Unauthorized access' });
+    if (req.user.role !== "admin" && req.user.role !== "instructor") {
+      return res.status(403).json({ message: "Unauthorized access" });
     }
 
     // Find the course to be deleted based on the input
@@ -157,14 +144,14 @@ router.delete("/courses", async (req, res) => {
     } else if (instructorId && courseKey) {
       query = { instructorId, courseKey };
     } else {
-      return res.status(400).json({ message: 'Invalid input' });
+      return res.status(400).json({ message: "Invalid input" });
     }
 
     // Delete the course
     const deletedCourse = await Course.findOneAndDelete(query);
 
     if (!deletedCourse) {
-      return res.status(404).json({ message: 'Course not found' });
+      return res.status(404).json({ message: "Course not found" });
     }
 
     // Remove the deleted course from the enrolledCourses array of all students
@@ -173,12 +160,28 @@ router.delete("/courses", async (req, res) => {
       { $pull: { enrolledCourses: deletedCourse._id } }
     );
 
-    res.status(200).json({ message: 'Course deleted successfully' });
+    res.status(200).json({ message: "Course deleted successfully" });
   } catch (error) {
     console.error("Error deleting course:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
+// Routes for Task
+// Get all tasks
+router.get("/task/getAll", taskController.getAllTasks);
+
+// Get a single task by ID
+router.get("/task/get/:id", taskController.getTaskById);
+
+// Delete a single task by ID
+router.delete("/task/delete/:id", taskController.deleteTask);
+
+// Update a task by ID
+router.put("/task/update/:id", taskController.updateTask);
+// Create a task
+router.post("/task/create", taskController.addTask);
+
+router.post("/task/all", taskController.getTaskBycourseId);
 
 module.exports = router;
