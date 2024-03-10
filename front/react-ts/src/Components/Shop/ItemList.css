@@ -1,0 +1,33 @@
+/* src/components/TaskList.css */
+
+.item-list-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Set the height to 100% of the viewport height */
+}
+
+.item-list-content {
+    padding: 20px;
+    width: 100%;
+    /* Set the width to 100% to make it responsive */
+    max-width: 1000px;
+    /* Adjust the maximum width based on your design */
+}
+
+.item-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+.item-title {
+    width: 75%;
+}
+
+.price {
+    width: 25%;
+}
