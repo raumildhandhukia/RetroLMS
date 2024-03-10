@@ -10,7 +10,8 @@ router.use(cookieParser());
 const taskController = require("../controllers/task");
 const courseController = require("../controllers/course");
 const itemController =  require("../controllers/item");
-
+const userController = require("../controllers/user")
+const submissionController = require("../controllers/submission")
 const middleware = require("../middleware/authMiddleware")
 
 
@@ -21,6 +22,10 @@ router.get("/leaderboard", (req, res) => {
     message: "You get the latest leaderboard.",
   });
 });
+
+// =============== User Profile routes =============== //
+
+router.get('/allusers', userController.getAllUsers);
 
 
 router.get("/profile", async (req, res) => {
@@ -89,5 +94,9 @@ router.get('/items/course/:courseId', middleware(['admin', 'instructor']), itemC
 // Route to get a single item by ID (assuming the filter by course ID is handled internally based on user's login and permissions)
 router.get('/items/:itemId', middleware(['admin', 'instructor']), itemController.getSingleItem);
 
+
+// ======================= Routes for Submission ====================== //
+
+router.post('/submit/:courseId', middleware(['student']),submissionController.createSubmission );
 
 module.exports = router;

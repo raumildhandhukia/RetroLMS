@@ -1,8 +1,14 @@
 const Submission = require('../models/submissionModel'); // Adjust the path as necessary
+const User = require("../models/userModel");
+const Course = require("../models/courseModel");
+const Student = require("../models/studentModel");
+const Instructor = require("../models/instructorModel");
+const JWT = require("jsonwebtoken");
 
 // Create a new submission
 exports.createSubmission = async (req, res) => {
   try {
+    jwt = req.cookies && req.cookies.jwt;
     const decoded = JWT.decode(jwt);
     const username = decoded.username;
     const user = await User.findOne({ username });
@@ -10,7 +16,7 @@ exports.createSubmission = async (req, res) => {
     const subBody = {
         studentId : studentId,
         taskId : req.body.taskId,
-        points_received : req.body.points_received,
+        // points_received : req.body.points_received,
         current_state: req.body.current_state
     }
     console.log(subBody)
@@ -62,3 +68,27 @@ exports.viewSingleSubmission = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+exports.allocatePointsToStudent = async(req, res) => {
+  const { submissionId, pointsReceived } = req.body;
+
+  if (!submissionId || pointsReceived === undefined) {
+    return res.status(400).json({ message: 'Submission ID and points received are required.' });
+  }
+
+  try {
+    const submission = await Submission.findByIdAndUpdate(
+      submissionId,
+      { points_received: pointsReceived },
+      { new: true } // Return the updated document
+    );
+
+    if (!submission) {
+      return res.status(404).json({ message: 'Submission not found.' });
+    }
+
+    res.status(200).json(submission);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}

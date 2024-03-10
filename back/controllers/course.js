@@ -2,16 +2,12 @@ const User = require("../models/userModel");
 const Course = require("../models/courseModel");
 const Student = require("../models/studentModel");
 const Instructor = require("../models/instructorModel");
+const JWT = require("jsonwebtoken");
 
 const courseController = {
   createCourse: async (req, res) => {
     try {
       const { title, instructorId, courseKey } = req.body;
-
-      // Check if the user is authorized (has the role of admin or instructor)
-      if (req.user.role !== "admin" && req.user.role !== "instructor") {
-        return res.status(403).json({ message: "Unauthorized access" });
-      }
 
       // Check if the course already exists
       let existingCourse = await Course.findOne({ title });
@@ -34,7 +30,7 @@ const courseController = {
         instructorId,
         courseKey,
       });
-
+      console.log(newCourse)
       // Save the new course to the database
       await newCourse.save();
 
@@ -49,9 +45,13 @@ const courseController = {
       });
     }
   },
+
   enrollCourse: async (req, res) => {
     try {
-      const { courseId, username } = req.body;
+      const { courseId } = req.body;
+      jwt = req.cookies && req.cookies.jwt;
+      const decoded = JWT.decode(jwt);
+      const username = decoded.username;
       const user = await User.findOne({ username });
 
       // Check if the course exists
@@ -83,10 +83,6 @@ const courseController = {
     try {
       const { title, instructorId, courseKey } = req.body;
 
-      // Check if the user is authorized (has the role of admin or instructor)
-      if (req.user.role !== "admin" && req.user.role !== "instructor") {
-        return res.status(403).json({ message: "Unauthorized access" });
-      }
 
       // Find the course to be deleted based on the input
       let query = {};
@@ -132,10 +128,7 @@ const courseController = {
         return res.status(200).json({ courses: student.enrolledCourses });
       } else if (user.role === "instructor") {
         // If the user is an instructor, fetch courses based on instructorId
-        const instructorId = await Instructor.findOne({
-          userId: user.id,
-        });
-        const courses = await Course.find({ instructorId });
+        const courses = await Course.find({ instructorId: user._id });
         return res.status(200).json({ courses });
       } else {
         return res.status(400).json({ message: "Invalid user role" });
@@ -148,7 +141,7 @@ const courseController = {
   getAllCourses: async (req, res) => {
     try {
       // If you want to populate instructorId or task fields to get detailed information, you can use .populate()
-      const courses = await Course.find().populate('instructorId task');
+      const courses = await Course.find().populate('instructorId');
       res.status(200).json(courses);
     } catch (err) {
       res.status(500).json({ message: err.message });

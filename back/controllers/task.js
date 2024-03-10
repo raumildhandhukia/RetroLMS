@@ -1,4 +1,8 @@
 const Task = require("../models/taskModel");
+const JWT = require("jsonwebtoken");
+const User = require("../models/userModel.js");
+const Instructor = require("../models/instructorModel.js");
+const Student = require("../models/studentModel.js");
 
 exports.addTask = async (req, res) => {
   try {
@@ -11,13 +15,14 @@ exports.addTask = async (req, res) => {
       point: req.body.point,
       courseId: req.body.courseId,
       deadline: req.body.deadline,
-      submissionId: req.body.submissionId,
+      // submissionId: req.body.submissionId,
     };
+    console.log(taskObj)
 
     const taskItem = new Task(taskObj);
     const savedDoc = await taskItem.save();
     res.status(201).json({
-      message: `Task: ${title} created successfully.`,
+      message: `Task: ${taskObj.title} created successfully.`,
     });
   } catch (err) {
     console.error(err);
@@ -47,24 +52,24 @@ exports.updateTask = async (req, res) => {
 
 exports.getAllTasks = async (req, res) => {
   try {
-    let query = {};
     jwt = req.cookies && req.cookies.jwt;
     const decoded = JWT.decode(jwt);
+    console.log(decoded)
     const username = decoded.username;
     const user = await User.findOne({ username });
+    console.log(user)
     if (user.role === "student") {
       // If the user is a student, fetch enrolled courses
       const student = await Student.findOne({
-        userId: user.id,
+        userId: user._id,
       }).populate("enrolledCourses");
       return res.status(200).json({ courses: student.enrolledCourses });
     } else if (user.role === "instructor") {
       // If the user is an instructor, fetch courses based on instructorId
       const instructorId = await Instructor.findOne({
-        userId: user.id,
+        userId: user._id,
       });
-      query.userId = userId;
-      const tasks = await Task.find(query).populate('courseId submissionId');
+      const tasks = await Task.find(instructorId).populate('courseId submissionId');
       res.status(200).json(tasks);
     } else {
       return res.status(400).json({ message: "Invalid user role" });
