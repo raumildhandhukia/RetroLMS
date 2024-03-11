@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
 import ItemList from './ItemList';
+import InstructorItemList from "./InstructorItemList";
 
 interface Item{
     _id: string;
@@ -16,6 +17,7 @@ interface Item{
 const Items: React.FC = () => {
     const [items, setItems] = useState<Item[]>([]);
     const [courseName, setCourseName] = useState<string>('SER517');
+    const [role, setRole] = useState("instructor")
     const navigate = useNavigate();
   
     useEffect(() => {
@@ -86,7 +88,9 @@ const Items: React.FC = () => {
     }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
   
     return (
-      <ItemList items={items} courseName={courseName} />
+      role === "student" ? 
+      <ItemList items={items} courseName={courseName} /> : 
+      <InstructorItemList items={items} courseName={courseName} />
     );
   };
 
