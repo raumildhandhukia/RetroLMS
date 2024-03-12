@@ -99,4 +99,6 @@ router.get('/items/:itemId', middleware(['admin', 'instructor']), itemController
 
 router.post('/submit/:courseId', middleware(['student']),submissionController.createSubmission );
 
+router.post('grading/:courseId/:taskId', middleware(['instructor']), submissionController.gradingTask )
+
 module.exports = router;

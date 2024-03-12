@@ -28,15 +28,16 @@ exports.createSubmission = async (req, res) => {
   }
 };
 
-// Update a submission by ID
-exports.updateSubmission = async (req, res) => {
+// Grading a submission by ID
+exports.gradingTask = async (req, res) => {
   try {
-    const { id } = req.params;
-    const submission = await Submission.findByIdAndUpdate(id, req.body, { new: true });
-    if (!submission) {
-      return res.status(404).json({ message: 'Submission not found' });
-    }
-    res.json(submission);
+    const { courseId,taskId } = req.params;
+    console.log(courseId,taskId)
+  //   const submission = await Submission.findByIdAndUpdate(id, req.body, { new: true });
+  //   if (!submission) {
+  //     return res.status(404).json({ message: 'Submission not found' });
+  //   }
+  //   res.json(submission);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

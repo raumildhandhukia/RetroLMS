@@ -3,6 +3,7 @@ const JWT = require("jsonwebtoken");
 const User = require("../models/userModel.js");
 const Instructor = require("../models/instructorModel.js");
 const Student = require("../models/studentModel.js");
+const Course = require("../models/courseModel");
 
 exports.addTask = async (req, res) => {
   try {
@@ -17,10 +18,25 @@ exports.addTask = async (req, res) => {
       deadline: req.body.deadline,
       // submissionId: req.body.submissionId,
     };
-    console.log(taskObj)
-
+    // Save the new Task document
     const taskItem = new Task(taskObj);
-    const savedDoc = await taskItem.save();
+    const savedTask = await taskItem.save();
+    try {
+      // Attempt to update the corresponding Course
+      await Course.findByIdAndUpdate(
+        taskObj.courseId,
+        { $push: { task: savedTask._id } }, // Use $push to add the new task's ID to the task array
+        { new: true, upsert: false } // upsert:false ensures that no new Course is created if it doesn't exist
+      );
+    } catch (courseUpdateError) {
+      // If an error occurs during the course update, log it and return an error response
+      console.error('Error updating course with new task:', courseUpdateError);
+      await Task.findByIdAndDelete(savedTask._id);
+      return res.status(500).json({
+        message: "Error updating course with new task.",
+      });
+    }
+    // If everything goes well, return success response
     res.status(201).json({
       message: `Task: ${taskObj.title} created successfully.`,
     });
