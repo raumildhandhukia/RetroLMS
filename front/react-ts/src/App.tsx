@@ -11,6 +11,7 @@ import CourseDetailPage from "./CourseDetailPage";
 import {CourseProvider} from "./CourseContext";
 import Items from "./Components/Shop/Items";
 import Item from "./Components/Shop/Item";
+import AddItem from "./Components/Shop/AddItem";
 
 
 
@@ -29,6 +30,7 @@ function App() {
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
             <Route path="/course/:id" element={<CourseDetailPage/>} />
             <Route path="/items" element={<Items />} />
+            <Route path="/items/add" element={<AddItem />} />
             <Route path="/item" element={<Item />} />
         </Routes>
       </main>

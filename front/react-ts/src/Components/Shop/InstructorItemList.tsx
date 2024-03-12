@@ -3,8 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import 'nes.css/css/nes.min.css';
 import "./ItemList.css";
 import { Edit } from 'lucide-react';
+import EightBitButton from '../Buttons/EightBitButton';
 
-interface Item{
+interface Item {
     _id: string;
     title: string;
     description: string;
@@ -30,10 +31,10 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
           method: "POST",
           body: JSON.stringify({
             _id: itemId,
-            title: "New Item",
-            description: "This is the updated item",
-            price: 300,
-            courseName: "SER 517"
+            itemName: "New Item",
+            itemDescription: "This is the updated item",
+            itemPrice: 300,
+            courseId: "SER 517"
           })
         });
 
@@ -42,7 +43,7 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
         }
 
       } catch (error) {
-        console.error("Error checking authentication:", error);
+        console.error("Error updating item", error);
       }
     };
 
@@ -71,6 +72,16 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="flex items-start ml-6">
+              <EightBitButton 
+                classNames="bg-[#A52A2A] my-5"
+                onClick={() => {
+                  navigate('/items/add')
+                }}
+              >
+                <p className="m-0 text-white">Add Item</p>
+              </EightBitButton>
             </div>
           </div>
         </div>
