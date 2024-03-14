@@ -9,6 +9,8 @@ import Tasks from "./Components/Task/Tasks";
 import Task from "./Components/Task/Task";
 import CourseDetailPage from "./CourseDetailPage";
 import {CourseProvider} from "./CourseContext";
+import LeaderboardList from "./Components/Leaderboard/LeaderboardList";
+import studentsData from './Components/Leaderboard/students.json'
 
 function App() {
   return (
@@ -24,6 +26,7 @@ function App() {
             <Route path="/task" element={<Task />} />
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
             <Route path="/course/:id" element={<CourseDetailPage/>} />
+            <Route path="/leaderboard" element={<LeaderboardList students={studentsData.students}/>} />
         </Routes>
       </main>
     </BrowserRouter>
