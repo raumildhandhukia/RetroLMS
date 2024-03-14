@@ -49,13 +49,13 @@ router.get("/profile", async (req, res) => {
   }
 });
 
-
+router.get("/course/:courseId/leaderboard", middleware(['student','instructor', 'admin']), courseController.getLeaderboard);
 
 router.post("/createcourse", middleware(['instructor','admin']), courseController.createCourse);
 
 router.get("/coursesById", courseController.getCourseByUserId);
 
-router.get("/getAllCourses",courseController.getAllCourses)
+//router.get("/getAllCourses",courseController.getAllCourses);
 
 // Route to add a course to the student
 router.post("/enrollstudent",middleware(['student']),courseController.enrollCourse)
@@ -67,6 +67,8 @@ router.delete("/courses", middleware(['admin', 'instructor']),courseController.d
 
 // Get all tasks
 router.get("/task/getAll", taskController.getAllTasks);
+
+router.get("/task/:courseId",courseController.getTaskIdsForCourse);
 
 // Get a single task by ID
 router.get("/task/get/:id", taskController.getTaskById);

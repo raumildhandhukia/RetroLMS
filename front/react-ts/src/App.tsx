@@ -7,6 +7,7 @@ import InstructorDashboard from "./InstructorDashboard";
 import Dashboard from "./Components/Dashboard/index";
 import CourseDetailPage from "./CourseDetailPage";
 import {CourseProvider} from "./CourseContext";
+import LeaderBoard from "./Components/Dashboard/LeaderBoard"
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/courses" element={<StudentPage />} />
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
             <Route path="/course/:id" element={<CourseDetailPage/>} />
+            <Route path="/course/:id/leaderboard" element={<LeaderBoard/>} />
         </Routes>
       </main>
     </BrowserRouter>

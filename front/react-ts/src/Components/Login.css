@@ -119,3 +119,6 @@ body {
 .active-class {
   background-color: #4b5563; /* Example active color */
 }
+img.pixel-art {
+  image-rendering: pixelated;
+}

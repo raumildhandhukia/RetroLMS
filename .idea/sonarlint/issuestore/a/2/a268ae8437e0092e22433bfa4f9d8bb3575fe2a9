@@ -1,0 +1,5 @@
+
+\javascript:S1481"9Remove the declaration of the unused 'savedDoc' variable.(òâô8úØ“ôã1
+Yjavascript:S1854"6Remove this useless assignment to variable "savedDoc".(òâô8úØ“ôã1
+javascript:S27037"YAdd the "let", "const" or "var" keyword to this declaration of "jwt" to make it explicit.(ÑŸ‰Ûûÿÿÿÿ8úØ“ôã1
+ƒjavascript:S65827"[Prefer using an optional chain expression instead, as it's more concise and easier to read.(ÑŸ‰Ûûÿÿÿÿ8úØ“ôã1

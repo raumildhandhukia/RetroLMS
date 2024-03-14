@@ -1,8 +1,11 @@
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 const User = require("../models/userModel");
 const Course = require("../models/courseModel");
 const Student = require("../models/studentModel");
 const Instructor = require("../models/instructorModel");
 const JWT = require("jsonwebtoken");
+const Task = require("../models/taskModel");
 
 const courseController = {
   createCourse: async (req, res) => {
@@ -138,15 +141,85 @@ const courseController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
-  getAllCourses: async (req, res) => {
+
+  getLeaderboard : async (req, res) => {
+    const courseId = req.params.courseId;
+    const taskIds = await Task.find({ courseId: new ObjectId(courseId) }).select('_id').lean();
+    const taskIdsArray = taskIds.map(task => task._id);
+
     try {
-      // If you want to populate instructorId or task fields to get detailed information, you can use .populate()
-      const courses = await Course.find().populate('instructorId');
-      res.status(200).json(courses);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+      // Aggregate pipeline to compute total scores for students enrolled in a course
+      const results = await Student.aggregate([
+        {
+          $match: {
+            enrolledCourses: new ObjectId(courseId)
+          }
+        },
+        {
+          $lookup: {
+            from: 'submissions',
+            let: { studentId: '$_id', taskIds:taskIdsArray },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$studentId', '$$studentId'] },
+                      { $in: ['$taskId', '$$taskIds'] }
+                    ]
+                  }
+                }
+              },
+              {
+                $lookup: {
+                  from: 'tasks',
+                  localField: 'taskId',
+                  foreignField: '_id',
+                  as: 'taskInfo'
+                }
+              },
+              {
+                $unwind: '$taskInfo'
+              },
+              {
+                $group: {
+                  _id: '$studentId',
+                  totalScore: { $sum: '$taskInfo.point' }
+                }
+              }
+            ],
+            as: 'scoreInfo'
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userInfo'
+          }
+        },
+        {
+          $unwind: '$userInfo'
+        },
+        {
+          $unwind: '$scoreInfo'
+        },
+        {
+          $project: {
+            _id: 1,
+            studentName: '$userInfo.profile.firstName',
+            studentId: '$userId',
+            totalScore: { $ifNull: ['$scoreInfo.totalScore', 0] }
+          }
+        }
+      ]);
+
+      res.json({ students: results });
+    } catch (error) {
+      console.error("Failed to fetch leaderboard:", error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
-
 };
 module.exports = courseController;
