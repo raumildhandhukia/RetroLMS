@@ -12,8 +12,7 @@ import {CourseProvider} from "./CourseContext";
 import Items from "./Components/Shop/Items";
 import Item from "./Components/Shop/Item";
 import AddItem from "./Components/Shop/AddItem";
-
-
+import Leaderboard from './Components/Leaderboard/Leaderboard';
 
 function App() {
   return (
@@ -23,7 +22,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/*" element={<Dashboard />} />
             <Route path="/courses" element={<StudentPage />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/task" element={<Task />} />
@@ -32,6 +31,7 @@ function App() {
             <Route path="/items" element={<Items />} />
             <Route path="/items/add" element={<AddItem />} />
             <Route path="/item" element={<Item />} />
+            <Route path="/leaderboard" element={<Leaderboard/>} />
         </Routes>
       </main>
     </BrowserRouter>
