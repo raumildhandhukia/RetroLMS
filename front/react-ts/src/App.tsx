@@ -11,7 +11,13 @@ import CourseDetailPage from "./CourseDetailPage";
 import {CourseProvider} from "./CourseContext";
 import Items from "./Components/Shop/Items";
 import Item from "./Components/Shop/Item";
+import Items from "./Components/Shop/Items";
+import Item from "./Components/Shop/Item";
+import LeaderboardList from "./Components/Leaderboard/LeaderboardList";
+import studentsData from './Components/Leaderboard/students.json'
 import Leaderboard from './Components/Leaderboard/Leaderboard';
+
+
 
 function App() {
   return (
@@ -29,7 +35,7 @@ function App() {
             <Route path="/course/:id" element={<CourseDetailPage/>} />
             <Route path="/items" element={<Items />} />
             <Route path="/item" element={<Item />} />
-            <Route path="/leaderboard" element={<Leaderboard/>} />
+            <Route path="/leaderboard" element={<LeaderboardList students={studentsData.students}/>} />
         </Routes>
       </main>
     </BrowserRouter>

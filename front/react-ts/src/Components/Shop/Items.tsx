@@ -41,7 +41,6 @@ const Items: React.FC = () => {
       checkProfile();
     }, []);
 
-    console.log(role)
   
     useEffect(() => {
       // Function to fetch tasks from the server
