@@ -11,8 +11,6 @@ import CourseDetailPage from "./CourseDetailPage";
 import {CourseProvider} from "./CourseContext";
 import Items from "./Components/Shop/Items";
 import Item from "./Components/Shop/Item";
-import Items from "./Components/Shop/Items";
-import Item from "./Components/Shop/Item";
 import LeaderboardList from "./Components/Leaderboard/LeaderboardList";
 import studentsData from './Components/Leaderboard/students.json'
 import Leaderboard from './Components/Leaderboard/Leaderboard';
