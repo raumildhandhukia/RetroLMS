@@ -8,13 +8,6 @@ const cookieParser = require("cookie-parser");
 const JWT = require("jsonwebtoken");
 router.use(cookieParser());
 const taskController = require("../controllers/task");
-const courseController = require("../controllers/course");
-const itemController =  require("../controllers/item");
-const userController = require("../controllers/user")
-const submissionController = require("../controllers/submission")
-const middleware = require("../middleware/authMiddleware")
-
-
 // Route for all users to view the leaderboard
 router.get("/leaderboard", (req, res) => {
   // Logic to view the leaderboard
@@ -22,12 +15,6 @@ router.get("/leaderboard", (req, res) => {
     message: "You get the latest leaderboard.",
   });
 });
-
-// =============== User Profile routes =============== //
-
-router.get('/allusers', userController.getAllUsers);
-
-
 router.get("/profile", async (req, res) => {
   try {
     jwt = req.cookies && req.cookies.jwt;
@@ -82,23 +69,5 @@ router.put("/task/update/:id", taskController.updateTask);
 router.post("/task/create", taskController.addTask);
 
 
-// ======================= Routes for Items and Shop ====================== //
-
-// Route to create a new item
-router.post('/createitem', middleware(['admin', 'instructor']), itemController.createItem);
-
-// Route to update an item by ID
-router.patch('/items/:itemId',middleware(['admin', 'instructor']), itemController.updateItem);
-
-// Route to get all items for a given course ID
-router.get('/items/course/:courseId', middleware(['admin', 'instructor']), itemController.getItemsByCourse);
-
-// Route to get a single item by ID (assuming the filter by course ID is handled internally based on user's login and permissions)
-router.get('/items/:itemId', middleware(['admin', 'instructor']), itemController.getSingleItem);
-
-
-// ======================= Routes for Submission ====================== //
-
-router.post('/submit/:courseId', middleware(['student']),submissionController.createSubmission );
 
 module.exports = router;
