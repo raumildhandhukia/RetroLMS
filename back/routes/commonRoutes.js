@@ -20,43 +20,25 @@ router.get("/leaderboard", (req, res) => {
 router.put("/courses", async (req, res) => {
   try {
     const { title, instructorId, courseKey } = req.body;
-
-    // Check if the user is authorized (has the role of admin or instructor)
-    if (req.user.role !== "admin" && req.user.role !== "instructor") {
-      return res.status(403).json({ message: "Unauthorized access" });
-    }
-
-    // Check if the course already exists
-    let existingCourse = await Course.findOne({ title });
-
+    const existingCourse = await Course.findOne({ title });
     if (existingCourse) {
-      // Update existing course
-      existingCourse.instructorId = instructorId;
-      existingCourse.courseKey = courseKey;
-      await existingCourse.save();
-
-      return res.status(200).json({
-        message: `Course '${title}' updated successfully`,
-        course: existingCourse,
-      });
+      return res
+        .status(400)
+        .json({ message: `Course: ${title} already exists` });
     }
-
-    // Create a new course if it doesn't exist
+    // Create a new user
     const newCourse = new Course({
       title,
       instructorId,
       courseKey,
     });
-
-    // Save the new course to the database
+    // Save the user to the database
     await newCourse.save();
-
     res.status(201).json({
-      message: `Course '${title}' created successfully`,
-      course: newCourse,
+      message: `Course: ${title} created successfully.`,
     });
   } catch (error) {
-    console.error("Error updating/creating course:", error);
+    console.error(error);
     res.status(500).json({
       message: "Internal Server Error",
     });
