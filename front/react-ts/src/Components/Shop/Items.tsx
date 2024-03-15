@@ -17,8 +17,31 @@ interface Item{
 const Items: React.FC = () => {
     const [items, setItems] = useState<Item[]>([]);
     const [courseName, setCourseName] = useState<string>('SER517');
-    const [role, setRole] = useState("instructor")
+    const [role, setRole] = useState<string>('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+      const checkProfile = async () => {
+        try {
+          const response = await fetch("http://localhost:8080/profile", {
+            method: "GET",
+            credentials: "include", // Include cookies in the request
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setRole(data.role);
+          } else {
+            console.log("User not found");
+          }
+        } catch (error) {
+          console.error("Error checking for profile", error);
+        }
+      };
+  
+      checkProfile();
+    }, []);
+
+    console.log(role)
   
     useEffect(() => {
       // Function to fetch tasks from the server
