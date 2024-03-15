@@ -55,7 +55,6 @@ router.delete("/courses", middleware(['admin', 'instructor']),courseController.d
 // Get all tasks
 router.get("/task/getAll", taskController.getAllTasks);
 
-router.get("/task/:courseId",courseController.getTaskIdsForCourse);
 
 // Get a single task by ID
 router.get("/task/get/:id", taskController.getTaskById);
