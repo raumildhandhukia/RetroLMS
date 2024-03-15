@@ -79,6 +79,7 @@ const Login: React.FC = () => {
       } else {
         setValidationMessage("Validation successful. Proceeding with sign-in.");
         // Proceed with your sign-in logic here...
+        navigate("/dashboard");
         console.log("Sign-In successful");
       }
       // Send credentials to the server
