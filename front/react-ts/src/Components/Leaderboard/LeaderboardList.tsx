@@ -1,41 +1,24 @@
 import React from 'react';
-import 'nes.css/css/nes.min.css'; // Import NES.css
+import 'nes.css/css/nes.min.css';
 import './LeaderboardList.css'
-
-interface CompletedTask {
-  taskId: string;
-  title: string;
-  point: number;
-  deadline: string; // Assuming the deadline is a string for simplicity
-}
-
-interface EnrolledCourse {
-  courseId: string;
-  completedTasks: CompletedTask[];
-}
-
-interface Student {
-  userId: string;
-  enrolledCourses: EnrolledCourse[];
-}
+import { Student } from './Leaderboard';
 
 interface LeaderboardListProps {
   students: Student[];
 }
-
+  
 const LeaderboardList: React.FC<LeaderboardListProps> = ({ students }) => {
   // Extract completed tasks and calculate total points for each student
   const leaderboardData = students.map((student) => {
     const completedTasks = student.enrolledCourses.flatMap((course) => course.completedTasks);
     const totalPoints = completedTasks.reduce((sum, task) => sum + task.point, 0);
-
     return {
       userId: student.userId,
       totalPoints,
       completedTasks,
     };
   });
-
+  leaderboardData.sort((a, b) => b.totalPoints - a.totalPoints);
   return (
     <div className="nes-container with-title is-centered">
       <p className="title">Leaderboard</p>
