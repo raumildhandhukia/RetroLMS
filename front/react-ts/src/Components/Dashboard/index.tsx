@@ -1,5 +1,5 @@
 import React, { JSXElementConstructor, ReactElement, useState } from 'react';
-import { BrowserRouter as Router, Route, useParams, Routes, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Route, useParams, Routes, Outlet, useNavigate } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
 import { CircleUser, LogOut } from 'lucide-react';
@@ -7,6 +7,9 @@ import Card from './Card';
 import asulogo from '../../asu.png'
 import {Link} from "react-router-dom";
 import CourseDetailPage from '../../CourseDetailPage';
+import Leaderboard from '../Leaderboard/Leaderboard';
+import Tasks from '../Task/Tasks';
+import Items from '../Shop/Items';
 
 export interface Course {
     id: number;
@@ -67,6 +70,7 @@ const Dashboard: React.FC = () => {
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<string>('');
     const [selectedItem, setSelectedItem] = useState<string>('Home');
+    const navigate = useNavigate();
 
     const handleCloseSidebar = () => {
         setSidebarOpen(false);
@@ -93,7 +97,7 @@ const Dashboard: React.FC = () => {
                 setSidebarOpen(!isSidebarOpen);
                 break;
             case 'Logout':
-                setSelectedComponent(<div>Logout Component</div>);
+                navigate('/login');
                 break;
             case 'Dashboard':
                 setSelectedComponent(null);
@@ -129,6 +133,9 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className='detail-container'>
                     {selectedItem === 'Home' && <CourseDetailPage />}
+                    {selectedItem === 'LeaderBoard' && <Leaderboard />}
+                    {selectedItem === 'Tasks' && <Tasks />}
+                    {selectedItem === 'BuyItems' && <Items />}
                     </div>
                 </div>
                
@@ -139,9 +146,9 @@ const Dashboard: React.FC = () => {
                 </div>
             </div>) }
             </div>
-            <Routes>
+            {/* <Routes>
                 <Route path="/dashboard/home" element={<Outlet />} />
-            </Routes>
+            </Routes> */}
         </div>
 
     );
