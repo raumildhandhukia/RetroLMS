@@ -34,7 +34,7 @@ function App() {
             <Route path="/items" element={<Items />} />
             <Route path="/items/add" element={<AddItem />} />
             <Route path="/item" element={<Item />} />
-            <Route path="/leaderboard" element={<Leaderboard/>} />
+            <Route path="/leaderboard" element={<LeaderboardList students={studentsData.students}/>} />
         </Routes>
       </main>
     </BrowserRouter>

@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import 'nes.css/css/nes.min.css';
 import "./ItemList.css";
 import { Edit } from 'lucide-react';
-import EightBitButton from '../Buttons/EightBitButton';
 
 interface Item {
     _id: string;

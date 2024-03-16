@@ -17,9 +17,9 @@ interface Item{
 const Items: React.FC = () => {
     const [items, setItems] = useState<Item[]>([]);
     const [courseName, setCourseName] = useState<string>('SER517');
-    const [role, setRole] = useState("instructor")
+    const [role, setRole] = useState<string>('');
     const navigate = useNavigate();
-    
+
     useEffect(() => {
       const checkProfile = async () => {
         try {
