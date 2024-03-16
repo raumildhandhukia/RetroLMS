@@ -13,8 +13,8 @@ import Items from "./Components/Shop/Items";
 import Item from "./Components/Shop/Item";
 import LeaderboardList from "./Components/Leaderboard/LeaderboardList";
 import studentsData from './Components/Leaderboard/students.json'
+import AddItem from "./Components/Shop/AddItem";
 import Leaderboard from './Components/Leaderboard/Leaderboard';
-
 
 
 function App() {
@@ -32,6 +32,7 @@ function App() {
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
             <Route path="/course/:id" element={<CourseDetailPage/>} />
             <Route path="/items" element={<Items />} />
+            <Route path="/items/add" element={<AddItem />} />
             <Route path="/item" element={<Item />} />
             <Route path="/leaderboard" element={<LeaderboardList students={studentsData.students}/>} />
         </Routes>

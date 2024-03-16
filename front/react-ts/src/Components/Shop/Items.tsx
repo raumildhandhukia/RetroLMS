@@ -40,7 +40,6 @@ const Items: React.FC = () => {
   
       checkProfile();
     }, []);
-
   
     useEffect(() => {
       // Function to fetch tasks from the server
