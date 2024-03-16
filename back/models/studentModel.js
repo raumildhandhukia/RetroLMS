@@ -20,6 +20,18 @@ const studentSchema = new mongoose.Schema(
         ref: "Task",
       },
     ],
+    currentCurrency: [
+      {
+        course: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Course",
+        },
+        currency: {
+          type: Number,
+        },
+      },
+    ],
+    
   },
   {
     timestamps: true,
