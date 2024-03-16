@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import 'nes.css/css/nes.min.css';
 import "./ItemList.css";
 import { Edit } from 'lucide-react';
+import EightBitButton from '../Buttons/EightBitButton';
 
 interface Item {
     _id: string;
@@ -73,7 +74,7 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
               </table>
             </div>
             <div className="flex items-start ml-6">
-              <EightBitButton 
+              <EightBitButton
                 classNames="bg-[#A52A2A] my-5"
                 onClick={() => {
                   navigate('/items/add')
