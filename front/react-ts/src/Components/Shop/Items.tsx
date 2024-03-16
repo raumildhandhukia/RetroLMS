@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
 import ItemList from './ItemList';
+import InstructorItemList from "./InstructorItemList";
 
 interface Item{
     _id: string;
@@ -16,7 +17,30 @@ interface Item{
 const Items: React.FC = () => {
     const [items, setItems] = useState<Item[]>([]);
     const [courseName, setCourseName] = useState<string>('SER517');
+    const [role, setRole] = useState<string>('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+      const checkProfile = async () => {
+        try {
+          const response = await fetch("http://localhost:8080/profile", {
+            method: "GET",
+            credentials: "include", // Include cookies in the request
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setRole(data.role);
+          } else {
+            console.log("User not found");
+          }
+        } catch (error) {
+          console.error("Error checking for profile", error);
+        }
+      };
+  
+      checkProfile();
+    }, []);
+
   
     useEffect(() => {
       // Function to fetch tasks from the server
@@ -86,7 +110,9 @@ const Items: React.FC = () => {
     }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
   
     return (
-      <ItemList items={items} courseName={courseName} />
+      role === "student" ? 
+      <ItemList items={items} courseName={courseName} /> : 
+      <InstructorItemList items={items} courseName={courseName} />
     );
   };
 
