@@ -19,6 +19,27 @@ const Items: React.FC = () => {
     const [courseName, setCourseName] = useState<string>('SER517');
     const [role, setRole] = useState("instructor")
     const navigate = useNavigate();
+    
+    useEffect(() => {
+      const checkProfile = async () => {
+        try {
+          const response = await fetch("http://localhost:8080/profile", {
+            method: "GET",
+            credentials: "include", // Include cookies in the request
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setRole(data.role);
+          } else {
+            console.log("User not found");
+          }
+        } catch (error) {
+          console.error("Error checking for profile", error);
+        }
+      };
+  
+      checkProfile();
+    }, []);
   
     useEffect(() => {
       // Function to fetch tasks from the server

@@ -8,6 +8,8 @@ import asulogo from '../../asu.png'
 import {Link} from "react-router-dom";
 import CourseDetailPage from '../../CourseDetailPage';
 import Leaderboard from '../Leaderboard/Leaderboard';
+import Tasks from '../Task/Tasks';
+import Items from '../Shop/Items';
 
 export interface Course {
     id: number;
@@ -132,6 +134,8 @@ const Dashboard: React.FC = () => {
                     <div className='detail-container'>
                     {selectedItem === 'Home' && <CourseDetailPage />}
                     {selectedItem === 'LeaderBoard' && <Leaderboard />}
+                    {selectedItem === 'Tasks' && <Tasks />}
+                    {selectedItem === 'BuyItems' && <Items />}
                     </div>
                 </div>
                
