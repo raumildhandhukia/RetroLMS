@@ -1,43 +1,170 @@
 [
-    {
-    "_comment": "User Object",
-    "id": 123,
-    "username": "Abc@gmail.com",
-    "password":"12345678",
-    "role":"student",
-    "profile":{
-        "firstName": "Abc",
-        "lastName":"Xyz",
-        "email": "Abc@gmail.com"
+  {
+    "_id": "65d7c8254df4ea811a701b00",
+    "title": "Capstone",
+    "instructorId": {
+      "_id": "65d7c7253ce2bdb6eaa3e336",
+      "userId": "65d7c7243ce2bdb6eaa3e334",
+      "coursesTeaching": [],
+      "createdAt": "2024-02-22T22:13:57.745Z",
+      "updatedAt": "2024-02-22T22:13:57.745Z",
+      "__v": 0
     },
-    "timestamp": 38393
+    "task": [],
+    "courseKey": "SER2000",
+    "__v": 0
+  },
+  {
+    "_id": "65d927bcb5963e7f68e7ac2f",
+    "title": "Capstone1",
+    "instructorId": {
+      "_id": "65d7c7253ce2bdb6eaa3e336",
+      "userId": "65d7c7243ce2bdb6eaa3e334",
+      "coursesTeaching": [],
+      "createdAt": "2024-02-22T22:13:57.745Z",
+      "updatedAt": "2024-02-22T22:13:57.745Z",
+      "__v": 0
     },
-    {
-        "_comment": "Student Object",
-        "id": "S123",
-        "enrolledCourses":["SER517","SER515", "SER502"],
-        "timestamp": 37489
+    "task": [],
+    "courseKey": "SER2001",
+    "__v": 0
+  },
+  {
+    "_id": "65d92a06885c4a96bb5c6133",
+    "title": "SER SER",
+    "instructorId": {
+      "_id": "65d929e5885c4a96bb5c612f",
+      "userId": "65d929e5885c4a96bb5c612d",
+      "coursesTeaching": [],
+      "createdAt": "2024-02-23T23:27:33.979Z",
+      "updatedAt": "2024-02-23T23:27:33.979Z",
+      "__v": 0
     },
-    {
-        "_comment": "Course Object with cart schema yet to create",
-        "courseId": "SER515",
-        "instructortId": "C456",
-        "Title": "Software Design",
-        "Task":["T123","T124","T125","T126"]
+    "task": [],
+    "courseKey": "SER200122",
+    "__v": 0
+  },
+  {
+    "_id": "65d92a0d885c4a96bb5c6136",
+    "title": "SER SER 2 2 2",
+    "instructorId": {
+      "_id": "65d929e5885c4a96bb5c612f",
+      "userId": "65d929e5885c4a96bb5c612d",
+      "coursesTeaching": [],
+      "createdAt": "2024-02-23T23:27:33.979Z",
+      "updatedAt": "2024-02-23T23:27:33.979Z",
+      "__v": 0
     },
-    {
-        "_comment": "Task Object",
-        "Id": "T123",
-        "Title": "Task1",
-        "Description":"solve 1 leetcode",
-        "Points": 10,
-        "SubmissionId": "ST1233"
+    "task": [],
+    "courseKey": "SER200122222",
+    "__v": 0
+  },
+  {
+    "_id": "65e91d01f64f86e62412e7f0",
+    "title": "Software Design",
+    "instructorId": null,
+    "task": [],
+    "courseKey": "CSE564",
+    "__v": 0
+  },
+  {
+    "_id": "65e9211714a721a3556de027",
+    "title": "Algorithms and data structures",
+    "instructorId": {
+      "_id": "65e91eb34f870a8cc65a1c4a",
+      "userId": "65e91eb34f870a8cc65a1c48",
+      "coursesTeaching": [],
+      "createdAt": "2024-03-07T01:56:03.132Z",
+      "updatedAt": "2024-03-07T01:56:03.132Z",
+      "__v": 0
     },
-
-    {
-        "_comment": "Submission Object",
-        "Id": "Sub123",
-        "userId":"S123",
-        "points_recevied": 7
+    "task": [],
+    "courseKey": "SER502",
+    "__v": 0
+  },
+  {
+    "_id": "65e92172469ad4b313a1c00f",
+    "title": "Compiler Design",
+    "instructorId": {
+      "_id": "65e91e5ef48247658d5b2577",
+      "userId": "65e91e5ef48247658d5b2575",
+      "coursesTeaching": [],
+      "createdAt": "2024-03-07T01:54:38.679Z",
+      "updatedAt": "2024-03-07T01:54:38.679Z",
+      "__v": 0
+    },
+    "task": [],
+    "courseKey": "SER505",
+    "__v": 0
+  },
+  {
+    "_id": "65e9239c38daecc3558c2258",
+    "title": "Software Agility",
+    "instructorId": {
+      "_id": "65e91e5ef48247658d5b2577",
+      "userId": "65e91e5ef48247658d5b2575",
+      "coursesTeaching": [],
+      "createdAt": "2024-03-07T01:54:38.679Z",
+      "updatedAt": "2024-03-07T01:54:38.679Z",
+      "__v": 0
+    },
+    "task": [],
+    "courseKey": "SER515",
+    "__v": 0
+  },
+  {
+    "_id": "65eb5bb3bd3b595b293b29ab",
+    "title": "CSE516",
+    "instructorId": {
+      "_id": "65eb568cf5243598743894e2",
+      "userId": "65eb568bf5243598743894e0",
+      "coursesTeaching": [],
+      "createdAt": "2024-03-08T18:18:52.214Z",
+      "updatedAt": "2024-03-08T18:18:52.214Z",
+      "__v": 0
+    },
+    "task": [],
+    "courseKey": "CSE516",
+    "__v": 0
+  },
+  {
+    "_id": "65eb5bbebd3b595b293b29ae",
+    "title": "CSE494",
+    "instructorId": {
+      "_id": "65eb568cf5243598743894e2",
+      "userId": "65eb568bf5243598743894e0",
+      "coursesTeaching": [],
+      "createdAt": "2024-03-08T18:18:52.214Z",
+      "updatedAt": "2024-03-08T18:18:52.214Z",
+      "__v": 0
+    },
+    "task": [],
+    "courseKey": "CSE494",
+    "__v": 0
+  },
+  {
+    "_id": "65eb5bc5bd3b595b293b29b1",
+    "title": "CSE490",
+    "instructorId": {
+      "_id": "65eb568cf5243598743894e2",
+      "userId": "65eb568bf5243598743894e0",
+      "coursesTeaching": [],
+      "createdAt": "2024-03-08T18:18:52.214Z",
+      "updatedAt": "2024-03-08T18:18:52.214Z",
+      "__v": 0
+    },
+    "task": [],
+    "courseKey": "CSE490",
+    "__v": 0
+  },
+  {
+    "course": {
+      "title": "Intro to Software ",
+      "instructorId": "65e3f375a306fab96f60ee44",
+      "task": [],
+      "courseKey": "SER101",
+      "_id": "65ee019b38d5fba73408ecb3",
+      "__v": 0
     }
+  }
 ]

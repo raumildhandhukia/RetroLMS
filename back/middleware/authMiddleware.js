@@ -1,38 +1,36 @@
 // middleware/authMiddleware.js
 
 const jwt = require('jsonwebtoken');
-
+const User = require("../models/userModel");
 // Middleware function to authenticate and authorize requests
-const authMiddleware = (req, res, next) => {
+const authMiddleware = (allowedRoles) => {
+    return async(req, res, next) => {
     // Extract the JWT token from the request headers
-    const token = req.headers['authorization'];
+    const jwtvalue = req.cookies && req.cookies.jwt;
 
-    if (!token) {
+    if (!jwtvalue) {
         // If token is not provided, send an unauthorized response
         return res.status(401).json({ message: 'Unauthorized: No token provided' });
     }
-
     // Verify the JWT token
-    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+    jwt.verify(jwtvalue, process.env.JWT_SECRET_KEY, (err, decoded) => {
         if (err) {
             // If token is invalid or expired, send an unauthorized response
             return res.status(401).json({ message: 'Unauthorized: Invalid token' });
         } else {
             // Extract the role from the decoded token
-            const { role } = decoded.role
-            const {username} = decoded.username
+            const role = decoded.role
             // Check if the role is one of the allowed values
-            if (['admin', 'instructor', 'student'].includes(role)) {
-                // Add the role to the request object
-                req.role = role;
-                req.username = username;
-                next(); // Pass the request to the next middleware or route handler
+            if (allowedRoles.includes(role)) {
+                // Add role and username to the request object
+                next(); // Authorized, proceed to the next middleware or route handler
             } else {
                 // If role is invalid, send an unauthorized response
-                return res.status(401).json({ message: 'Unauthorized: Invalid role' });
+                return res.status(401).json({ message: 'Forbidden: Privilge is not provide for this user' });
             }
         }
     });
-};
+}}
+;
 
 module.exports = authMiddleware;
