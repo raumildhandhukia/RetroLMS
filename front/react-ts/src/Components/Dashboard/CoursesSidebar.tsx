@@ -27,10 +27,10 @@ const CoursesSidebar: React.FC<CoursesSidebarProps> = ({ onClose, courses,  onCo
         <hr />
         <div>
         {courses.map(course => (
-          <h3 className='third-heading' key={course.id} onClick={() => {
+          <h3 className='third-heading' key={course._id} onClick={() => {
             onClose(); // Close the sidebar
-            handleCourseClick(course.description); // Handle the course click
-        }}>{course.description}</h3>
+            handleCourseClick(course.title); // Handle the course click
+        }}>{course.title}</h3>
         ))}
       </div>
       </div>

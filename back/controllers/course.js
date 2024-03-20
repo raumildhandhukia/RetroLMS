@@ -30,7 +30,7 @@ const courseController = {
         instructorId,
         courseKey,
       });
-      console.log(newCourse)
+      console.log(newCourse);
       // Save the new course to the database
       await newCourse.save();
 
@@ -67,12 +67,10 @@ const courseController = {
         { new: true }
       );
 
-      res
-        .status(200)
-        .json({
-          message: "Course added successfully",
-          student: updatedStudent,
-        });
+      res.status(200).json({
+        message: "Course added successfully",
+        student: updatedStudent,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -82,7 +80,6 @@ const courseController = {
   deleteCourse: async (req, res) => {
     try {
       const { title, instructorId, courseKey } = req.body;
-
 
       // Find the course to be deleted based on the input
       let query = {};
@@ -141,12 +138,11 @@ const courseController = {
   getAllCourses: async (req, res) => {
     try {
       // If you want to populate instructorId or task fields to get detailed information, you can use .populate()
-      const courses = await Course.find().populate('instructorId');
+      const courses = await Course.find().populate("instructorId");
       res.status(200).json(courses);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }
-
+  },
 };
 module.exports = courseController;
