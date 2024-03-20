@@ -117,19 +117,33 @@ const courseController = {
       const decoded = JWT.decode(jwt);
       const username = decoded.username;
       const user = await User.findOne({ username });
+      let courses;
       if (user.role === "student") {
         // If the user is a student, fetch enrolled courses
         const student = await Student.findOne({
           userId: user.id,
         }).populate("enrolledCourses");
-        return res.status(200).json({ courses: student.enrolledCourses });
+
+        courses = student.enrolledCourses;
       } else if (user.role === "instructor") {
         // If the user is an instructor, fetch courses based on instructorId
-        const courses = await Course.find({ instructorId: user._id });
-        return res.status(200).json({ courses });
+        courses = await Course.find({ instructorId: user._id });
       } else {
         return res.status(400).json({ message: "Invalid user role" });
       }
+      // const coursesTS = {
+      //   _id: courses._id,
+      //   title: courses.title,
+      //   courseKey: courses.courseKey,
+      // };
+
+      const coursesTS = courses.map((course) =>
+        Object.assign(
+          {},
+          { _id: course._id, title: course.title, courseKey: course.courseKey }
+        )
+      );
+      return res.status(200).json(coursesTS);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal Server Error" });

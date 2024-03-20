@@ -56,8 +56,15 @@ const Dashboard: React.FC = () => {
         courseKey: string;
     };
     
+    
+    // const courses: Course[] = [
+    //     { _id: "1", courseKey: 'Course 1', title: 'Software Agility'},
+    //     { _id: "2", courseKey: 'Course 2', title: 'Software Design'},
+    //     { _id: "3", courseKey: 'Course 3', title: 'Software Design'},
+    //     { _id: "4", courseKey: 'Course 4', title: 'Software Design'},
+    //     { _id: "5", courseKey: 'Course 5', title: 'Software Design'}
+    // ];
     const [courses, setCourses] = useState<Course[]>([]);
-
     useEffect(() => {
     const getCourses = async () => {
         try {
@@ -71,9 +78,9 @@ const Dashboard: React.FC = () => {
             if (!response.ok) {
                 throw new Error('Failed to fetch courses');
             }
-            const courses: Course[] = await response.json();
-            console.log("Fetched courses:", courses);
-            setCourses(courses);
+            const res: Course[] = await response.json();
+            console.log("Fetched courses:", res);
+            setCourses(res);
         } catch (error) {
             console.error('Error fetching courses:', error);
         }
@@ -161,12 +168,14 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
                
-            </div>) : (<div>
+            </div>) : (
+            <div>
                 <p className="text-3xl">Dashboard</p>
                 <div className='w-full flex flex-wrap mt-10'>
                     {courses.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
                 </div>
-            </div>) }
+            </div>
+            ) }
             </div>
             {/* <Routes>
                 <Route path="/dashboard/home" element={<Outlet />} />
