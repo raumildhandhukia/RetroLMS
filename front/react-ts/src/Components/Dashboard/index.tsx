@@ -17,45 +17,21 @@ export interface Course {
     _id: string;
     title: string;
     courseKey: string;
+    details: string;
 }
 
 export interface ISidebarItem {
     name: "Account" | "Logout" | "MyCourses" | "Dashboard";
 }
 
-const details= "SER 517: Software Factory Capstone (2024 Spring)\n" +
-    "Welcome to SER 517!\n" +
-    "\n" +
-    "Course Instructor:\n" +
-    "\n" +
-    " Dr. Nouh Alhindawi,  nalhinda@asu.edu\n" +
-    "\n" +
-    "Office Hours: Tuesdays and Thursdays 11:00 - 12:00 - or by appointment\n" +
-    "\n" +
-    "Zoom Link: https://asu.zoom.us/j/4154409963Links to an external site. \n" +
-    "\n" +
-    " \n" +
-    "\n" +
-    "Course TA : James Smith , jsmit106@asu.edu - Office Hours: Mondays and Wednesdays 1:00p - 2:00p (https://asu.zoom.us/my/jsmit106Links to an external site.)\n" +
-    "\n" +
-    "Course Grade : Anmol Girish More, amore9@asu.edu \n" +
-    "\n" +
-    "Course Grade : Smit Ashokbhai Jasani,   sjasani2@asu.edu\n" +
-    "\n" +
-    " \n" +
-    "\n" +
-    "Make sure to review the course Syllabus for further details and information.\n" +
-    "The course content will be added to the Modules section.\n" +
-    "\n" +
-    "I'm looking forward to meeting you all in class.";
-
 const Dashboard: React.FC = () => {
     
-    interface Course {
-        _id: string;
-        title: string;
-        courseKey: string;
-    };
+    // interface Course {
+    //     _id: string;
+    //     title: string;
+    //     courseKey: string;
+
+    // };
     const [courses, setCourses] = useState<Course[]>([]);
     useEffect(() => {
     const getCourses = async () => {
@@ -89,7 +65,7 @@ const Dashboard: React.FC = () => {
     ]
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
-    const [selectedCourse, setSelectedCourse] = useState<string>('');
+    const [selectedCourse, setSelectedCourse] = useState<string>();
     const [selectedItem, setSelectedItem] = useState<string>('Home');
     const navigate = useNavigate();
 
@@ -97,8 +73,8 @@ const Dashboard: React.FC = () => {
         setSidebarOpen(false);
     };
 
-    const handleCourseClick = (description: string) => {
-        setSelectedCourse(description);
+    const handleCourseClick = (_id: string) => {
+        setSelectedCourse(_id);
         setSelectedItem('Home');
     };
 
@@ -153,7 +129,7 @@ const Dashboard: React.FC = () => {
                         {menuItems.map((item, index) => <div className='text-1xl custom-styling' onClick={() => handleItemClick(item)}>{item}</div>)}
                     </div>
                     <div className='detail-container'>
-                    {selectedItem === 'Home' && <CourseDetailPage />}
+                    {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]}/>}
                     {selectedItem === 'LeaderBoard' && <Leaderboard />}
                     {selectedItem === 'Tasks' && <Tasks />}
                     {selectedItem === 'BuyItems' && <Items />}

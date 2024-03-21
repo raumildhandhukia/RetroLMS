@@ -30,7 +30,7 @@ function App() {
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/task" element={<Task />} />
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
-            <Route path="/course/:id" element={<CourseDetailPage/>} />
+            {/* <Route path="/course/:id" element={<CourseDetailPage/>} /> */}
             <Route path="/items" element={<Items />} />
             <Route path="/items/add" element={<AddItem />} />
             <Route path="/item" element={<Item />} />

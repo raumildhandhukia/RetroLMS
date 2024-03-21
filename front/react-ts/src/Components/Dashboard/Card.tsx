@@ -2,14 +2,14 @@ import React from 'react'
 import { Course } from '.'
 
 interface CardProps extends Course {
-    onCardClick: (description: string) => void;
+    onCardClick: (_id: string) => void;
   }
   
 
 const Card: React.FC<CardProps> = (props) => {
-    const { courseKey, title, onCardClick } = props;
+    const { courseKey, _id, title, onCardClick } = props;
     const handleClick = () => {
-      onCardClick(title);
+      onCardClick(_id);
     };
 
     return (
