@@ -19,13 +19,8 @@ const courseController = {
       let existingCourse = await Course.findOne({ title });
 
       if (existingCourse) {
-        // Update existing course
-        existingCourse.instructorId = instructorId;
-        existingCourse.courseKey = courseKey;
-        await existingCourse.save();
-
-        return res.status(200).json({
-          message: `Course '${title}' updated successfully`,
+        return res.status(400).json({
+          message: `Course '${title}' already exists.`,
           course: existingCourse,
         });
       }
@@ -134,7 +129,8 @@ const courseController = {
         courses = student.enrolledCourses;
       } else if (user.role === "instructor") {
         // If the user is an instructor, fetch courses based on instructorId
-        courses = await Course.find({ instructorId: user._id });
+        const ins = await Instructor.findOne({ userId: user.id });
+        courses = await Course.find({ instructorId: ins.id });
       } else {
         return res.status(400).json({ message: "Invalid user role" });
       }
@@ -147,7 +143,12 @@ const courseController = {
       const coursesTS = courses.map((course) =>
         Object.assign(
           {},
-          { _id: course._id, title: course.title, courseKey: course.courseKey }
+          {
+            _id: course._id,
+            title: course.title,
+            courseKey: course.courseKey,
+            details: course.details,
+          }
         )
       );
       return res.status(200).json(coursesTS);

@@ -26,6 +26,8 @@ export interface ISidebarItem {
     name: "Account" | "Logout" | "MyCourses" | "Dashboard";
 }
 
+
+
 const Dashboard: React.FC = () => {
     
     // interface Course {
@@ -136,7 +138,7 @@ const Dashboard: React.FC = () => {
             )}
             <div className="flex flex-1 p-10 flex-col">
             {selectedCourse ? (<div>
-                    <p className='text-2xl'>{selectedCourse}</p>
+                    <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
                 <hr/>
                 <div className='main-content'>
                     <div>
