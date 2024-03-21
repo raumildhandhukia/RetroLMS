@@ -10,8 +10,10 @@ import CourseDetailPage from '../../CourseDetailPage';
 import Leaderboard from '../Leaderboard/Leaderboard';
 import Tasks from '../Task/Tasks';
 import Items from '../Shop/Items';
+import CreateCourse from './CreateCourse';
 import { ok } from 'assert';
 import DeletePrompt from './DeletePrompt';
+
 
 export interface Course {
     _id: string;
@@ -78,6 +80,11 @@ const Dashboard: React.FC = () => {
         setSelectedItem('Home');
     };
 
+    const handleCourseCreate = () => {
+        setSelectedItem('CreateCourse');
+        setSelectedCourse('');
+    };
+
     const menuItems = ['Home', 'Tasks', 'LeaderBoard', 'BuyItems', 'Delete'];
 
     const handleItemClick = (item: string) => {
@@ -90,7 +97,14 @@ const Dashboard: React.FC = () => {
                 setSelectedComponent(<div>Account Component</div>);
                 break;
             case 'MyCourses':
-                setSelectedComponent(<CoursesSidebar onClose={handleCloseSidebar} courses={courses} onCourseClick={handleCourseClick}/>);
+                setSelectedComponent(
+                <CoursesSidebar 
+                    onClose={handleCloseSidebar} 
+                    courses={courses} 
+                    onCourseClick={handleCourseClick}
+                    setComponent={handleCourseCreate}
+                    />
+                );
                 setSidebarOpen(!isSidebarOpen);
                 break;
             case 'Logout':
@@ -134,17 +148,20 @@ const Dashboard: React.FC = () => {
                     {selectedItem === 'Tasks' && <Tasks />}
                     {selectedItem === 'BuyItems' && <Items />}
                     {selectedItem === 'Delete' && <DeletePrompt/>}
+                    {/* {selectedItem === 'CreateCourse' && <CreateCourse/>} */}
                     </div>
                 </div>
                
             </div>) : (
-            <div>
+            selectedItem === 'CreateCourse' ? (<CreateCourse/>) : 
+            (<div>
                 <p className="text-3xl">Dashboard</p>
                 <div className='w-full flex flex-wrap mt-10'>
                     {courses.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
                 </div>
             </div>
-            ) }
+            )
+        ) }
             </div>
             {/* <Routes>
                 <Route path="/dashboard/home" element={<Outlet />} />
