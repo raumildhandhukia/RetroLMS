@@ -14,6 +14,10 @@ const CoursesSidebar: React.FC<CoursesSidebarProps> = ({ onClose, courses,  onCo
     // Pass the clicked course description to the parent function
     onCourseClick(description);
 };
+
+const handleAddCourse = () => {
+
+}
   return (
     <div>
       <div className='header-container'>
@@ -33,6 +37,12 @@ const CoursesSidebar: React.FC<CoursesSidebarProps> = ({ onClose, courses,  onCo
         }}>{course.title}</h3>
         ))}
       </div>
+      <hr />
+        <div className='second-heading nes-pointer' onClick={() => {
+            onClose(); // Close the sidebar
+            handleAddCourse(); // Handle the Add Course click
+        }}>Add Course</div>
+        <hr />
       </div>
     );
   };

@@ -11,6 +11,7 @@ import Leaderboard from '../Leaderboard/Leaderboard';
 import Tasks from '../Task/Tasks';
 import Items from '../Shop/Items';
 import { ok } from 'assert';
+import DeletePrompt from './DeletePrompt';
 
 export interface Course {
     _id: string;
@@ -55,15 +56,6 @@ const Dashboard: React.FC = () => {
         title: string;
         courseKey: string;
     };
-    
-    
-    // const courses: Course[] = [
-    //     { _id: "1", courseKey: 'Course 1', title: 'Software Agility'},
-    //     { _id: "2", courseKey: 'Course 2', title: 'Software Design'},
-    //     { _id: "3", courseKey: 'Course 3', title: 'Software Design'},
-    //     { _id: "4", courseKey: 'Course 4', title: 'Software Design'},
-    //     { _id: "5", courseKey: 'Course 5', title: 'Software Design'}
-    // ];
     const [courses, setCourses] = useState<Course[]>([]);
     useEffect(() => {
     const getCourses = async () => {
@@ -110,7 +102,7 @@ const Dashboard: React.FC = () => {
         setSelectedItem('Home');
     };
 
-    const menuItems = ['Home', 'Tasks', 'LeaderBoard', 'BuyItems'];
+    const menuItems = ['Home', 'Tasks', 'LeaderBoard', 'BuyItems', 'Delete'];
 
     const handleItemClick = (item: string) => {
         setSelectedItem(item);
@@ -165,6 +157,7 @@ const Dashboard: React.FC = () => {
                     {selectedItem === 'LeaderBoard' && <Leaderboard />}
                     {selectedItem === 'Tasks' && <Tasks />}
                     {selectedItem === 'BuyItems' && <Items />}
+                    {selectedItem === 'Delete' && <DeletePrompt/>}
                     </div>
                 </div>
                

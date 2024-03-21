@@ -7,7 +7,7 @@ const JWT = require("jsonwebtoken");
 const courseController = {
   createCourse: async (req, res) => {
     try {
-      const { title, instructorId, courseKey } = req.body;
+      const { title, instructorId, courseKey, details } = req.body;
 
       // Check if the course already exists
       let existingCourse = await Course.findOne({ title });
@@ -29,6 +29,7 @@ const courseController = {
         title,
         instructorId,
         courseKey,
+        details,
       });
       console.log(newCourse);
       // Save the new course to the database
