@@ -63,6 +63,10 @@ router.post("/enrollstudent",middleware(['student']),courseController.enrollCour
 //Method to delete the course and also to remove it from the enrolledCourses array of all students.
 router.delete("/courses", middleware(['admin', 'instructor']),courseController.deleteCourse);
 
+//Method to get Students enrolled in given course
+router.get('/course/:courseId', middleware(['student', 'instructor']), courseController.getStudentsByCourseId);
+
+
 // ================= Routes for Task =================== //
 
 // Get all tasks
@@ -99,6 +103,6 @@ router.get('/items/:itemId', middleware(['admin', 'instructor']), itemController
 
 router.post('/submit/:courseId', middleware(['student']),submissionController.createSubmission );
 
-router.post('grading/:courseId/:taskId', middleware(['instructor']), submissionController.gradingTask )
+router.post('grading/:courseId/:taskId', middleware(['instructor']), submissionController.gradingTask );
 
 module.exports = router;
