@@ -66,18 +66,18 @@ router.delete("/courses", middleware(['admin', 'instructor']),courseController.d
 // ================= Routes for Task =================== //
 
 // Get all tasks
-router.get("/task/getAll", taskController.getAllTasks);
+router.get("/task/getAll", middleware(['admin', 'instructor', 'student']), taskController.getAllTasks);
 
 // Get a single task by ID
-router.get("/task/get/:id", taskController.getTaskById);
+router.get("/task/get/:id", middleware(['admin', 'instructor', 'student']), taskController.getTaskById);
 
 // Delete a single task by ID
-router.delete("/task/delete/:id", taskController.deleteTask);
+router.delete("/task/delete/:id", middleware(['admin', 'instructor']), taskController.deleteTask);
 
 // Update a task by ID
-router.put("/task/update/:id", taskController.updateTask);
+router.put("/task/update/:id", middleware(['admin', 'instructor']), taskController.updateTask);
 // Create a task
-router.post("/task/create", taskController.addTask);
+router.post("/task/create", middleware(['admin', 'instructor']), taskController.addTask);
 
 
 // ======================= Routes for Items and Shop ====================== //
@@ -89,10 +89,10 @@ router.post('/createitem', middleware(['admin', 'instructor']), itemController.c
 router.patch('/items/:itemId',middleware(['admin', 'instructor']), itemController.updateItem);
 
 // Route to get all items for a given course ID
-router.get('/items/course/:courseId', middleware(['admin', 'instructor']), itemController.getItemsByCourse);
+router.get('/items/course/:courseId', middleware(['admin', 'instructor', 'student']), itemController.getItemsByCourse);
 
 // Route to get a single item by ID (assuming the filter by course ID is handled internally based on user's login and permissions)
-router.get('/items/:itemId', middleware(['admin', 'instructor']), itemController.getSingleItem);
+router.get('/items/:itemId', middleware(['admin', 'instructor', 'student']), itemController.getSingleItem);
 
 
 // ======================= Routes for Submission ====================== //
