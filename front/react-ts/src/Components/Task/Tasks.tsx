@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
 import TaskList from "./TaskList";
+import InstructorItemList from "../Shop/InstructorItemList";
+import InstructorTaskList from "./InstructorTaskList";
+//import tasksData from './tasks.json';
 
 interface Task {
   _id: string;
@@ -13,8 +16,10 @@ interface Task {
 }
 
 const Tasks: React.FC = () => {
+  var data = require('./tasks.json');
   const [tasks, setTasks] = useState<Task[]>([]);
   const [courseName, setCourseName] = useState<string>('SER517');
+  const [role, setRole] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +41,8 @@ const Tasks: React.FC = () => {
 
         const tasks: Task[] = await response.json();
         const updatedTasks = tasks.map(task => ({ ...task, course: courseName }));
-        setTasks(updatedTasks); // Update tasks state with the received data
+        console.log(data.tasks);
+        setTasks(data.tasks);// Update tasks state with the received data
       } catch (error) {
         console.error('Error fetching tasks:', error);
         // You can handle the error appropriately (e.g., show an error message)
@@ -47,8 +53,11 @@ const Tasks: React.FC = () => {
     fetchTasks();
   }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
 
+  //setTasks(data.tasks);
   return (
-    <TaskList tasks={tasks} courseName={courseName} />
+      role === "student" ?
+          <TaskList tasks={data.tasks} courseName={courseName} /> :
+    <InstructorTaskList tasks={data.tasks} courseName={courseName} />
   );
 };
 

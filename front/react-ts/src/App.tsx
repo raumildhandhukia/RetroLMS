@@ -16,6 +16,7 @@ import LeaderboardList from "./Components/Leaderboard/LeaderboardList";
 import studentsData from './Components/Leaderboard/students.json'
 import AddItem from "./Components/Shop/AddItem";
 import Leaderboard from './Components/Leaderboard/Leaderboard';
+import AddTask from "./Components/Task/AddTask";
 
 
 function App() {
@@ -35,6 +36,9 @@ function App() {
             <Route path="/items" element={<Items />} />
             <Route path="/items/add" element={<AddItem />} />
             <Route path="/item" element={<Item />} />
+            <Route path="/task" element={<Tasks />} />
+            <Route path="/tasks/add" element={<AddTask />} />
+            <Route path="/task" element={<Task />} />
             <Route path="/leaderboard" element={<LeaderboardList students={studentsData.students}/>} />
         </Routes>
       </main>
