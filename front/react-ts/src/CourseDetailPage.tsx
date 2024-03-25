@@ -1,7 +1,7 @@
 import React from 'react';
 import {useLocation, useParams} from 'react-router-dom';
 import SidebarItem from "./Components/Dashboard/SidebarItem";
-import {Course, ISidebarItem} from "./Components/Dashboard";
+import {ISidebarItem} from "./Components/Dashboard";
 
 
 const CourseDetailPage: React.FC = () => {

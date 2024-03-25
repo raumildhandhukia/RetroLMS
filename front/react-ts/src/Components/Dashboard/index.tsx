@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, ReactElement, useState } from 'react';
+import React, { JSXElementConstructor, ReactElement, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, useParams, Routes, Outlet, useNavigate } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
@@ -11,14 +11,13 @@ import Leaderboard from '../Leaderboard/Leaderboard';
 import Tasks from '../Task/Tasks';
 import Items from '../Shop/Items';
 
-export interface Course {
-    id: number;
-    name: string;
-    description: string;
-    studentsEnrolled: number;
-    highestScore: number;
-    highestScorer: string;
-    content: string;
+export interface Courses {
+  _id: string;
+  title: string;
+  instructorId: string;
+  task: string[];
+  courseKey: string;
+  __v: number;
 }
 
 export interface ISidebarItem {
@@ -52,13 +51,27 @@ const details= "SER 517: Software Factory Capstone (2024 Spring)\n" +
     "I'm looking forward to meeting you all in class.";
 
 const Dashboard: React.FC = () => {
-    const coursesData: Course[] = [
-        { id: 1, name: 'Course 1', description: 'Software Agility', studentsEnrolled: 20, highestScore: 95, highestScorer: 'Student A', content:details},
-        { id: 2, name: 'Course 2', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details },
-        { id: 3, name: 'Course 3', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details },
-        { id: 4, name: 'Course 4', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details },
-        { id: 5, name: 'Course 5', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details }
-    ];
+  useEffect(() => {
+    const fetchCoursesByUserId = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/coursesById", {
+          method: "GET",
+          credentials: "include",
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          setCourses(data.courses);
+        } else {
+          console.log("Failed to fetch courses");
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+  
+    fetchCoursesByUserId();
+  }, []);
 
     const sidebarItems: ISidebarItem[] = [
         { name: "Account" },
@@ -70,6 +83,7 @@ const Dashboard: React.FC = () => {
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<string>('');
     const [selectedItem, setSelectedItem] = useState<string>('Home');
+    const [courses, setCourses] = useState<Courses[]>([]);
     const navigate = useNavigate();
 
     const handleCloseSidebar = () => {
@@ -93,7 +107,7 @@ const Dashboard: React.FC = () => {
                 setSelectedComponent(<div>Account Component</div>);
                 break;
             case 'MyCourses':
-                setSelectedComponent(<CoursesSidebar onClose={handleCloseSidebar} courses={coursesData} onCourseClick={handleCourseClick}/>);
+                setSelectedComponent(<CoursesSidebar onClose={handleCloseSidebar} courses={courses} onCourseClick={handleCourseClick}/>);
                 setSidebarOpen(!isSidebarOpen);
                 break;
             case 'Logout':
@@ -142,7 +156,7 @@ const Dashboard: React.FC = () => {
             </div>) : (<div>
                 <p className="text-3xl">Dashboard</p>
                 <div className='w-full flex flex-wrap mt-10'>
-                    {coursesData.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
+                    {courses.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
                 </div>
             </div>) }
             </div>
