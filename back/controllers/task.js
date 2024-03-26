@@ -1,4 +1,9 @@
 const Task = require("../models/taskModel");
+const JWT = require("jsonwebtoken");
+const User = require("../models/userModel.js");
+const Instructor = require("../models/instructorModel.js");
+const Student = require("../models/studentModel.js");
+const Course = require("../models/courseModel");
 
 exports.addTask = async (req, res) => {
   try {
@@ -13,9 +18,25 @@ exports.addTask = async (req, res) => {
       deadline: req.body.deadline,
       // submissionId: req.body.submissionId,
     };
-
+    // Save the new Task document
     const taskItem = new Task(taskObj);
-    const savedDoc = await taskItem.save();
+    const savedTask = await taskItem.save();
+    try {
+      // Attempt to update the corresponding Course
+      await Course.findByIdAndUpdate(
+        taskObj.courseId,
+        { $push: { task: savedTask._id } }, // Use $push to add the new task's ID to the task array
+        { new: true, upsert: false } // upsert:false ensures that no new Course is created if it doesn't exist
+      );
+    } catch (courseUpdateError) {
+      // If an error occurs during the course update, log it and return an error response
+      console.error('Error updating course with new task:', courseUpdateError);
+      await Task.findByIdAndDelete(savedTask._id);
+      return res.status(500).json({
+        message: "Error updating course with new task.",
+      });
+    }
+    // If everything goes well, return success response
     res.status(201).json({
       message: `Task: ${taskObj.title} created successfully.`,
     });
@@ -49,24 +70,24 @@ exports.updateTask = async (req, res) => {
 
 exports.getAllTasks = async (req, res) => {
   try {
-    let query = {};
     jwt = req.cookies && req.cookies.jwt;
     const decoded = JWT.decode(jwt);
+    console.log(decoded)
     const username = decoded.username;
     const user = await User.findOne({ username });
+    console.log(user)
     if (user.role === "student") {
       // If the user is a student, fetch enrolled courses
       const student = await Student.findOne({
-        userId: user.id,
+        userId: user._id,
       }).populate("enrolledCourses");
       return res.status(200).json({ courses: student.enrolledCourses });
     } else if (user.role === "instructor") {
       // If the user is an instructor, fetch courses based on instructorId
       const instructorId = await Instructor.findOne({
-        userId: user.id,
+        userId: user._id,
       });
-      query.userId = userId;
-      const tasks = await Task.find(query).populate("courseId submissionId");
+      const tasks = await Task.find(instructorId).populate('courseId submissionId');
       res.status(200).json(tasks);
     } else {
       return res.status(400).json({ message: "Invalid user role" });

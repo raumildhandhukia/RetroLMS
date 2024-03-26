@@ -1,0 +1,34 @@
+[ 
+  {
+    "_id": { "$oid": "65ee11d4a2372f856bdf8d3d" },
+    "title": "Intro to Cyber software",
+    "instructorId": { "$oid": "65ee0baef899dc5d05d60d06" },
+    "task": [],
+    "courseKey": "SER102",
+    "__v": { "$numberInt": "0" }
+  },
+  {
+    "_id": { "$oid": "65ee276576ac94ef4a77bdba" },
+    "title": "Software Design",
+    "instructorId": { "$oid": "65ee0baef899dc5d05d60d06" },
+    "task": [],
+    "courseKey": "SER564",
+    "__v": { "$numberInt": "0" }
+  },
+  {
+    "_id": { "$oid": "65ee27ba76ac94ef4a77bdc0" },
+    "title": "Software Agility",
+    "instructorId": { "$oid": "65ee0c21f899dc5d05d60d15" },
+    "task": [],
+    "courseKey": "SER515",
+    "__v": { "$numberInt": "0" }
+  },
+  {
+    "_id": { "$oid": "65ee27d276ac94ef4a77bdc3" },
+    "title": "Data Structure and Algorithm",
+    "instructorId": { "$oid": "65ee0c21f899dc5d05d60d15" },
+    "task": [],
+    "courseKey": "SER502",
+    "__v": { "$numberInt": "0" }
+  }
+]
