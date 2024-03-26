@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, ReactElement, useState } from 'react';
+import React, { JSXElementConstructor, ReactElement, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, useParams, Routes, Outlet, useNavigate } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
@@ -52,6 +52,27 @@ const details= "SER 517: Software Factory Capstone (2024 Spring)\n" +
     "I'm looking forward to meeting you all in class.";
 
 const Dashboard: React.FC = () => {
+    const [role, setRole] = useState<string>('');
+    useEffect(() => {
+      const checkProfile = async () => {
+        try {
+          const response = await fetch("http://localhost:8080/profile", {
+            method: "GET",
+            credentials: "include", // Include cookies in the request
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setRole(data.role);
+          } else {
+            console.log("User not found");
+          }
+        } catch (error) {
+          console.error("Error checking for profile", error);
+        }
+      };
+  
+      checkProfile();
+    }, []);
     const coursesData: Course[] = [
         { id: 1, name: 'Course 1', description: 'Software Agility', studentsEnrolled: 20, highestScore: 95, highestScorer: 'Student A', content:details},
         { id: 2, name: 'Course 2', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details },
@@ -82,6 +103,9 @@ const Dashboard: React.FC = () => {
     };
 
     const menuItems = ['Home', 'Tasks', 'LeaderBoard', 'BuyItems'];
+    if(role === 'instructor') {
+        menuItems.push('Grading Submission')
+    }
 
     const handleItemClick = (item: string) => {
         setSelectedItem(item);
@@ -115,7 +139,7 @@ const Dashboard: React.FC = () => {
           <div className="w-20 bg-gray-100 h-lvh flex flex-col">
              <img src={asulogo} />
               {sidebarItems.map(sidebarItem =>
-                  <SidebarItem key={sidebarItem.name} name={sidebarItem.name} onClick={handleIconClick} />
+                  <SidebarItem key={sidebarItem.name} name={sidebarItem.name} onClick={handleIconClick} role={role}/>
               )}
           </div>
            {isSidebarOpen && (
@@ -125,7 +149,12 @@ const Dashboard: React.FC = () => {
             )}
             <div className="flex flex-1 p-10 flex-col">
             {selectedCourse ? (<div>
+                    <div>
                     <p className='text-2xl'>{selectedCourse}</p>
+                    {role === 'student' ? (
+                        <div className='text-2xl'>Currency balance: 150$</div>
+                     ) : null}
+                    </div>
                 <hr/>
                 <div className='main-content'>
                     <div>
