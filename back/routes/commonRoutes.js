@@ -46,11 +46,15 @@ router.get("/profile", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 router.post(
   "/createcourse",
   middleware(["instructor", "admin"]),
   courseController.createCourse
+);
+router.post(
+  "/editCourse",
+  middleware(["instructor", "admin"]),
+  courseController.editCourse
 );
 
 router.get("/coursesById", courseController.getCourseByUserId);

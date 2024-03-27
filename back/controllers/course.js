@@ -48,6 +48,44 @@ const courseController = {
     }
   },
 
+  editCourse: async (req, res) => {
+    try {
+      // Authorize user
+      const jwt = req.cookies && req.cookies.jwt;
+      const decoded = JWT.decode(jwt);
+      const username = decoded.username;
+      const user = await User.findOne({ username });
+
+      const { courseId, title, courseKey, details } = req.body;
+      // Check if there's another course with the same title
+      const existingTitleCourse = await Course.findOne({ title });
+      if (existingTitleCourse && existingTitleCourse._id != courseId) {
+        return res
+          .status(400)
+          .json({
+            error: "Another course with the same title already exists.",
+          });
+      }
+
+      // Check if there's another course with the same courseKey
+      const existingKeyCourse = await Course.findOne({ courseKey });
+      if (existingKeyCourse && existingKeyCourse._id != courseId) {
+        return res
+          .status(400)
+          .json({
+            error: "Another course with the same course key already exists.",
+          });
+      }
+
+      // Update the course
+      await Course.findByIdAndUpdate(courseId, { title, courseKey, details });
+      res.status(200).json({ message: "Course updated successfully." });
+    } catch (err) {
+      console.error("Error updating course:", err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
+
   enrollCourse: async (req, res) => {
     try {
       const { courseId } = req.body;
