@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
 import TaskList from "./TaskList";
-import InstructorItemList from "../Shop/InstructorItemList";
 import InstructorTaskList from "./InstructorTaskList";
-import {Course} from "../Dashboard";
-//import tasksData from './tasks.json';
 
 interface Task {
   _id: string;
@@ -20,11 +16,9 @@ interface TaskProps {
 }
 
 const Tasks: React.FC<TaskProps> = ({courseId}) => {
-  var data = require('./tasks.json');
   const [tasks, setTasks] = useState<Task[]>([]);
   const [courseName, setCourseName] = useState<string>('SER517');
   const [role, setRole] = useState<string>('');
-  const navigate = useNavigate();
   useEffect(() => {
     console.log(courseId);
     const checkProfile = async () => {

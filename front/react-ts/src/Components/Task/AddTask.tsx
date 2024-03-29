@@ -1,8 +1,6 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState} from 'react';
 import 'nes.css/css/nes.min.css';
-import {useLocation, useNavigate} from "react-router-dom";
-import Tasks from "./Tasks";
-import tasks from "./Tasks";
+import {useLocation} from "react-router-dom";
 
 const AddTask: React.FC<{}> = () => {
     const [title, setTitle] = useState('');
@@ -11,11 +9,10 @@ const AddTask: React.FC<{}> = () => {
     const [point, setPoint] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
     // Use useLocation to access navigation state
     const location = useLocation();
     // Extract courseId from location state
-    const { courseId } = location.state as { courseId: string };
+    const courseId = location.state;
     console.log(courseId);
     const handleCreateTask = async () => {
         if (!title || !deadline || !details || !point) {
@@ -25,7 +22,6 @@ const AddTask: React.FC<{}> = () => {
 
         try {
             setIsLoading(true);
-
             const response = await fetch('http://localhost:8080/task/create', {
                 method: "POST",
                 credentials: "include",
@@ -38,7 +34,6 @@ const AddTask: React.FC<{}> = () => {
             });
 
             setIsLoading(false);
-            navigate('tasks');
             if (!response.ok) {
                 const responseData = await response.json();
                 throw new Error(responseData.message || 'Something went wrong!');
