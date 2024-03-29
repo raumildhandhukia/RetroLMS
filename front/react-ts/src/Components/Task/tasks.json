@@ -1,0 +1,45 @@
+{
+	"tasks": [
+		{
+			"_id": "Task 1",
+			"title": "Task 1",
+            "deadline": "This is task 1",
+            "details": "Task 1 of SER517",
+            "point": 40,
+            "course": "SER517"
+		},
+        {
+          "_id": "Task 2",
+          "title": "Task 2",
+          "deadline": "This is task 2",
+          "details": "Task 2 of SER517",
+          "point": 50,
+          "course": "SER517"
+		},
+        {
+          "_id": "Task 3",
+          "title": "Task 3",
+          "deadline": "This is task 3",
+          "details": "Task 3 of SER517",
+          "point": 60,
+          "course": "SER517"
+		},
+        {
+          "_id": "Task 4",
+          "title": "Task 4",
+          "deadline": "This is task 4",
+          "details": "Task 4 of SER517",
+          "point": 70,
+          "course": "SER517"
+		},
+        {
+          "_id": "Task 5",
+          "title": "Task 5",
+          "deadline": "This is task 5",
+          "details": "Task 5 of SER517",
+          "point": 80,
+          "course": "SER517"
+		}
+
+	]
+}

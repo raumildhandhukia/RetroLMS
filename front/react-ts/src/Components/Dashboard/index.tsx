@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, ReactElement, useState } from 'react';
+import React, { JSXElementConstructor, ReactElement, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, useParams, Routes, Outlet, useNavigate } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
@@ -10,55 +10,56 @@ import CourseDetailPage from '../../CourseDetailPage';
 import Leaderboard from '../Leaderboard/Leaderboard';
 import Tasks from '../Task/Tasks';
 import Items from '../Shop/Items';
+import CreateCourse from './CreateCourse';
+import { ok } from 'assert';
+import DeletePrompt from './DeletePrompt';
+
 
 export interface Course {
-    id: number;
-    name: string;
-    description: string;
-    studentsEnrolled: number;
-    highestScore: number;
-    highestScorer: string;
-    content: string;
+    _id: string;
+    title: string;
+    courseKey: string;
+    details: string;
 }
 
 export interface ISidebarItem {
     name: "Account" | "Logout" | "MyCourses" | "Dashboard";
 }
 
-const details= "SER 517: Software Factory Capstone (2024 Spring)\n" +
-    "Welcome to SER 517!\n" +
-    "\n" +
-    "Course Instructor:\n" +
-    "\n" +
-    " Dr. Nouh Alhindawi,  nalhinda@asu.edu\n" +
-    "\n" +
-    "Office Hours: Tuesdays and Thursdays 11:00 - 12:00 - or by appointment\n" +
-    "\n" +
-    "Zoom Link: https://asu.zoom.us/j/4154409963Links to an external site. \n" +
-    "\n" +
-    " \n" +
-    "\n" +
-    "Course TA : James Smith , jsmit106@asu.edu - Office Hours: Mondays and Wednesdays 1:00p - 2:00p (https://asu.zoom.us/my/jsmit106Links to an external site.)\n" +
-    "\n" +
-    "Course Grade : Anmol Girish More, amore9@asu.edu \n" +
-    "\n" +
-    "Course Grade : Smit Ashokbhai Jasani,   sjasani2@asu.edu\n" +
-    "\n" +
-    " \n" +
-    "\n" +
-    "Make sure to review the course Syllabus for further details and information.\n" +
-    "The course content will be added to the Modules section.\n" +
-    "\n" +
-    "I'm looking forward to meeting you all in class.";
+
 
 const Dashboard: React.FC = () => {
-    const coursesData: Course[] = [
-        { id: 1, name: 'Course 1', description: 'Software Agility', studentsEnrolled: 20, highestScore: 95, highestScorer: 'Student A', content:details},
-        { id: 2, name: 'Course 2', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details },
-        { id: 3, name: 'Course 3', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details },
-        { id: 4, name: 'Course 4', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details },
-        { id: 5, name: 'Course 5', description: 'Software Design', studentsEnrolled: 15, highestScore: 90, highestScorer: 'Student B', content:details }
-    ];
+    
+    // interface Course {
+    //     _id: string;
+    //     title: string;
+    //     courseKey: string;
+
+    // };
+    const [courses, setCourses] = useState<Course[]>([]);
+    useEffect(() => {
+    const getCourses = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/coursesById', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: "include",
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch courses');
+            }
+            const res: Course[] = await response.json();
+            console.log("Fetched courses:", res);
+            setCourses(res);
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+        }
+    };
+    getCourses();
+}, []);
+
 
     const sidebarItems: ISidebarItem[] = [
         { name: "Account" },
@@ -68,7 +69,7 @@ const Dashboard: React.FC = () => {
     ]
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
-    const [selectedCourse, setSelectedCourse] = useState<string>('');
+    const [selectedCourse, setSelectedCourse] = useState<string>();
     const [selectedItem, setSelectedItem] = useState<string>('Home');
     const navigate = useNavigate();
 
@@ -76,12 +77,17 @@ const Dashboard: React.FC = () => {
         setSidebarOpen(false);
     };
 
-    const handleCourseClick = (description: string) => {
-        setSelectedCourse(description);
+    const handleCourseClick = (_id: string) => {
+        setSelectedCourse(_id);
         setSelectedItem('Home');
     };
 
-    const menuItems = ['Home', 'Tasks', 'LeaderBoard', 'BuyItems'];
+    const handleCourseCreate = () => {
+        setSelectedItem('CreateCourse');
+        setSelectedCourse('');
+    };
+
+    const menuItems = ['Home', 'Tasks', 'LeaderBoard', 'BuyItems', 'Delete'];
 
     const handleItemClick = (item: string) => {
         setSelectedItem(item);
@@ -93,7 +99,14 @@ const Dashboard: React.FC = () => {
                 setSelectedComponent(<div>Account Component</div>);
                 break;
             case 'MyCourses':
-                setSelectedComponent(<CoursesSidebar onClose={handleCloseSidebar} courses={coursesData} onCourseClick={handleCourseClick}/>);
+                setSelectedComponent(
+                <CoursesSidebar 
+                    onClose={handleCloseSidebar} 
+                    courses={courses} 
+                    onCourseClick={handleCourseClick}
+                    setComponent={handleCourseCreate}
+                    />
+                );
                 setSidebarOpen(!isSidebarOpen);
                 break;
             case 'Logout':
@@ -125,26 +138,32 @@ const Dashboard: React.FC = () => {
             )}
             <div className="flex flex-1 p-10 flex-col">
             {selectedCourse ? (<div>
-                    <p className='text-2xl'>{selectedCourse}</p>
+                    <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
                 <hr/>
                 <div className='main-content'>
                     <div>
                         {menuItems.map((item, index) => <div className='text-1xl custom-styling' onClick={() => handleItemClick(item)}>{item}</div>)}
                     </div>
                     <div className='detail-container'>
-                    {selectedItem === 'Home' && <CourseDetailPage />}
+                    {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]}/>}
                     {selectedItem === 'LeaderBoard' && <Leaderboard />}
-                    {selectedItem === 'Tasks' && <Tasks />}
+                    {selectedItem === 'Tasks' && <Tasks courseId = {selectedCourse}/>}
                     {selectedItem === 'BuyItems' && <Items />}
+                    {selectedItem === 'Delete' && <DeletePrompt/>}
+                    {/* {selectedItem === 'CreateCourse' && <CreateCourse/>} */}
                     </div>
                 </div>
                
-            </div>) : (<div>
+            </div>) : (
+            selectedItem === 'CreateCourse' ? (<CreateCourse/>) : 
+            (<div>
                 <p className="text-3xl">Dashboard</p>
                 <div className='w-full flex flex-wrap mt-10'>
-                    {coursesData.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
+                    {courses.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
                 </div>
-            </div>) }
+            </div>
+            )
+        ) }
             </div>
             {/* <Routes>
                 <Route path="/dashboard/home" element={<Outlet />} />

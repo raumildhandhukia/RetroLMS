@@ -23,6 +23,9 @@ const courseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  details: {
+    type: String,
+  },
 });
 
 const Course = mongoose.model("Course", courseSchema);

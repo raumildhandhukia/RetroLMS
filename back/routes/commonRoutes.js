@@ -26,8 +26,7 @@ router.get("/leaderboard", (req, res) => {
 
 // =============== User Profile routes =============== //
 
-router.get('/allusers', userController.getAllUsers);
-
+router.get("/allusers", userController.getAllUsers);
 
 router.get("/profile", async (req, res) => {
   try {
@@ -49,20 +48,34 @@ router.get("/profile", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
-
-
-router.post("/createcourse", middleware(['instructor','admin']), courseController.createCourse);
+router.post(
+  "/createcourse",
+  middleware(["instructor", "admin"]),
+  courseController.createCourse
+);
+router.post(
+  "/editCourse",
+  middleware(["instructor", "admin"]),
+  courseController.editCourse
+);
 
 router.get("/coursesById", courseController.getCourseByUserId);
 
-router.get("/getAllCourses",courseController.getAllCourses)
+router.get("/getAllCourses", courseController.getAllCourses);
 
 // Route to add a course to the student
-router.post("/enrollstudent",middleware(['student']),courseController.enrollCourse)
+router.post(
+  "/enrollstudent",
+  middleware(["student"]),
+  courseController.enrollCourse
+);
 
 //Method to delete the course and also to remove it from the enrolledCourses array of all students.
-router.delete("/courses", middleware(['admin', 'instructor']),courseController.deleteCourse);
+router.delete(
+  "/courses",
+  middleware(["admin", "instructor"]),
+  courseController.deleteCourse
+);
 
 //Method to get Students enrolled in given course
 router.get('/course/:courseId', middleware(['student', 'instructor']), courseController.getStudentsByCourseId);
@@ -83,21 +96,38 @@ router.put("/task/update/:id", taskController.updateTask);
 // Create a task
 router.post("/task/create", taskController.addTask);
 
+// Get Tasks By Course ID ()
+router.post("/task/getTasksByCourseId", taskController.getTaskByCourseId);
 
 // ======================= Routes for Items and Shop ====================== //
 
 // Route to create a new item
-router.post('/createitem', middleware(['admin', 'instructor']), itemController.createItem);
+router.post(
+  "/createitem",
+  middleware(["admin", "instructor"]),
+  itemController.createItem
+);
 
 // Route to update an item by ID
-router.patch('/items/:itemId',middleware(['admin', 'instructor']), itemController.updateItem);
+router.patch(
+  "/items/:itemId",
+  middleware(["admin", "instructor"]),
+  itemController.updateItem
+);
 
 // Route to get all items for a given course ID
-router.get('/items/course/:courseId', middleware(['admin', 'instructor']), itemController.getItemsByCourse);
+router.get(
+  "/items/course/:courseId",
+  middleware(["admin", "instructor"]),
+  itemController.getItemsByCourse
+);
 
 // Route to get a single item by ID (assuming the filter by course ID is handled internally based on user's login and permissions)
-router.get('/items/:itemId', middleware(['admin', 'instructor']), itemController.getSingleItem);
-
+router.get(
+  "/items/:itemId",
+  middleware(["admin", "instructor"]),
+  itemController.getSingleItem
+);
 
 // ======================= Routes for Submission ====================== //
 

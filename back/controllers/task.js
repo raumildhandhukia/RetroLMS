@@ -8,7 +8,7 @@ const Course = require("../models/courseModel");
 exports.addTask = async (req, res) => {
   try {
     if (!req.body) {
-      return res.status(500).json({ sendMsg: "Need more informations" });
+      return res.status(500).json({ sendMsg: "Need more information" });
     }
     const taskObj = {
       title: req.body.title,
@@ -123,7 +123,7 @@ exports.getTaskById = async (req, res) => {
   }
 };
 
-exports.getTaskBycourseId = async (req, res) => {
+exports.getTaskByCourseId = async (req, res) => {
   try {
     const tasks = await Task.find({ courseId: req.body.courseId });
     if (tasks) {
