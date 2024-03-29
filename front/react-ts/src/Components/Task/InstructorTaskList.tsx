@@ -2,8 +2,9 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import 'nes.css/css/nes.min.css';
 import "./TaskList.css";
-import { Edit } from 'lucide-react';
+import {Delete, Edit} from 'lucide-react';
 import EightBitButton from '../Buttons/EightBitButton';
+import DeletePrompt from "../Dashboard/DeletePrompt";
 
 interface Task {
     _id: string;
@@ -17,8 +18,9 @@ interface Task {
 interface TaskListProps {
     tasks: Task[];
     courseName: string;
+    courseId: string;
 }
-const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName }) => {
+const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName, courseId }) => {
     const navigate = useNavigate();
     const handleEditClick = (task: Task, event: React.MouseEvent) => {
         event.stopPropagation(); // Prevent triggering click events on parent elements
@@ -29,10 +31,32 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName }) => {
         // Then handle editing task logic
         handleEditTask(task._id);
     };
+    const handleDeleteClick = (task: Task, event: React.MouseEvent) => {
+        event.stopPropagation(); // Prevent triggering click events on parent elements
+        handleDeleteTask(task._id);
+    };
     const navigateToTaskDescription =( task: Task) => {
         navigate('/task', {state: {task}});
     };
+    const handleDeleteTask = async (taskId: string) => {
+        try {
+            const response = await fetch("http://localhost:8080/task/delete/"+taskId, {
+                method: "DELETE",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
 
+            if (response.ok) {
+                window.location.reload();
+                console.log("Task was Deleted.")
+            }
+
+        } catch (error) {
+            console.error("Error deleting task", error);
+        }
+    };
     const handleEditTask = async (taskId: string) => {
         try {
             const response = await fetch("http://localhost:8080/task/updateTask?taskId={taskId}", {
@@ -67,6 +91,7 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName }) => {
                             <th className="task-title">Task Title</th>
                             <th className="task-deadline">Task Deadline</th>
                             <th className="price">Edit</th>
+                            <th className="delete">Delete</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -79,6 +104,11 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName }) => {
                                         <Edit />
                                     </button>
                                 </td>
+                                <td>
+                                    <button onClick={(event) => handleDeleteClick(task, event)}>
+                                        <Delete />
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                         </tbody>
@@ -88,7 +118,7 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName }) => {
                     <EightBitButton
                         classNames="bg-[#A52A2A] my-5"
                         onClick={() => {
-                            navigate('/tasks/add')
+                            navigate('/task/create', { state: {courseId:{courseId} } })
                         }}
                     >
                         <p className="m-0 text-white">Add Task</p>

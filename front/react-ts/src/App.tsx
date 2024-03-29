@@ -29,15 +29,14 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard/*" element={<Dashboard />} />
             <Route path="/courses" element={<StudentPage />} />
-            <Route path="/tasks" element={<Tasks />} />
+            {/*<Route path="/tasks" element={<Tasks />} />*/}
             <Route path="/task" element={<Task />} />
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
             {/* <Route path="/course/:id" element={<CourseDetailPage/>} /> */}
             <Route path="/items" element={<Items />} />
             <Route path="/items/add" element={<AddItem />} />
             <Route path="/item" element={<Item />} />
-            <Route path="/task" element={<Tasks />} />
-            <Route path="/tasks/add" element={<AddTask />} />
+            <Route path="/task/create" element={<AddTask />} />
             <Route path="/task" element={<Task />} />
             <Route path="/leaderboard" element={<LeaderboardList students={studentsData.students}/>} />
         </Routes>

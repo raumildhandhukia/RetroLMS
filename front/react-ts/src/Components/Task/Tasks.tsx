@@ -4,6 +4,7 @@ import "nes.css/css/nes.min.css";
 import TaskList from "./TaskList";
 import InstructorItemList from "../Shop/InstructorItemList";
 import InstructorTaskList from "./InstructorTaskList";
+import {Course} from "../Dashboard";
 //import tasksData from './tasks.json';
 
 interface Task {
@@ -14,14 +15,18 @@ interface Task {
   point: number;
   course: string;
 }
+interface TaskProps {
+  courseId: string;
+}
 
-const Tasks: React.FC = () => {
+const Tasks: React.FC<TaskProps> = ({courseId}) => {
   var data = require('./tasks.json');
   const [tasks, setTasks] = useState<Task[]>([]);
   const [courseName, setCourseName] = useState<string>('SER517');
   const [role, setRole] = useState<string>('');
   const navigate = useNavigate();
   useEffect(() => {
+    console.log(courseId);
     const checkProfile = async () => {
       try {
         const response = await fetch("http://localhost:8080/profile", {
@@ -46,20 +51,14 @@ const Tasks: React.FC = () => {
     // Function to fetch tasks from the server
     const fetchTasks = async () => {
       try {
-
-        //fetch course by calling '/coursesById' and use this courseID to fetch all the Items
-        const courseId = await fetch('http://localhost:8080/coursesById', {
-          method: 'GET',
+        const response = await fetch(`http://localhost:8080/task/getTasksByCourseId`, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-        })
-        //const courseName = '65d7c8254df4ea811a701b00'; // Replace with the actual courseName
-        const response = await fetch(`http://localhost:8080//task/get/${courseId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          body:JSON.stringify({
+            courseId
+          })
         });
 
         if (!response.ok) {
@@ -67,8 +66,6 @@ const Tasks: React.FC = () => {
         }
 
         setTasks(await response.json()); //await response.json();
-        //const updatedTasks = tasks.map(task => ({ ...task, course: courseName}));
-        //setTasks(updatedTasks); // Update tasks state with the received data
       } catch (error) {
         console.error('Error fetching items:', error);
         // You can handle the error appropriately (e.g., show an error message)
@@ -78,45 +75,10 @@ const Tasks: React.FC = () => {
     // Call the fetchTasks function when the component mounts
     fetchTasks();
   }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
-
-
-  /*useEffect(() => {
-    // Function to fetch tasks from the server
-    const fetchTasks = async () => {
-      try {
-        const courseId = '65d7c8254df4ea811a701b00'; // Replace with the actual courseId
-        const response = await fetch('http://localhost:8080/task/all', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ courseId }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch tasks');
-        }
-
-        const tasks: Task[] = await response.json();
-        const updatedTasks = tasks.map(task => ({ ...task, course: courseName }));
-        console.log(data.tasks);
-        setTasks(data.tasks);// Update tasks state with the received data
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-        // You can handle the error appropriately (e.g., show an error message)
-      }
-    };
-
-    // Call the fetchTasks function when the component mounts
-    fetchTasks();
-  }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
-
-  //setTasks(data.tasks);
-   */
   return (
       role === "student" ?
-          <TaskList tasks={tasks} courseName={courseName} /> :
-    <InstructorTaskList tasks={tasks} courseName={courseName} />
+          <TaskList tasks={tasks} courseName={courseName} courseId = {courseId}/> :
+    <InstructorTaskList tasks={tasks} courseName={courseName} courseId = {courseId}/>
   );
 };
 
