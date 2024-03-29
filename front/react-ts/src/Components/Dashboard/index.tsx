@@ -147,7 +147,7 @@ const Dashboard: React.FC = () => {
                     <div className='detail-container'>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]}/>}
                     {selectedItem === 'LeaderBoard' && <Leaderboard />}
-                    {selectedItem === 'Tasks' && <Tasks />}
+                    {selectedItem === 'Tasks' && <Tasks courseId = {selectedCourse}/>}
                     {selectedItem === 'BuyItems' && <Items />}
                     {selectedItem === 'Delete' && <DeletePrompt/>}
                     {/* {selectedItem === 'CreateCourse' && <CreateCourse/>} */}
