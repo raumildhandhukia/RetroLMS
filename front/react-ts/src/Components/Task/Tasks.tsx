@@ -21,7 +21,7 @@ const Tasks: React.FC = () => {
     // Function to fetch tasks from the server
     const fetchTasks = async () => {
       try {
-        const courseId = '65d7c8254df4ea811a701b00'; // Replace with the actual courseId
+        const courseId = '65ee276576ac94ef4a77bdba'; // Replace with the actual courseId
         const response = await fetch('http://localhost:8080/task/all', {
           method: 'POST',
           headers: {

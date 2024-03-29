@@ -5,9 +5,9 @@ import "./ItemList.css";
 
 interface Item{
     _id: string;
-    title: string;
-    description: string;
-    price: number;
+    itemName: string;
+    itemDescription: string;
+    itemPrice: number;
     courseName: string;
 
 }
@@ -40,8 +40,8 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
                   {items.map((item) => (
                     <tr key={item._id} className="item-item">
                       {/* Use onClick to call navigateToTaskDescription on click */}
-                      <td onClick={() => navigateToItemDescription(item)}>{item.title}</td>
-                      <td>{item.price}</td>
+                      <td onClick={() => navigateToItemDescription(item)}>{item.itemName}</td>
+                      <td>{item.itemPrice}</td>
                     </tr>
                   ))}
                 </tbody>

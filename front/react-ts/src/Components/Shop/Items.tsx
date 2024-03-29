@@ -7,9 +7,9 @@ import InstructorItemList from "./InstructorItemList";
 
 interface Item{
     _id: string;
-    title: string;
-    description: string;
-    price: number;
+    itemName: string;
+    itemDescription: string;
+    itemPrice: number;
     courseName: string;
 
 }
@@ -47,28 +47,31 @@ const Items: React.FC = () => {
         try {
 
           //fetch course by calling '/coursesById' and use this courseID to fetch all the Items
-          const courseId = await fetch('http://localhost:8080/coursesById', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
+          const courseId = '65ee276576ac94ef4a77bdba'
+          // await fetch('http://localhost:8080/coursesById', {
+          //   method: 'GET',
+          //   headers: {
+          //     'Content-Type': 'application/json',
+          //   },
+          // })
           //const courseName = '65d7c8254df4ea811a701b00'; // Replace with the actual courseName
           const response = await fetch(`http://localhost:8080/items/course/${courseId}`, {
             method: 'GET',
+            credentials: "include",
             headers: {
               'Content-Type': 'application/json',
             },
+
           });
   
           if (!response.ok) {
             throw new Error('Failed to fetch items');
           }
-
-          //const items: Item[] = response; //await response.json();
-
-          const updatedItems = items.map(item => ({ ...item, course: courseName}));
-          setItems(updatedItems); // Update tasks state with the received data
+          
+         const items : Item[] = await response.json();
+         console.log(items)
+         const updatedItems = items.map(item => ({ ...item, course: courseName}));
+         setItems(updatedItems); // Update tasks state with the received data
         } catch (error) {
           console.error('Error fetching items:', error);
           // You can handle the error appropriately (e.g., show an error message)
