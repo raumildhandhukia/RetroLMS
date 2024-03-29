@@ -27,18 +27,22 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
 
     const handleEditItem = async (itemId: string) => {
       try {
-        const response = await fetch("http://localhost:8080/item/updateItem?itemId=123", {
-          method: "POST",
+        const response = await fetch(`http://localhost:8080/items/6603712406751a37c0a4dcb5`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
-            _id: itemId,
-            itemName: "New Item",
+            itemName: "New Item Frontend",
             itemDescription: "This is the updated item",
             itemPrice: 300,
-            courseId: "SER 517"
-          })
+          }),
+          credentials: "include"
         });
 
         if (response.ok) {
+          const body = await response.json()
+          console.log(body)
           console.log("Item was updated.")
         }
 
@@ -62,14 +66,17 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
-                    <tr key={item._id} className="item-item">
-                      {/* Use onClick to call navigateToTaskDescription on click */}
-                      <td onClick={() => navigateToItemDescription(item)}>{item.title}</td>
-                      <td>{item.price}</td>
-                      <td>{<Edit onClick={() => handleEditItem(item._id)} />}</td>
-                    </tr>
-                  ))}
+                  {items.map((item) => {
+                    console.log(item)
+                    return(
+                      <tr key={item._id} className="item-item">
+                        {/* Use onClick to call navigateToTaskDescription on click */}
+                        <td onClick={() => navigateToItemDescription(item)}>{item.title}</td>
+                        <td>{item.price}</td>
+                        <td>{<Edit onClick={() => handleEditItem(item._id)} />}</td>
+                      </tr>
+                    )}
+                  )}
                 </tbody>
               </table>
             </div>
