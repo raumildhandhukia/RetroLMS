@@ -13,7 +13,7 @@ import Items from '../Shop/Items';
 import CreateCourse from './CreateCourse';
 import { ok } from 'assert';
 import DeletePrompt from './DeletePrompt';
-
+import GradingSubmission from '../GradingSubmission/GradingSubmission';
 
 export interface Course {
     _id: string;
@@ -150,6 +150,7 @@ const Dashboard: React.FC = () => {
                     {selectedItem === 'Tasks' && <Tasks />}
                     {selectedItem === 'BuyItems' && <Items />}
                     {selectedItem === 'Delete' && <DeletePrompt/>}
+                    {selectedItem === 'GradingSubmission' && <GradingSubmission />}
                     {/* {selectedItem === 'CreateCourse' && <CreateCourse/>} */}
                     </div>
                 </div>
