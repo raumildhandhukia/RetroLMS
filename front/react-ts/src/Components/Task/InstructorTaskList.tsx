@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 import 'nes.css/css/nes.min.css';
 import "./TaskList.css";
 import {Delete, Edit} from 'lucide-react';
 import EightBitButton from '../Buttons/EightBitButton';
-import DeletePrompt from "../Dashboard/DeletePrompt";
 
 interface Task {
     _id: string;
@@ -118,7 +117,7 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName, course
                     <EightBitButton
                         classNames="bg-[#A52A2A] my-5"
                         onClick={() => {
-                            navigate('/task/create', { state: {courseId:{courseId} } })
+                            navigate('/task/create', { state: {courseId:courseId } })
                         }}
                     >
                         <p className="m-0 text-white">Add Task</p>
