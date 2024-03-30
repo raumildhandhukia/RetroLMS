@@ -6,32 +6,10 @@ import { ISidebarItem } from '.'
   
   interface SidebarItemProps extends ISidebarItem {
     onClick: (name: string) => void;
+    role:string
   }
 
-  const SidebarItem: React.FC<SidebarItemProps> = ({ name, onClick }) => {
-    
-    const [role, setRole] = useState<string>('');
-    useEffect(() => {
-      const checkProfile = async () => {
-        try {
-          const response = await fetch("http://localhost:8080/profile", {
-            method: "GET",
-            credentials: "include", // Include cookies in the request
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setRole(data.role);
-          } else {
-            console.log("User not found");
-          }
-        } catch (error) {
-          console.error("Error checking for profile", error);
-        }
-      };
-  
-      checkProfile();
-    }, []);
-
+  const SidebarItem: React.FC<SidebarItemProps> = ({ name, onClick, role}) => {
     const sidebarItemsMapper = {
       Account: <CircleUser />,
       Dashboard: <LayoutDashboard />,
