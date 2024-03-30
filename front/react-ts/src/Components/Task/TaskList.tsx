@@ -15,14 +15,15 @@ interface Task {
 interface TaskListProps {
   tasks: Task[];
   courseName: string;
+  courseId: string;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, courseName }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId}) => {
   const navigate = useNavigate();
 
   const navigateToTaskDescription = (task: Task) => {
     // Use the navigate function to navigate to the task description page
-    navigate('/task', { state: { task } });
+    navigate('/task', { state: { task, courseId } });
   };
 
   return (

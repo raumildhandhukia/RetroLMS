@@ -204,5 +204,22 @@ const courseController = {
       res.status(500).json({ message: err.message });
     }
   },
+
+  getStudentsByCourseId: async (req, res) => {
+    try {
+      if(!req.params){
+        res.status(422).json({ message: 'Missing Parameter' });
+      }
+      const courseId = req.params.courseId;
+      const students = await Student.find({ enrolledCourses: courseId }).populate('userId');
+      if (!students.length) {
+        return res.status(404).json({ message: 'No students found enrolled in this course' });
+      }
+      res.status(200).json(students.map(student => student.userId.profile));
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
 };
 module.exports = courseController;
