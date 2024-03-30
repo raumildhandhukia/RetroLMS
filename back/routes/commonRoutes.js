@@ -13,7 +13,8 @@ const itemController =  require("../controllers/item");
 const userController = require("../controllers/user")
 const submissionController = require("../controllers/submission")
 const middleware = require("../middleware/authMiddleware")
-const multer = require("multer")
+const multer = require("multer");
+const onlyRolesMiddleware = require("../middleware/onlyRolesMiddleware");
 const upload = multer({ dest: 'uploads/' })
 
 // Route for all users to view the leaderboard
@@ -50,7 +51,7 @@ router.get("/profile", async (req, res) => {
 });
 router.post(
   "/createcourse",
-  middleware(["instructor", "admin"]),
+  onlyRolesMiddleware(["instructor", "admin"]),
   courseController.createCourse
 );
 router.post(
