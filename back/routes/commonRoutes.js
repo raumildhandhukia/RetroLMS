@@ -9,10 +9,12 @@ const JWT = require("jsonwebtoken");
 router.use(cookieParser());
 const taskController = require("../controllers/task");
 const courseController = require("../controllers/course");
-const itemController = require("../controllers/item");
-const userController = require("../controllers/user");
-const submissionController = require("../controllers/submission");
-const middleware = require("../middleware/authMiddleware");
+const itemController =  require("../controllers/item");
+const userController = require("../controllers/user")
+const submissionController = require("../controllers/submission")
+const middleware = require("../middleware/authMiddleware")
+const multer = require("multer")
+const upload = multer({ dest: 'uploads/' })
 
 // Route for all users to view the leaderboard
 router.get("/leaderboard", (req, res) => {
@@ -75,6 +77,9 @@ router.delete(
   courseController.deleteCourse
 );
 
+//Method to get Students enrolled in given course
+router.get('/course/:courseId', middleware(['student', 'instructor']), courseController.getStudentsByCourseId);
+
 // ================= Routes for Task =================== //
 
 // Get all tasks
@@ -126,16 +131,8 @@ router.get(
 
 // ======================= Routes for Submission ====================== //
 
-router.post(
-  "/submit/:courseId",
-  middleware(["student"]),
-  submissionController.createSubmission
-);
+router.post('/submit/:courseId', middleware(['instructor']), upload.single('file'),submissionController.createSubmission );
 
-router.post(
-  "grading/:courseId/:taskId",
-  middleware(["instructor"]),
-  submissionController.gradingTask
-);
+router.post('grading/:courseId/:taskId', middleware(['instructor']), submissionController.gradingTask );
 
 module.exports = router;
