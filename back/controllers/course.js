@@ -7,19 +7,20 @@ const JWT = require("jsonwebtoken");
 const courseController = {
   createCourse: async (req, res) => {
     try {
-      const { title, instructorId, courseKey } = req.body;
+      jwt = req.cookies && req.cookies.jwt;
+      const decoded = JWT.decode(jwt);
+      const username = decoded.username;
+      const user = await User.findOne({ username });
+      const ins = await Instructor.findOne({ userId: user._id });
+      const instructorId = ins.id;
+      const { title, courseKey, details } = req.body;
 
       // Check if the course already exists
       let existingCourse = await Course.findOne({ title });
 
       if (existingCourse) {
-        // Update existing course
-        existingCourse.instructorId = instructorId;
-        existingCourse.courseKey = courseKey;
-        await existingCourse.save();
-
-        return res.status(200).json({
-          message: `Course '${title}' updated successfully`,
+        return res.status(400).json({
+          message: `Course '${title}' already exists.`,
           course: existingCourse,
         });
       }
@@ -29,8 +30,9 @@ const courseController = {
         title,
         instructorId,
         courseKey,
+        details,
       });
-      console.log(newCourse)
+      console.log(newCourse);
       // Save the new course to the database
       await newCourse.save();
 
@@ -43,6 +45,44 @@ const courseController = {
       res.status(500).json({
         message: "Internal Server Error",
       });
+    }
+  },
+
+  editCourse: async (req, res) => {
+    try {
+      // Authorize user
+      const jwt = req.cookies && req.cookies.jwt;
+      const decoded = JWT.decode(jwt);
+      const username = decoded.username;
+      const user = await User.findOne({ username });
+
+      const { courseId, title, courseKey, details } = req.body;
+      // Check if there's another course with the same title
+      const existingTitleCourse = await Course.findOne({ title });
+      if (existingTitleCourse && existingTitleCourse._id != courseId) {
+        return res
+          .status(400)
+          .json({
+            error: "Another course with the same title already exists.",
+          });
+      }
+
+      // Check if there's another course with the same courseKey
+      const existingKeyCourse = await Course.findOne({ courseKey });
+      if (existingKeyCourse && existingKeyCourse._id != courseId) {
+        return res
+          .status(400)
+          .json({
+            error: "Another course with the same course key already exists.",
+          });
+      }
+
+      // Update the course
+      await Course.findByIdAndUpdate(courseId, { title, courseKey, details });
+      res.status(200).json({ message: "Course updated successfully." });
+    } catch (err) {
+      console.error("Error updating course:", err);
+      res.status(500).json({ error: "Internal server error" });
     }
   },
 
@@ -67,12 +107,10 @@ const courseController = {
         { new: true }
       );
 
-      res
-        .status(200)
-        .json({
-          message: "Course added successfully",
-          student: updatedStudent,
-        });
+      res.status(200).json({
+        message: "Course added successfully",
+        student: updatedStudent,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -82,7 +120,6 @@ const courseController = {
   deleteCourse: async (req, res) => {
     try {
       const { title, instructorId, courseKey } = req.body;
-
 
       // Find the course to be deleted based on the input
       let query = {};
@@ -120,19 +157,39 @@ const courseController = {
       const decoded = JWT.decode(jwt);
       const username = decoded.username;
       const user = await User.findOne({ username });
+      let courses;
       if (user.role === "student") {
         // If the user is a student, fetch enrolled courses
         const student = await Student.findOne({
           userId: user.id,
         }).populate("enrolledCourses");
-        return res.status(200).json({ courses: student.enrolledCourses });
+
+        courses = student.enrolledCourses;
       } else if (user.role === "instructor") {
         // If the user is an instructor, fetch courses based on instructorId
-        const courses = await Course.find({ instructorId: user._id });
-        return res.status(200).json({ courses });
+        const ins = await Instructor.findOne({ userId: user.id });
+        courses = await Course.find({ instructorId: ins.id });
       } else {
         return res.status(400).json({ message: "Invalid user role" });
       }
+      // const coursesTS = {
+      //   _id: courses._id,
+      //   title: courses.title,
+      //   courseKey: courses.courseKey,
+      // };
+
+      const coursesTS = courses.map((course) =>
+        Object.assign(
+          {},
+          {
+            _id: course._id,
+            title: course.title,
+            courseKey: course.courseKey,
+            details: course.details,
+          }
+        )
+      );
+      return res.status(200).json(coursesTS);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -141,12 +198,11 @@ const courseController = {
   getAllCourses: async (req, res) => {
     try {
       // If you want to populate instructorId or task fields to get detailed information, you can use .populate()
-      const courses = await Course.find().populate('instructorId');
+      const courses = await Course.find().populate("instructorId");
       res.status(200).json(courses);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }
-
+  },
 };
 module.exports = courseController;
