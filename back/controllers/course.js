@@ -5,46 +5,45 @@ const Instructor = require("../models/instructorModel");
 const JWT = require("jsonwebtoken");
 
 const courseController = {
-  createCourse: async (req, res) => {
+  createCourse :async (req, res) => {
     try {
-      jwt = req.cookies && req.cookies.jwt;
-      const decoded = JWT.decode(jwt);
-      const username = decoded.username;
-      const user = await User.findOne({ username });
-      const ins = await Instructor.findOne({ userId: user._id });
-      const instructorId = ins.id;
-      const { title, courseKey, details } = req.body;
-
-      // Check if the course already exists
-      let existingCourse = await Course.findOne({ title });
-
-      if (existingCourse) {
-        return res.status(400).json({
-          message: `Course '${title}' already exists.`,
-          course: existingCourse,
+      const { title, instructorId, courseKey } = req.body;
+      let course = await Course.findOne({ title });
+  
+      if (course) {
+        // Course exists, update it
+        course.instructorId = instructorId;
+        course.courseKey = courseKey;
+        await course.save();
+  
+        // No need to update the instructor here since the course already exists
+      } else {
+        // Create a new course
+        course = new Course({
+          title,
+          instructorId,
+          courseKey,
         });
+        await course.save();
+        // Attempt to update the instructor's coursesTeaching array
+        const instructor = await Instructor.findOne({ userId: instructorId });
+        if (!instructor) {
+          // Instructor not found, roll back course creation
+          await Course.findByIdAndDelete(course._id);
+          return res.status(404).json({ message: 'Instructor not found' });
+        }
+  
+        instructor.coursesTeaching.push(course._id);
+        await instructor.save();
       }
-
-      // Create a new course if it doesn't exist
-      const newCourse = new Course({
-        title,
-        instructorId,
-        courseKey,
-        details,
-      });
-      console.log(newCourse);
-      // Save the new course to the database
-      await newCourse.save();
-
+  
       res.status(201).json({
         message: `Course '${title}' created successfully`,
-        course: newCourse,
+        course,
       });
     } catch (error) {
-      console.error("Error updating/creating course:", error);
-      res.status(500).json({
-        message: "Internal Server Error",
-      });
+      console.error("Error creating course:", error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   },
 
