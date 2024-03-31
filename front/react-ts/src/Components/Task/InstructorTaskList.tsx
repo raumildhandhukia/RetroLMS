@@ -46,7 +46,6 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName, course
                     'Content-Type': 'application/json'
                 },
             });
-
             if (response.ok) {
                 window.location.reload();
                 console.log("Task was Deleted.")
@@ -69,9 +68,10 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName, course
                     courseId: "SER 517"
                 })
             });
-
             if (response.ok) {
+                window.location.reload();
                 console.log("Task was updated.")
+
             }
 
         } catch (error) {
@@ -89,8 +89,7 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName, course
                         <tr>
                             <th className="task-title">Task Title</th>
                             <th className="task-deadline">Task Deadline</th>
-                            <th className="price">Edit</th>
-                            <th className="delete">Delete</th>
+                            <th className="delete"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -99,11 +98,9 @@ const InstructorTaskList: React.FC<TaskListProps> = ({ tasks, courseName, course
                                 <td>{task.title}</td>
                                 <td>{task.deadline}</td>
                                 <td>
-                                    <button onClick={(event) => handleEditClick(task, event)}>
+                                    <button style={{ marginRight: "50px" }} onClick={(event) => handleEditClick(task, event)}>
                                         <Edit />
                                     </button>
-                                </td>
-                                <td>
                                     <button onClick={(event) => handleDeleteClick(task, event)}>
                                         <Delete />
                                     </button>

@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import 'nes.css/css/nes.min.css';
-import {useLocation} from "react-router-dom";
+import {useLocation,useNavigate} from "react-router-dom";
 
 const AddTask: React.FC<{}> = () => {
     const [title, setTitle] = useState('');
@@ -9,17 +9,17 @@ const AddTask: React.FC<{}> = () => {
     const [point, setPoint] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
     // Use useLocation to access navigation state
     const location = useLocation();
     // Extract courseId from location state
-    const courseId = location.state;
+    const {courseId} = location.state||{};
     console.log(courseId);
     const handleCreateTask = async () => {
         if (!title || !deadline || !details || !point) {
             setErrorMessage('All fields are required.');
             return;
         }
-
         try {
             setIsLoading(true);
             const response = await fetch('http://localhost:8080/task/create', {
@@ -32,7 +32,7 @@ const AddTask: React.FC<{}> = () => {
                     title, details, point, courseId, deadline
                 })
             });
-
+            navigate('/dashboard', { state: { view: 'Tasks', courseId: 'courseId' } });
             setIsLoading(false);
             if (!response.ok) {
                 const responseData = await response.json();

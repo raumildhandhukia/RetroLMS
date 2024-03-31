@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'nes.css/css/nes.min.css';
 import './TaskDescription.css';
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 
 // Assuming this component is now for editing, not just displaying
 const TaskDescription: React.FC<{}> = () => {
@@ -13,7 +13,6 @@ const TaskDescription: React.FC<{}> = () => {
     const [point, setPoint] = useState(task.point+"");
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
     const handleUpdateTask = async () => {
         if (!title || !deadline || !details || !point) {
             setErrorMessage('All fields are required.');

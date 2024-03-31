@@ -25,15 +25,12 @@
 }
 
 .task-title {
-    width: 35%;
+    width: 40%;
 }
 
 .task-deadline {
-    width: 35%;
-}
-.price {
-    width: 15%;
+    width: 40%;
 }
 .delete{
-    width:15%;
+    width:20%;
 }

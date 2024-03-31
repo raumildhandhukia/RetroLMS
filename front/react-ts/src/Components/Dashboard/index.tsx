@@ -1,17 +1,14 @@
-import React, { JSXElementConstructor, ReactElement, useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, useParams, Routes, Outlet, useNavigate } from 'react-router-dom';
+import React, {useState, useEffect } from 'react';
+import {useNavigate} from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
-import { CircleUser, LogOut } from 'lucide-react';
 import Card from './Card';
 import asulogo from '../../asu.png'
-import {Link} from "react-router-dom";
 import CourseDetailPage from '../../CourseDetailPage';
 import Leaderboard from '../Leaderboard/Leaderboard';
 import Tasks from '../Task/Tasks';
 import Items from '../Shop/Items';
 import CreateCourse from './CreateCourse';
-import { ok } from 'assert';
 import DeletePrompt from './DeletePrompt';
 
 
@@ -122,7 +119,6 @@ const Dashboard: React.FC = () => {
                 break;
         }
     };
-
     return (
         <div className="container flex">
           <div className="w-20 bg-gray-100 h-lvh flex flex-col">
@@ -142,7 +138,7 @@ const Dashboard: React.FC = () => {
                 <hr/>
                 <div className='main-content'>
                     <div>
-                        {menuItems.map((item, index) => <div className='text-1xl custom-styling' onClick={() => handleItemClick(item)}>{item}</div>)}
+                        {menuItems.map((item) => <div className='text-1xl custom-styling' onClick={() => handleItemClick(item)}>{item}</div>)}
                     </div>
                     <div className='detail-container'>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]}/>}
