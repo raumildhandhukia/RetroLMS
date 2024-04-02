@@ -12,10 +12,9 @@ const AddTask: React.FC<{}> = () => {
     // Use useLocation to access navigation state
     const location = useLocation();
     // Extract courseId from location state
-    const courseId = location.state;
-    console.log(courseId);
+    const {courseId} = location.state||{};
     const handleCreateTask = async () => {
-        if (!title || !deadline || !details || !point) {
+        if (!title|| !details || !point) {
             setErrorMessage('All fields are required.');
             return;
         }
@@ -29,10 +28,10 @@ const AddTask: React.FC<{}> = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    title, details, point, courseId, deadline
+                    title, details, point, courseId
                 })
             });
-
+            console.log(response)
             setIsLoading(false);
             if (!response.ok) {
                 const responseData = await response.json();
