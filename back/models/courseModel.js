@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Transaction = require("./transactionModel");
 
 const courseSchema = new mongoose.Schema({
   title: {
@@ -17,6 +18,12 @@ const courseSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Task",
     },
+  ],
+  transaction:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Transaction",
+    }
   ],
   courseKey: {
     // SER517 will be used for capstone project
