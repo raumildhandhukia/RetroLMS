@@ -17,7 +17,7 @@ const AddItem: React.FC<{}> = () => {
     itemDescription: "",
     itemPrice: 0,
     itemExpiry: 0,
-    courseId: ""
+    courseId: "65ee276576ac94ef4a77bdba"
   })
 
   const inputFields: {
@@ -28,7 +28,7 @@ const AddItem: React.FC<{}> = () => {
     {id: "itemName", name: "Item Name" , type: "string"},
     {id: "itemPrice", name: "Item Price" , type: "number"},
     {id: "itemExpiry", name: "Item Expiry" , type: "number"},
-    {id: "courseId", name: "Course ID", type: "string" }
+    // {id: "courseId", name: "Course ID", type: "string" }
   ]
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
@@ -44,6 +44,8 @@ const AddItem: React.FC<{}> = () => {
     })
   }
 
+  console.log(request)
+
   const handleAddItem = async () => {
     try {
       const {
@@ -53,7 +55,7 @@ const AddItem: React.FC<{}> = () => {
         itemExpiry,
         courseId,
       } = request
-      const response = await fetch("http://localhost:8080/item/createItem", {
+      const response = await fetch("http://localhost:8080/createItem", {
         method: "POST",
         body: JSON.stringify({
           itemName,
@@ -61,11 +63,12 @@ const AddItem: React.FC<{}> = () => {
           itemPrice,
           itemExpiry,
           courseId,
-        })
+        }),
+        credentials: 'include'
       });
 
       if (response.ok) {
-        console.log("Item was created.")
+        alert(`Item with ${itemName}, with price ${itemPrice} was added`)
       }
 
     } catch (error) {

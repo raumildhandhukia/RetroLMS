@@ -5,12 +5,14 @@ import "nes.css/css/nes.min.css";
 import ItemList from './ItemList';
 import InstructorItemList from "./InstructorItemList";
 
-interface Item{
+export interface Item {
     _id: string;
     itemName: string;
     itemDescription: string;
     itemPrice: number;
     courseName: string;
+    courseId: string;
+    itemExpiry: number;
 
 }
 
@@ -42,9 +44,10 @@ const Items: React.FC = () => {
     }, []);
   
     useEffect(() => {
-      // Function to fetch tasks from the server
+      // Function to fetch items from the server
       const fetchItems = async () => {
         try {
+
 
           //fetch course by calling '/coursesById' and use this courseID to fetch all the Items
           const courseId = '65ee276576ac94ef4a77bdba'
@@ -75,12 +78,12 @@ const Items: React.FC = () => {
         } catch (error) {
           console.error('Error fetching items:', error);
           // You can handle the error appropriately (e.g., show an error message)
+
         }
       };
   
-      // Call the fetchTasks function when the component mounts
       fetchItems();
-    }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
+    }, []);
   
     return (
       role === "student" ? 

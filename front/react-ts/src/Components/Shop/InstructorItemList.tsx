@@ -4,6 +4,8 @@ import 'nes.css/css/nes.min.css';
 import "./ItemList.css";
 import { Edit } from 'lucide-react';
 import EightBitButton from '../Buttons/EightBitButton';
+import { Item } from './Items';
+
 
 interface Item {
     _id: string;
@@ -13,6 +15,7 @@ interface Item {
     courseName: string;
 
 }
+
 interface ItemListProps {
     items: Item[];
     courseName: string;

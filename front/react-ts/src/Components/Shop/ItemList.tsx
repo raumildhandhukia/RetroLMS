@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import 'nes.css/css/nes.min.css';
 import "./ItemList.css";
+import { Item } from './Items';
+
 
 interface Item{
     _id: string;
@@ -11,6 +13,7 @@ interface Item{
     courseName: string;
 
 }
+
 interface ItemListProps {
     items: Item[];
     courseName: string;
