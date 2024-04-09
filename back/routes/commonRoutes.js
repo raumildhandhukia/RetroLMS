@@ -132,8 +132,8 @@ router.get(
 
 // ======================= Routes for Submission ====================== //
 
-router.post('/submit/:courseId', middleware(['instructor']), upload.single('file'),submissionController.createSubmission );
+router.post('/grading/:courseId', middleware(['instructor']), upload.single('file'),submissionController.gradingMutlipleSubmission );
 
-router.post('grading/:courseId/:taskId', middleware(['instructor']), submissionController.gradingTask );
+router.post('/grading/:courseId/:taskId',  submissionController.gradingSingleSubmission );
 
 module.exports = router;
