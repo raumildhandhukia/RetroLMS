@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import 'nes.css/css/nes.min.css';
 import './TaskList.css';
 import AddTask from './AddTask';
+import TaskDescription from './TaskDesription';
 
 interface Task {
   _id: string;
@@ -33,15 +34,17 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
     updateTasks();
   };
 
+  const onClickBack = () => {
+    setSelectedTask(null);
+    updateTasks();
+  }
+
   const renderTaskDescription = () => {
     if (selectedTask) {
       return (
-        <div>
-          <h2>{selectedTask.title}</h2>
-          <p>Deadline: {selectedTask.deadline}</p>
-          <p>Details: {selectedTask.details}</p>
-          {/* Render any additional information about the task */}
-        </div>
+
+          <TaskDescription selectedTask={selectedTask} onClickBack={onClickBack} updateTasks={updateTasks}/> 
+          
       );
     } else {
       return null;
@@ -50,7 +53,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
 
   return (
     <div className="task-list-container">
-      <div className="nes-container with-title is-centered">
+      {!selectedTask ? (<div className="nes-container with-title is-centered">
         <p className="title">{courseName}</p>
         {createTask ? (
           
@@ -62,14 +65,16 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
               <tr>
                 <th className="task-title">Task Title</th>
                 <th className="task-deadline">Task Deadline</th>
+                <th className="task-points">Task Title</th>
               </tr>
             </thead>
             <tbody>
               {tasks.map((task) => (
-                <tr key={task._id} className="task-item">
+                <tr key={task._id} className="task-item" onClick={() => handleTaskClick(task)}>
                   {/* Use onClick to call handleTaskClick on click */}
-                  <td onClick={() => handleTaskClick(task)}>{task.title}</td>
-                  <td>{task.deadline}</td>
+                  <td >{task.title}</td>
+                  <td >{task.deadline}</td>
+                  <td >{task.point}</td>
                 </tr>
               ))}
             </tbody>
@@ -84,10 +89,14 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
           )
       }
       </div>
-      <div className="task-description">
+      ) :
+      (
+        <div className="task-description">
         {/* Render the task description component conditionally */}
         {renderTaskDescription()}
       </div>
+      )
+    }
     </div>
   );
 };

@@ -86,10 +86,10 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Create a JWT token with user role and expiration time
+    // Create a JWT token with user roe and expiration time
 
     const token = jwt.sign({ username, role: user.role }, secretKey, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     // You may also create a refresh token if needed

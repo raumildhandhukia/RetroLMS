@@ -35,7 +35,7 @@ const AddTask: React.FC<AddTaskProps> = ({showTaskList, courseId, createTask}) =
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    title, details, point, courseId
+                    title, details, point, courseId, deadline
                 })
             });
             console.log(response)
