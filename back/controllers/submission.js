@@ -11,7 +11,7 @@ const fs = require("fs");
 const xlsx = require("xlsx");
 
 // Create a new submission
-exports.createSubmission = async (req, res) => {
+exports.gradingMutlipleSubmission = async (req, res) => {
   try {
     if (req.file) {
       const workbook = xlsx.readFile(req.file.path);
@@ -30,7 +30,7 @@ exports.createSubmission = async (req, res) => {
           points_recevied: item.mark,
           current_state: true,
         };
-        console.log(subBody)
+        console.log(subBody);
         const submission = new Submission(subBody);
 
         await submission.save();
