@@ -33,7 +33,7 @@ const CreateCourse: React.FC = () => {
 
       if (!response.ok) {
         const responseData = await response.json();
-        throw new Error(responseData.message || 'Something went wrong!');
+       throw new Error(responseData.message || 'Something went wrong!');
       }
 
       // Reset input fields after successful creation

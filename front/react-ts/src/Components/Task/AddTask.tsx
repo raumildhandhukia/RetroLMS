@@ -2,7 +2,13 @@ import React, { useState} from 'react';
 import 'nes.css/css/nes.min.css';
 import {useLocation} from "react-router-dom";
 
-const AddTask: React.FC<{}> = () => {
+interface AddTaskProps {
+  showTaskList: Function;
+  courseId: string;
+  createTask: boolean;
+}
+
+const AddTask: React.FC<AddTaskProps> = ({showTaskList, courseId, createTask}) => {
     const [title, setTitle] = useState('');
     const [deadline, setDeadline] = useState('');
     const [details, setDetails] = useState('');
@@ -12,7 +18,7 @@ const AddTask: React.FC<{}> = () => {
     // Use useLocation to access navigation state
     const location = useLocation();
     // Extract courseId from location state
-    const {courseId} = location.state||{};
+    // const {courseId} = location.state||{};
     const handleCreateTask = async () => {
         if (!title|| !details || !point) {
             setErrorMessage('All fields are required.');
@@ -20,6 +26,7 @@ const AddTask: React.FC<{}> = () => {
         }
 
         try {
+            
             setIsLoading(true);
             const response = await fetch('http://localhost:8080/task/create', {
                 method: "POST",
@@ -36,7 +43,10 @@ const AddTask: React.FC<{}> = () => {
             if (!response.ok) {
                 const responseData = await response.json();
                 throw new Error(responseData.message || 'Something went wrong!');
+            } else {
+                showTaskList();
             }
+            
 
         } catch (error) {
             console.error('Error creating task:', error);

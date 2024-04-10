@@ -23,6 +23,7 @@ exports.addTask = async (req, res) => {
     const savedTask = await taskItem.save();
     try {
       // Attempt to update the corresponding Course
+      console.log(taskObj.courseId, savedTask._id);
       await Course.findByIdAndUpdate(
         taskObj.courseId,
         { $push: { task: savedTask._id } }, // Use $push to add the new task's ID to the task array
@@ -30,7 +31,7 @@ exports.addTask = async (req, res) => {
       );
     } catch (courseUpdateError) {
       // If an error occurs during the course update, log it and return an error response
-      console.error('Error updating course with new task:', courseUpdateError);
+      console.error("Error updating course with new task:", courseUpdateError);
       await Task.findByIdAndDelete(savedTask._id);
       return res.status(500).json({
         message: "Error updating course with new task.",
@@ -72,10 +73,10 @@ exports.getAllTasks = async (req, res) => {
   try {
     jwt = req.cookies && req.cookies.jwt;
     const decoded = JWT.decode(jwt);
-    console.log(decoded)
+    console.log(decoded);
     const username = decoded.username;
     const user = await User.findOne({ username });
-    console.log(user)
+    console.log(user);
     if (user.role === "student") {
       // If the user is a student, fetch enrolled courses
       const student = await Student.findOne({
@@ -87,7 +88,9 @@ exports.getAllTasks = async (req, res) => {
       const instructorId = await Instructor.findOne({
         userId: user._id,
       });
-      const tasks = await Task.find(instructorId).populate('courseId submissionId');
+      const tasks = await Task.find(instructorId).populate(
+        "courseId submissionId"
+      );
       res.status(200).json(tasks);
     } else {
       return res.status(400).json({ message: "Invalid user role" });

@@ -17,8 +17,14 @@ interface TaskProps {
 
 const Tasks: React.FC<TaskProps> = ({courseId}) => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [updateTask, setUpdateTask] = useState<boolean>(true);
   const [courseName, setCourseName] = useState<string>('SER517');
   const [role, setRole] = useState<string>('');
+
+  const handleUpdateTask = () => {
+    setUpdateTask(true);
+  }
+
   useEffect(() => {
     console.log(courseId);
     const checkProfile = async () => {
@@ -67,12 +73,15 @@ const Tasks: React.FC<TaskProps> = ({courseId}) => {
     };
 
     // Call the fetchTasks function when the component mounts
-    fetchTasks();
-  }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
+    if (updateTask) {
+      fetchTasks();
+      setUpdateTask(false);
+    }
+  }, [updateTask]); // The empty dependency array ensures that this effect runs only once when the component mounts
   return (
-      role === "student" ?
-          <TaskList tasks={tasks} courseName={courseName} courseId = {courseId}/> :
-    <InstructorTaskList tasks={tasks} courseName={courseName} courseId = {courseId}/>
+      
+          <TaskList tasks={tasks} courseName={courseName} courseId = {courseId} updateTasks = {handleUpdateTask}/> 
+    
   );
 };
 
