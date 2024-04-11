@@ -107,8 +107,7 @@ router.post("/login", async (req, res) => {
 router.get("/logout", async (req, res) => {
   //clear the JWT token
   res.clearCookie("jwt", { httpOnly: true });
-
-  res.redirect("/login");
+  res.status(200).json({ message: "Logout successful" });
 });
 
 router.get("/check-auth", (req, res) => {

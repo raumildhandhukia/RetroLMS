@@ -14,38 +14,24 @@ export interface Item {
     itemExpiry: number;
 }
 
-const Items: React.FC = () => {
+interface ItemProps {
+  role: string;
+  courseId: string;
+}
+
+const Items: React.FC<ItemProps> = ({ role, courseId }) => {
     const [items, setItems] = useState<Item[]>([]);
-    const [courseName, setCourseName] = useState<string>('SER517');
-    const [role, setRole] = useState<string>('');
+    // const [courseName, setCourseName] = useState<string>('SER517');
+    // const [role, setRole] = useState<string>('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-      const checkProfile = async () => {
-        try {
-          const response = await fetch("http://localhost:8080/profile", {
-            method: "GET",
-            credentials: "include", // Include cookies in the request
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setRole(data.role);
-          } else {
-            console.log("User not found");
-          }
-        } catch (error) {
-          console.error("Error checking for profile", error);
-        }
-      };
-  
-      checkProfile();
-    }, []);
-  
+   
     useEffect(() => {
       // Function to fetch items from the server
       const fetchItems = async () => {
         try {
-          const courseId = '65ee276576ac94ef4a77bdba'; // Replace with the actual courseName
+          // const courseId = '65ee276576ac94ef4a77bdba'; // Replace with the actual courseName
+          console.log(courseId)
           const response = await fetch(`http://localhost:8080/items/course/${courseId}`, {
             method: 'GET',
             headers: {
@@ -53,7 +39,7 @@ const Items: React.FC = () => {
             },
             credentials: 'include'
           });
-          console.log(response)
+          // console.log(response)
   
           if (!response.ok) {
             throw new Error('Failed to fetch items');
@@ -71,9 +57,7 @@ const Items: React.FC = () => {
     }, []);
   
     return (
-      role === "student" ? 
-      <ItemList items={items} courseName={courseName} /> : 
-      <InstructorItemList items={items} courseName={courseName} />
+      <InstructorItemList items={items} courseId={courseId} role={role} />
     );
   };
 

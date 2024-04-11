@@ -33,8 +33,8 @@ function App() {
             <Route path="/task" element={<Task />} />
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
             {/* <Route path="/course/:id" element={<CourseDetailPage/>} /> */}
-            <Route path="/items" element={<Items />} />
-            <Route path="/items/add" element={<AddItem />} />
+            {/* <Route path="/items" element={<Items />} /> */}
+            {/* <Route path="/items/add" element={<AddItem />} /> */}
             <Route path="/item" element={<Item />} />
             {/* <Route path="/task/create" element={<AddTask />} /> */}
             <Route path="/task" element={<Task />} />

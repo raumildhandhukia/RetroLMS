@@ -103,11 +103,7 @@ router.post("/task/getTasksByCourseId", taskController.getTaskByCourseId);
 // ======================= Routes for Items and Shop ====================== //
 
 // Route to create a new item
-router.post(
-  "/createitem",
-  middleware(["admin", "instructor"]),
-  itemController.createItem
-);
+router.post("/createitem", itemController.createItem);
 
 // Route to update an item by ID
 router.patch(
@@ -117,11 +113,7 @@ router.patch(
 );
 
 // Route to get all items for a given course ID
-router.get(
-  "/items/course/:courseId",
-  middleware(["admin", "instructor"]),
-  itemController.getItemsByCourse
-);
+router.get("/items/course/:courseId", itemController.getItemsByCourse);
 
 // Route to get a single item by ID (assuming the filter by course ID is handled internally based on user's login and permissions)
 router.get(

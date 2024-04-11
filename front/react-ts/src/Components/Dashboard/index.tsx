@@ -135,6 +135,22 @@ const Dashboard: React.FC = () => {
     const handleItemClick = (item: string) => {
         setSelectedItem(item);
     };
+
+    const handleLogOut = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/logout', {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                navigate('/login');
+            } else {
+                console.log('Error logging out');
+            }
+        } catch (error) {
+            console.error('Error logging out', error);
+        }
+    }
     
     const handleIconClick = (iconName: string) => {
         switch (iconName) {
@@ -154,7 +170,8 @@ const Dashboard: React.FC = () => {
                 setSidebarOpen(!isSidebarOpen);
                 break;
             case 'Logout':
-                navigate('/login');
+                // navigate('/login');
+                handleLogOut();
                 break;
             case 'Dashboard':
                 setSelectedComponent(null);
@@ -197,7 +214,7 @@ const Dashboard: React.FC = () => {
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]}/>}
                     {selectedItem === 'LeaderBoard' && <Leaderboard />}
                     {selectedItem === 'Tasks' && <Tasks courseId = {selectedCourse} role={role}/>}
-                    {selectedItem === 'BuyItems' && <Items />}
+                    {selectedItem === 'BuyItems' && <Items role={role} courseId={selectedCourse}/>}
                     {selectedItem === 'Delete' && <DeletePrompt/>}
                     {selectedItem === 'GradingSubmission' && <GradingSubmission />}
                     {/* {selectedItem === 'CreateCourse' && <CreateCourse/>} */}
