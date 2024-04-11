@@ -13,39 +13,18 @@ interface Task {
 }
 interface TaskProps {
   courseId: string;
+  role: string;
 }
 
-const Tasks: React.FC<TaskProps> = ({courseId}) => {
+const Tasks: React.FC<TaskProps> = ({courseId, role}) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [updateTask, setUpdateTask] = useState<boolean>(true);
   const [courseName, setCourseName] = useState<string>('SER517');
-  const [role, setRole] = useState<string>('');
+  // const [role, setRole] = useState<string>('');
 
   const handleUpdateTask = () => {
     setUpdateTask(true);
   }
-
-  useEffect(() => {
-    console.log(courseId);
-    const checkProfile = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/profile", {
-          method: "GET",
-          credentials: "include", // Include cookies in the request
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setRole(data.role);
-        } else {
-          console.log("User not found");
-        }
-      } catch (error) {
-        console.error("Error checking for profile", error);
-      }
-    };
-
-    checkProfile();
-  }, []);
 
   useEffect(() => {
     // Function to fetch tasks from the server
@@ -80,7 +59,7 @@ const Tasks: React.FC<TaskProps> = ({courseId}) => {
   }, [updateTask]); // The empty dependency array ensures that this effect runs only once when the component mounts
   return (
       
-          <TaskList tasks={tasks} courseName={courseName} courseId = {courseId} updateTasks = {handleUpdateTask}/> 
+          <TaskList tasks={tasks} courseName={courseName} courseId = {courseId} updateTasks = {handleUpdateTask} role = {role}/> 
     
   );
 };

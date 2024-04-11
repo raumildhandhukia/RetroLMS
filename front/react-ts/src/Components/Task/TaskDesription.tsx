@@ -14,11 +14,12 @@ interface TaskDescriptionProps {
     };
     onClickBack: Function;
     updateTasks: Function;
+    role: string;
 
 }
 
 // Assuming this component is now for editing, not just displaying
-const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onClickBack, updateTasks}) => {
+const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onClickBack, updateTasks, role}) => {
     const [title, setTitle] = useState(task.title);
     const [details, setDetails] = useState(task.details);
     const [deadline, setDeadline] = useState(task.deadline);
@@ -150,13 +151,17 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
                         }}>
                             Back
                         </button>
+                         {role === 'instructor' ? (<>
                             
-                        <button type="button" className={`nes-btn is-primary ${isLoading && 'is-disabled'}`}
-                                onClick={handleUpdateTask} disabled={isLoading}>
-                            {isLoading ? 'Updating Task...' : 'Update Task'}
-                        </button>
+                            <button type="button" className={`nes-btn is-primary ${isLoading && 'is-disabled'}`}
+                                    onClick={handleUpdateTask} disabled={isLoading}>
+                                {isLoading ? 'Updating Task...' : 'Update Task'}
+                            </button>
 
-                        <button type='button' className='nes-btn is-primary' onClick={handleDelete} >Delete</button>
+                            <button type='button' className='nes-btn is-primary' onClick={handleDelete} >Delete</button>
+
+                        </>) : null}
+                        
                     </div>
                 </div>) : <DeletePrompt task={task} redirectToTaskList={onClickBack}/>}
                 

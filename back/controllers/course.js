@@ -5,17 +5,17 @@ const Instructor = require("../models/instructorModel");
 const JWT = require("jsonwebtoken");
 
 const courseController = {
-  createCourse :async (req, res) => {
+  createCourse: async (req, res) => {
     try {
       const { title, instructorId, courseKey } = req.body;
       let course = await Course.findOne({ title });
-  
+
       if (course) {
         // Course exists, update it
         course.instructorId = instructorId;
         course.courseKey = courseKey;
         await course.save();
-  
+
         // No need to update the instructor here since the course already exists
       } else {
         // Create a new course
@@ -30,13 +30,13 @@ const courseController = {
         if (!instructor) {
           // Instructor not found, roll back course creation
           await Course.findByIdAndDelete(course._id);
-          return res.status(404).json({ message: 'Instructor not found' });
+          return res.status(404).json({ message: "Instructor not found" });
         }
-  
+
         instructor.coursesTeaching.push(course._id);
         await instructor.save();
       }
-  
+
       res.status(201).json({
         message: `Course '${title}' created successfully`,
         course,
@@ -59,21 +59,17 @@ const courseController = {
       // Check if there's another course with the same title
       const existingTitleCourse = await Course.findOne({ title });
       if (existingTitleCourse && existingTitleCourse._id != courseId) {
-        return res
-          .status(400)
-          .json({
-            error: "Another course with the same title already exists.",
-          });
+        return res.status(400).json({
+          error: "Another course with the same title already exists.",
+        });
       }
 
       // Check if there's another course with the same courseKey
       const existingKeyCourse = await Course.findOne({ courseKey });
       if (existingKeyCourse && existingKeyCourse._id != courseId) {
-        return res
-          .status(400)
-          .json({
-            error: "Another course with the same course key already exists.",
-          });
+        return res.status(400).json({
+          error: "Another course with the same course key already exists.",
+        });
       }
 
       // Update the course
@@ -88,6 +84,7 @@ const courseController = {
   enrollCourse: async (req, res) => {
     try {
       const { courseId } = req.body;
+      console.log(courseId);
       jwt = req.cookies && req.cookies.jwt;
       const decoded = JWT.decode(jwt);
       const username = decoded.username;
@@ -206,19 +203,22 @@ const courseController = {
 
   getStudentsByCourseId: async (req, res) => {
     try {
-      if(!req.params){
-        res.status(422).json({ message: 'Missing Parameter' });
+      if (!req.params) {
+        res.status(422).json({ message: "Missing Parameter" });
       }
       const courseId = req.params.courseId;
-      const students = await Student.find({ enrolledCourses: courseId }).populate('userId');
+      const students = await Student.find({
+        enrolledCourses: courseId,
+      }).populate("userId");
       if (!students.length) {
-        return res.status(404).json({ message: 'No students found enrolled in this course' });
+        return res
+          .status(404)
+          .json({ message: "No students found enrolled in this course" });
       }
-      res.status(200).json(students.map(student => student.userId.profile));
+      res.status(200).json(students.map((student) => student.userId.profile));
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }
-
+  },
 };
 module.exports = courseController;

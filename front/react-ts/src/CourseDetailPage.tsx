@@ -1,4 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactQuill, { Quill } from "react-quill";
+import 'quill/dist/quill.snow.css';
+import './RichEditor.css';
+import RichTextEditor from './RichTextEditor';
+const Font = Quill.import("formats/font");
+Font.whitelist = [
+  "arial"
+];
+Quill.register(Font, true);
+
 
 const demo = {
             id: "3",
@@ -30,6 +40,8 @@ interface Course {
 }
 
 
+
+
 interface CourseDetailPageProps {
     course: Course;
 }
@@ -41,6 +53,7 @@ const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course }) => {
     const [editedTitle, setEditedTitle] = useState(course.title);
     const [editedCourseKey, setEditedCourseKey] = useState(course.courseKey);
     const [editedDetails, setEditedDetails] = useState(course.details);
+    const [value, setValue] = useState('');
 
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -138,6 +151,13 @@ const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course }) => {
                         course.details
                     )}
                 </p> */}
+                <ReactQuill theme="snow" modules={{toolbar:[
+                        [{ 'font': ['arial'] }], // font family
+                        ['bold', 'italic', 'underline', 'strike'], // basic formatting
+                        ['link', 'image'], // link and image
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }], // lists
+                        ['clean'] // remove formatting
+                    ]}} />
                 <p><strong>Term:</strong> {demo.term}</p>
                 <p><strong>Instructor:</strong> {demo.instructor.name} (<a href={`mailto:${demo.instructor.email}`}>{demo.instructor.email}</a>)</p>
                 <p><strong>Office Hours:</strong> {demo.officeHours}</p>

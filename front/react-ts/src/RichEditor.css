@@ -1,0 +1,9 @@
+.rich-editor {
+    image-rendering: pixelated;
+}
+
+@font-face {
+    font-family: '8bit';
+    src: url('../static/fonts/PressStart2P-Regular.ttf') format('truetype');
+    /* Add more src declarations for other font formats like woff, woff2, etc. if necessary */
+}

@@ -9,9 +9,10 @@ interface CoursesSidebarProps {
     onCourseClick: (description: string) => void;
     setComponent: () => void;
     courses: Course[];
+    role: string;
   }
   
-const CoursesSidebar: React.FC<CoursesSidebarProps> = ({ onClose, courses,  onCourseClick, setComponent}) => {
+const CoursesSidebar: React.FC<CoursesSidebarProps> = ({ onClose, courses,  onCourseClick, setComponent, role}) => {
   const handleCourseClick = (description: string) => {
     // Pass the clicked course description to the parent function
     onCourseClick(description);
@@ -30,12 +31,14 @@ const handleAddCourse = () => {
           <X onClick={onClose} />
         </div>
       </div>
-      <hr />
+      {role === 'instructor' ? (<><hr />
       <div className='second-heading nes-pointer' onClick={() => {
         onClose(); // Close the sidebar
         handleAddCourse(); // Handle the Add Course click
       }}>Add Course</div>
-      <hr />
+      <hr /></>) : null}
+      
+
       <hr />
       <h2 className='second-heading nes-pointer' onClick={() => {
         setShowAllCourses(!showAllCourses); // Toggle the state

@@ -19,9 +19,10 @@ interface TaskListProps {
   courseName: string;
   courseId: string;
   updateTasks: Function;
+  role: string;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, updateTasks}) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, updateTasks, role}) => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [createTask, setCreateTask] = useState<boolean>(false);
 
@@ -43,7 +44,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
     if (selectedTask) {
       return (
 
-          <TaskDescription selectedTask={selectedTask} onClickBack={onClickBack} updateTasks={updateTasks}/> 
+          <TaskDescription selectedTask={selectedTask} onClickBack={onClickBack} updateTasks={updateTasks} role={role}/> 
           
       );
     } else {
@@ -80,11 +81,12 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
             </tbody>
             
           </table>
-          <button 
+          {role === 'instructor' ? (<button 
             className="nes-btn is-primary"
             onClick={() => setCreateTask(true)}>
                 Add Task
-          </button>
+          </button>) : null}
+          
         </div>
           )
       }

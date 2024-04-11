@@ -30,6 +30,30 @@ export interface ISidebarItem {
 
 const Dashboard: React.FC = () => {
     const [role, setRole] = useState<string>('');
+
+    useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        // Make a request to the server to check the authentication status
+        const response = await fetch("http://localhost:8080/check-auth", {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        }); 
+
+        if (!response.ok) {
+          // User is authenticated, redirect to the landing page
+          navigate("/login");
+        } else {
+          // User is not authenticated, continue rendering the login page
+          console.log("User not authenticated");
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+      }
+    };
+
+    checkAuthentication();
+  }, []);
     useEffect(() => {
       const checkProfile = async () => {
         try {
@@ -99,16 +123,14 @@ const Dashboard: React.FC = () => {
     };
 
    
-    const menuItems = ['Home', 'Tasks', 'LeaderBoard', 'BuyItems', 'Delete'];
-     if(role === 'instructor') {
-        menuItems.push('GradingSubmission')
-    }
+    const menuItems = role === 'student' ? 
+                    ['Home', 'Tasks', 'LeaderBoard', 'BuyItems'] : 
+                    ['Home', 'Tasks', 'LeaderBoard', 'BuyItems', 'Delete', 'GradingSubmission'];
+
     const handleCourseCreate = () => {
         setSelectedItem('CreateCourse');
         setSelectedCourse('');
     };
-
-
 
     const handleItemClick = (item: string) => {
         setSelectedItem(item);
@@ -126,6 +148,7 @@ const Dashboard: React.FC = () => {
                     courses={courses} 
                     onCourseClick={handleCourseClick}
                     setComponent={handleCourseCreate}
+                    role={role}
                     />
                 );
                 setSidebarOpen(!isSidebarOpen);
@@ -173,7 +196,7 @@ const Dashboard: React.FC = () => {
                     <div className='detail-container'>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]}/>}
                     {selectedItem === 'LeaderBoard' && <Leaderboard />}
-                    {selectedItem === 'Tasks' && <Tasks courseId = {selectedCourse}/>}
+                    {selectedItem === 'Tasks' && <Tasks courseId = {selectedCourse} role={role}/>}
                     {selectedItem === 'BuyItems' && <Items />}
                     {selectedItem === 'Delete' && <DeletePrompt/>}
                     {selectedItem === 'GradingSubmission' && <GradingSubmission />}
