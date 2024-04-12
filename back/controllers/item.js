@@ -1,6 +1,7 @@
 const Item = require("../models/itemModel");
 const Transaction = require("../models/transactionModel");
 const Student = require("../models/studentModel");
+const User = require("../models/userModel");
 
 exports.createItem = async (req, res) => {
   try {
@@ -72,7 +73,17 @@ exports.deleteItem = async (req, res) => {
 
 exports.requestItem = async (req, res) => {
   try {
-    const { itemId, price, studentId } = req.body;
+    const JWT = req.cookies && req.cookies.jwt;
+    const decoded = JWT.decode(JWT);
+    const username = decoded.username;
+    const user = await User.findOne({
+      username,
+    });
+    const student = await Student.findOne({
+      userId: user._id,
+    });
+    const studentId = student._id;
+    const { itemId, price } = req.body;
     const transaction = await Transaction.create({
       itemId,
       studentId,
@@ -86,6 +97,7 @@ exports.requestItem = async (req, res) => {
 
 exports.getTransactions = async (req, res) => {
   try {
+    const { courseId } = req.params.courseId;
     const items = await Item.find({ courseId });
     const itemIds = items.map((item) => item._id);
     const transactions = await Transaction.find({ itemId: { $in: itemIds } });
@@ -125,7 +137,17 @@ exports.updateTransaction = async (req, res) => {
 
 exports.getTransactionByItemByStudent = async (req, res) => {
   try {
-    const { itemId, studentId } = req.params;
+    const JWT = req.cookies && req.cookies.jwt;
+    const decoded = JWT.decode(JWT);
+    const username = decoded.username;
+    const user = await User.findOne({
+      username,
+    });
+    const student = await Student.findOne({
+      userId: user._id,
+    });
+    const studentId = student._id;
+    const { itemId } = req.params;
     const transaction = await Transaction.findOne({ itemId, studentId });
     if (!transaction) {
       return res.status(404).json({ message: "Transaction not found" });

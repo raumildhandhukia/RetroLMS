@@ -26,41 +26,62 @@ const ItemDescription: React.FC<ItemDescriptionProps> = ({selectedItem:item, upd
     handleUpdateTask();
   }
 
-const handleDeleteMode = () => {
-  setIsDeleating(true);
-} 
+  const handleDeleteMode = () => {
+    setIsDeleating(true);
+  } 
 
-const handleUpdateTask = async () => {
-  if (isEditing) {
-    if (!title || !description || !expiry || !price) {
-      setErrorMessage('All fields are required.');
-      return;
-    }
-
-    try {
-      const response = await fetch(`http://localhost:8080/items/${item?._id}`, {
-        method: "PATCH",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          itemName:title,
-          itemDescription: description,
-          itemPrice: price,
-          itemExpiry: expiry,
-        })
-      });
-
-      if (response.ok) {
-        console.log("Item was updated.")
-        update();
-        setIsEditing(false);
+  const handleUpdateTask = async () => {
+    if (isEditing) {
+      if (!title || !description || !expiry || !price) {
+        setErrorMessage('All fields are required.');
+        return;
       }
 
-    } catch (error) {
-      console.error("Error updating item", error);
+      try {
+        const response = await fetch(`http://localhost:8080/items/${item?._id}`, {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            itemName:title,
+            itemDescription: description,
+            itemPrice: price,
+            itemExpiry: expiry,
+          })
+        });
+
+        if (response.ok) {
+          console.log("Item was updated.")
+          update();
+          setIsEditing(false);
+        }
+
+      } catch (error) {
+        console.error("Error updating item", error);
+      }
     }
-  }};
+  };
+
+  const handleBuyRequest = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/requestItem", {
+        method: "POST",
+        headers: {
+                    'Content-Type': 'application/json'
+                },
+        credentials: 'include',
+        body: JSON.stringify({
+          itemId: item?._id,
+          price: item?.itemPrice
+        })
+      });
+    } catch (error) {
+      console.error("Error buying item.", error);
+    } 
+  };
+      
+        
   
   return (
         <div className="task-description-container">
@@ -142,7 +163,7 @@ const handleUpdateTask = async () => {
 
                             <button type='button' className='nes-btn is-primary' onClick={handleDeleteMode} >Delete</button>
 
-                        </>) : null}
+                        </>) : <button type="button" className='nes-btn is-primary' onClick={handleBuyRequest} >Buy</button>}
                         
                     </div>
                 </div>) : <DeletePrompt item={item} redirectToItemList={handleBack} update={update}/>}
