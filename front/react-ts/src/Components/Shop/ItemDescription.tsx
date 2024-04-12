@@ -38,7 +38,6 @@ const handleUpdateTask = async () => {
     }
 
     try {
-      console.log(`http://localhost:8080/items/${item?._id}`)
       const response = await fetch(`http://localhost:8080/items/${item?._id}`, {
         method: "PATCH",
         headers: {

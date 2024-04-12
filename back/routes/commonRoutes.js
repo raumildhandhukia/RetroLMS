@@ -134,4 +134,13 @@ router.get(
 //   submissionController.gradingSingleSubmission
 // );
 
+// ======================= Routes for Transaction ====================== //
+router.post("/requestItem", itemController.requestItem);
+router.get("/getTransactions", itemController.getTransactions);
+router.get(
+  "/getTrasactionsByItemByStudent",
+  itemController.getTransactionByItemByStudent
+);
+router.post("/updateTransaction", itemController.updateTransaction);
+
 module.exports = router;
