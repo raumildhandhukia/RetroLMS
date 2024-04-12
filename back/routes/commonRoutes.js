@@ -136,11 +136,14 @@ router.get(
 
 // ======================= Routes for Transaction ====================== //
 router.post("/requestItem", itemController.requestItem);
-router.get("/getTransactions", itemController.getTransactions);
+router.get("/getTransactions/:courseId", itemController.getTransactions);
 router.get(
-  "/getTrasactionsByItemByStudent",
+  "/getTrasactionsByItemByStudent/:itemId",
   itemController.getTransactionByItemByStudent
 );
-router.post("/updateTransaction", itemController.updateTransaction);
+router.post(
+  "/updateTransaction/:transactionId",
+  itemController.updateTransaction
+);
 
 module.exports = router;
