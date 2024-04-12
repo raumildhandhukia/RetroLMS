@@ -25,7 +25,13 @@ const Items: React.FC<ItemProps> = ({ role, courseId }) => {
     // const [role, setRole] = useState<string>('');
     const navigate = useNavigate();
 
-   
+    const [updateItems, setUpdateItems] = useState<boolean>(false);
+
+
+    const updateItemList = () => {
+      setUpdateItems(!updateItems);
+    }
+
     useEffect(() => {
       // Function to fetch items from the server
       const fetchItems = async () => {
@@ -54,10 +60,10 @@ const Items: React.FC<ItemProps> = ({ role, courseId }) => {
       };
   
       fetchItems();
-    }, []);
+    }, [updateItems]);
   
     return (
-      <InstructorItemList items={items} courseId={courseId} role={role} />
+      <InstructorItemList items={items} courseId={courseId} role={role} update = {updateItemList} />
     );
   };
 

@@ -106,14 +106,12 @@ router.post("/task/getTasksByCourseId", taskController.getTaskByCourseId);
 router.post("/createitem", itemController.createItem);
 
 // Route to update an item by ID
-router.patch(
-  "/items/:itemId",
-  middleware(["admin", "instructor"]),
-  itemController.updateItem
-);
+router.patch("/items/:itemId", itemController.updateItem);
 
 // Route to get all items for a given course ID
 router.get("/items/course/:courseId", itemController.getItemsByCourse);
+
+router.delete("/items/:itemId", itemController.deleteItem);
 
 // Route to get a single item by ID (assuming the filter by course ID is handled internally based on user's login and permissions)
 router.get(

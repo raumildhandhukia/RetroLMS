@@ -55,3 +55,15 @@ exports.getSingleItem = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+exports.deleteItem = async (req, res) => {
+  try {
+    const item = await Item.findByIdAndDelete(req.params.itemId);
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+    res.status(200).json({ message: "Item deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

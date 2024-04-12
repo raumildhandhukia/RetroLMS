@@ -5,9 +5,11 @@ import EightBitButton from '../Buttons/EightBitButton';
 
 interface AddItemProps {
   courseId: string;
+  update: Function;
+  handleBack: Function;
 }
 
-const AddItem: React.FC<AddItemProps> = ({courseId}) => {
+const AddItem: React.FC<AddItemProps> = ({courseId, update, handleBack}) => {
 
   const [itemName, setItemName] = useState<string>('');
   const [itemDescription, setItemDescription] = useState<string>('');
@@ -18,18 +20,22 @@ const AddItem: React.FC<AddItemProps> = ({courseId}) => {
     try {
       const response = await fetch("http://localhost:8080/createItem", {
         method: "POST",
+        headers: {
+                    'Content-Type': 'application/json'
+                },
+        credentials: 'include',
         body: JSON.stringify({
           itemName,
           itemDescription,
           itemPrice,
           itemExpiry,
           courseId,
-        }),
-        credentials: 'include'
+        })
       });
 
       if (response.ok) {
-        alert(`Item with ${itemName}, with price ${itemPrice} was added`)
+        update();
+        handleBack();
       }
 
     } catch (error) {
@@ -84,7 +90,10 @@ const AddItem: React.FC<AddItemProps> = ({courseId}) => {
                 />
               </div>
         <div className='flex items-start my-10'>
-          <EightBitButton onClick={handleAddItem}>ADD</EightBitButton>
+          <button type="button" className='nes-btn is-primary' onClick={()=>{
+            handleBack();
+          }}>Back</button>
+          <button type="button" className='nes-btn is-primary' onClick={handleAddItem}>Add</button>
         </div>
       </div>
     </div>

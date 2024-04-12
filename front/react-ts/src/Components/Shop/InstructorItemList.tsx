@@ -1,24 +1,26 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import 'nes.css/css/nes.min.css';
 import "./ItemList.css";
-import { Edit } from 'lucide-react';
-import EightBitButton from '../Buttons/EightBitButton';
 import { Item } from './Items';
 import AddItem from './AddItem';
+import ItemDescription from './ItemDescription';
+
 
 interface ItemListProps {
     items: Item[];
     courseId: string;
     role: string;
+    update: Function;
 }
 
-const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role }) => {
-    const navigate = useNavigate();
+const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role, update }) => {
     const [createItem, setCreateItem] = React.useState<boolean>(false);
+    const [showItem, setShowItem] = React.useState<boolean>(false);
+    const [selectedItem, setSelectedItem] = React.useState<Item | null>(null);
 
-    const navigateToItemDescription = (item: Item) => {
-        navigate('/item', {state: {item}});
+    const handleItemDescription = (item: Item) => {
+      setShowItem(true);
+      setSelectedItem(item);
     };
 
     const handleEditItem = async (itemId: string) => {
@@ -47,10 +49,16 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role }) 
       setCreateItem(true);
     }
 
+    const handleBack = () => {
+      setCreateItem(false);
+      setShowItem(false);
+    }
+
     return (
         <div className="item-list-container">
-          <div className="nes-container with-title is-centered">
-            {createItem ? (<AddItem courseId={courseId}/>) : (<div>
+          {showItem ? (<ItemDescription selectedItem={selectedItem} update={update} role={role} handleBack={handleBack}/>) : 
+          (<div className="nes-container with-title is-centered">
+            {createItem ? (<AddItem courseId={courseId} update={update} handleBack={handleBack}/>) : (<div>
               {/* <p className="title">{courseName}</p> */}
               <div className="item-list-content">
                 <h2>Items List</h2>
@@ -59,16 +67,16 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role }) 
                     <tr>
                       <th className="item-title">Item Title</th>
                       <th className="price">Price</th>
-                      <th className="price">Edit</th>
+                      {/* <th className="price">Edit</th> */}
                     </tr>
                   </thead>
                   <tbody>
                     {items.map((item) => (
-                      <tr key={item._id} className="item-item">
+                      <tr key={item._id} className="item-item" onClick={() => handleItemDescription(item)}>
                         {/* Use onClick to call navigateToTaskDescription on click */}
-                        <td onClick={() => navigateToItemDescription(item)}>{item.itemName}</td>
+                        <td>{item.itemName}</td>
                         <td>{item.itemPrice}</td>
-                        <td>{<Edit onClick={() => handleEditItem(item._id)} />}</td>
+                        {/* <td>{<Edit onClick={() => handleEditItem(item._id)} />}</td> */}
                       </tr>
                     ))}
                   </tbody>
@@ -80,8 +88,9 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role }) 
                 }
               </div>
             </div>)}
-          </div>
+          </div>)}
+          
         </div>
       );
     };
-export default InstructorItemList
+export default InstructorItemList;
