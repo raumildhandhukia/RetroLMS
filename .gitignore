@@ -1,3 +1,4 @@
 back/node_modules
 .env
 back/.vscode/
+**/node_modules
