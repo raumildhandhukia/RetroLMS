@@ -32,6 +32,20 @@ exports.updateItem = async (req, res) => {
       req.body,
       { new: true }
     );
+    if (req.body.itemPrice) {
+      const transactions = await Transaction.find({
+        itemId: req.params.itemId,
+      });
+      const updatedTransactions = await Promise.all(
+        transactions.map(async (transaction) => {
+          const updatedTransaction = await Transaction.findByIdAndUpdate(
+            transaction._id,
+            { price: req.body.itemPrice },
+            { new: true }
+          );
+        })
+      );
+    }
     res.status(200).json(updatedItem);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -110,28 +124,25 @@ exports.getTransactions = async (req, res) => {
 
 exports.updateTransaction = async (req, res) => {
   try {
-    const updatedTransaction = await Transaction.findByIdAndUpdate(
-      req.params.transactionId,
-      req.body,
-      { new: true }
-    );
-
-    if (updatedTransaction.status === "Approval") {
-      const studentId = updatedTransaction.studentId;
-      const student = await Student.findOne({ _id: studentId });
-      const difference = student.currentCurrency - updatedTransaction.price;
+    const transaction = await Transaction.findById(req.params.transactionId);
+    const studentId = transaction.studentId;
+    const student = await Student.findOne({ _id: studentId });
+    if (
+      transaction.status === "Approval" &&
+      (req.body.status === "Reject" || req.body.status === "Awaiting")
+    ) {
+      student.currentCurrency += transaction.price;
+      await student.save();
+    }
+    transaction.status = req.body.status;
+    transaction.save();
+    if (transaction.status === "Approval") {
+      const difference = student.currentCurrency - transaction.price;
       if (difference < 0) {
-        const updatedTransaction = await Transaction.findByIdAndUpdate(
-          req.params.transactionId,
-          { status: "Reject" },
-          { new: true }
-        );
+        transaction.status = "Reject";
       } else {
-        const updatedStudent = await Student.findByIdAndUpdate(
-          studentId,
-          { currentCurrency: difference },
-          { new: true }
-        );
+        student.currentCurrency = difference;
+        await student.save();
       }
       res.status(200).json(updatedTransaction);
     }
