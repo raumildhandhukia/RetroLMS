@@ -145,5 +145,9 @@ router.post(
   "/updateTransaction/:transactionId",
   itemController.updateTransaction
 );
+router.get(
+  "/getTransactionsByItem/:itemId",
+  itemController.getTransactionByItem
+);
 
 module.exports = router;

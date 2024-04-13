@@ -2,6 +2,7 @@ const Item = require("../models/itemModel");
 const Transaction = require("../models/transactionModel");
 const Student = require("../models/studentModel");
 const User = require("../models/userModel");
+const JWT = require("jsonwebtoken");
 
 exports.createItem = async (req, res) => {
   try {
@@ -73,8 +74,8 @@ exports.deleteItem = async (req, res) => {
 
 exports.requestItem = async (req, res) => {
   try {
-    const JWT = req.cookies && req.cookies.jwt;
-    const decoded = JWT.decode(JWT);
+    const token = req.cookies && req.cookies.jwt;
+    const decoded = JWT.decode(token);
     const username = decoded.username;
     const user = await User.findOne({
       username,
@@ -120,7 +121,11 @@ exports.updateTransaction = async (req, res) => {
       const student = await Student.findOne({ _id: studentId });
       const difference = student.currentCurrency - updatedTransaction.price;
       if (difference < 0) {
-        return res.status(400).json({ message: "Insufficient funds" });
+        const updatedTransaction = await Transaction.findByIdAndUpdate(
+          req.params.transactionId,
+          { status: "Reject" },
+          { new: true }
+        );
       } else {
         const updatedStudent = await Student.findByIdAndUpdate(
           studentId,
@@ -137,8 +142,8 @@ exports.updateTransaction = async (req, res) => {
 
 exports.getTransactionByItemByStudent = async (req, res) => {
   try {
-    const JWT = req.cookies && req.cookies.jwt;
-    const decoded = JWT.decode(JWT);
+    const token = req.cookies && req.cookies.jwt;
+    const decoded = JWT.decode(token);
     const username = decoded.username;
     const user = await User.findOne({
       username,
@@ -154,6 +159,31 @@ exports.getTransactionByItemByStudent = async (req, res) => {
     } else {
       res.status(200).json(transaction);
     }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.getTransactionByItem = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const transactions = await Transaction.find({ itemId });
+    const transactionsWithUsername = await Promise.all(
+      transactions.map(async (transaction) => {
+        const studentId = transaction.studentId;
+        const studentPromise = Student.findOne({ _id: studentId });
+        const student = await studentPromise;
+        const userPromise = User.findOne({ _id: student.userId });
+        const user = await userPromise;
+        const username = user.username;
+        const transactionWithUsername = {
+          ...transaction.toObject(),
+          username,
+        };
+        return transactionWithUsername;
+      })
+    );
+    res.status(200).json(transactionsWithUsername);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
