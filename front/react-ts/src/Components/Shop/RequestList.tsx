@@ -72,9 +72,10 @@ const RequestList: React.FC<RequestListProps> = ({
             <ul key={transaction?._id} className="nes-container with-title">
             <p className="title">{transaction?.username}</p>
             <div className="nes-btn-group" style={{ marginTop: '25px' }}>
-                <button className="nes-btn is-success" style={{ marginRight: '25px' }} onClick={() => manageRequest("Approval", transaction._id)}>Accept</button>
-                <button className="nes-btn is-error" style={{ marginRight: '25px' }} onClick={() => manageRequest("Reject", transaction._id)}>Reject</button>
-                <button className="nes-btn is-warning" onClick={() => manageRequest("Awaiting", transaction._id)}>Reset</button>
+                {transaction?.status === 'Awaiting' ? (<div><button className="nes-btn is-success" style={{ marginRight: '25px' }} onClick={() => manageRequest("Approval", transaction._id)}>Accept</button>
+                <button className="nes-btn is-error" style={{ marginRight: '25px' }} onClick={() => manageRequest("Reject", transaction._id)}>Reject</button></div>):<button className="nes-btn is-warning" onClick={() => manageRequest("Awaiting", transaction._id)}>Reset</button>}
+                
+                
             </div>
             </ul>
         ))}
