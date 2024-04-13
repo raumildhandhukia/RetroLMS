@@ -31,6 +31,7 @@ export interface ISidebarItem {
 
 const Dashboard: React.FC = () => {
     const [role, setRole] = useState<string>('');
+    const [currency, setCurrency] = useState<number|null>(null);
 
     useEffect(() => {
     const checkAuthentication = async () => {
@@ -65,6 +66,8 @@ const Dashboard: React.FC = () => {
           if (response.ok) {
             const data = await response.json();
             setRole(data.role);
+            setCurrency(data.currency);
+
           } else {
             console.log("User not found");
           }
@@ -212,7 +215,7 @@ const Dashboard: React.FC = () => {
                     <div>
                     <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
                      {role === 'student' ? (
-                        <div className='text-2xl'>Currency balance: 150$</div>
+                        <div className='text-2xl'>Balance: $ {currency}</div>
                      ) : null}
                     </div>
                 <hr/>
