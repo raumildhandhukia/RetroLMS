@@ -14,6 +14,7 @@ import CreateCourse from './CreateCourse';
 import { ok } from 'assert';
 import DeletePrompt from './DeletePrompt';
 import GradingSubmission from '../GradingSubmission/GradingSubmission';
+import Profile from './Profile';
 
 export interface Course {
     _id: string;
@@ -155,21 +156,29 @@ const Dashboard: React.FC = () => {
     const handleIconClick = (iconName: string) => {
         switch (iconName) {
             case 'Account':
-                setSelectedComponent(<div>Account Component</div>);
+                console.log('Account clicked');
+                setSelectedComponent(
+                <div className='overlay-profile'><Profile 
+                    onClose={handleCloseSidebar} 
+                    /></div>
+                );
+                setSidebarOpen(!isSidebarOpen);
                 break;
             case 'MyCourses':
                 setSelectedComponent(
+                <div className='overlay-courses'>
                 <CoursesSidebar 
                     onClose={handleCloseSidebar} 
                     courses={courses} 
                     onCourseClick={handleCourseClick}
                     setComponent={handleCourseCreate}
                     role={role}
-                    />
+                    /></div>
                 );
                 setSidebarOpen(!isSidebarOpen);
                 break;
             case 'Logout':
+                setSidebarOpen(false);
                 // navigate('/login');
                 handleLogOut();
                 break;
@@ -177,6 +186,7 @@ const Dashboard: React.FC = () => {
                 setSelectedComponent(null);
                 setSelectedCourse('');
                 setSelectedItem('');
+                setSidebarOpen(false);
                 break;
             default:
                 setSelectedComponent(null);
@@ -193,9 +203,9 @@ const Dashboard: React.FC = () => {
               )}
           </div>
            {isSidebarOpen && (
-                <div className="overlay">
+                <>
                     {selectedComponent}
-                </div>
+                </>
             )}
             <div className="flex flex-1 p-10 flex-col">
             {selectedCourse ? (<div>

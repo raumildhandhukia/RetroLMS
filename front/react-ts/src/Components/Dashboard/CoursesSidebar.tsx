@@ -1,6 +1,6 @@
 import { CircleUser, LogOut, LucideIcon, LucideProps, X } from 'lucide-react'
-import React from 'react'
-import {useState} from 'react'
+import React, { useEffect } from 'react'
+import {useState, useRef } from 'react'
 import './CoursesSidebar.css'
 import { Course } from '.'
 
@@ -22,9 +22,25 @@ const handleAddCourse = () => {
   setComponent()
 }
   const [showAllCourses, setShowAllCourses] = useState(true);
+  const corusesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Add event listener to close sidebar when clicking outside
+        const handleClickOutside = (event: MouseEvent) => {
+            if (corusesRef.current && !corusesRef.current.contains(event.target as Node)) {
+                onClose();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [onClose]
+  );
 
   return (
-    <div>
+    <div ref={corusesRef}>
       <div className='header-container'>
         <h1 className='heading'>Courses</h1>
         <div className='close-button'>
