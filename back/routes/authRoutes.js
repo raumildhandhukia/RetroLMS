@@ -2,6 +2,7 @@ const User = require("../models/userModel.js");
 const Instructor = require("../models/instructorModel.js");
 const Student = require("../models/studentModel.js");
 const Admin = require("../models/userModel.js");
+const { faker } = require("@faker-js/faker");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
@@ -9,9 +10,26 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const authMiddleware = require("../middleware/authMiddleware.js");
 
+
 router.use(cookieParser());
 
 const secretKey = process.env.JWT_SECRET_KEY;
+function generateRandomUser() {
+  const firstName = faker.name.firstName();
+  const lastName = faker.name.lastName();
+  const username = faker.internet.userName(firstName, lastName);
+  const password = faker.internet.password();
+  return {
+      username,
+      password,
+      role: "student",
+      profile: {
+          firstName,
+          lastName,
+          email: `${username}@gmail.com`
+      }
+  };
+}
 
 async function generateRespectiveObject(role, userId) {
   if (role == "admin") {
@@ -37,6 +55,7 @@ async function generateRespectiveObject(role, userId) {
 
 router.post("/signup", async (req, res) => {
   try {
+
     const { username, password, role, profile } = req.body;
     // Check if the user already exists
     const existingUser = await User.findOne({
@@ -130,5 +149,35 @@ router.get("/check-auth", (req, res) => {
     res.status(401).json({ message: "Unauthorized" });
   }
 });
+
+
+router.post("/studentSignup", async(req, res) => {
+  const {count,courseId} = req.body;
+  const students = [];
+  for (let i = 0; i < count; i++) {
+    const newUser = generateRandomUser();
+    try {
+        const user = new User(newUser);
+        await user.save();
+
+        const student = new Student({
+            userId: user._id,
+            enrolledCourses: [courseId]
+        });
+        await student.save();
+        students.push(student);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error creating student' });
+    }
+}
+
+res.status(201).json({
+    message: `${count} students created and enrolled in course ${courseId}`,
+    // students: students
+});
+
+  
+})
 
 module.exports = router;

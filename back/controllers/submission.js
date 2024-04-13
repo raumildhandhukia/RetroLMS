@@ -15,7 +15,6 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   try {
     if (req.file) {
       const workbook = xlsx.readFile(req.file.path);
-      // Assuming the first sheet in the workbook; adjust as needed
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       // Convert sheet to JSON
@@ -67,53 +66,48 @@ exports.gradingMutlipleSubmission = async (req, res) => {
 };
 
 // Grading a submission by ID
-exports.gradingTask = async (req, res) => {
+exports.gradingSingleSubmission = async (req, res) => {
+  let savedSubmission = null;
   try {
-    const { courseId, taskId } = req.params;
-    console.log(courseId, taskId);
-    const submission = await Submission.findByIdAndUpdate(id, req.body, {
-      new: true,
+    const { studentId, taskId, pointsReceived, currentState } = req.body;
+
+    // Create a new Submission document
+    const submission = new Submission({
+      studentId,
+      taskId,
+      points_recevied: pointsReceived,
+      current_state: currentState
     });
-    if (!submission) {
-      return res.status(404).json({ message: "Submission not found" });
-    }
-    res.json(submission);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
 
-// View all submissions for the logged-in user
-exports.viewSubmissionsByCourse = async (req, res) => {
-  // Assuming you have some way to identify the logged-in user and course ID is passed in query
-  const { userId, courseId } = req.query;
-  try {
-    const submissions = await Submission.find({
-      studentId: userId,
-      courseId: courseId,
-    }).populate("taskId");
-    res.json(submissions);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
+    // Save the submission to the database
+    savedSubmission = await submission.save();
 
-// View a single submission for the logged-in user filtered by course ID
-exports.viewSingleSubmission = async (req, res) => {
-  const { submissionId } = req.params;
-  const { userId, courseId } = req.query;
-  try {
-    const submission = await Submission.findOne({
-      _id: submissionId,
-      studentId: userId,
-      courseId: courseId,
-    }).populate("taskId");
-    if (!submission) {
-      return res.status(404).json({ message: "Submission not found" });
+    try {
+      // Attempt to update the corresponding Task document
+      console.log(savedSubmission._id)
+      await Task.findByIdAndUpdate(
+        taskId,
+        { $push: { submissionId: savedSubmission._id } }, // Use $push to add the submission ID to the task's submissionId array
+        { new: true } // Return the updated document
+      );
+    } catch (error) {
+      // If an error occurs while updating the Task, rollback the Submission creation
+      console.error("Error updating task with submission ID:", error);
+      if (savedSubmission) {
+        await Submission.findByIdAndDelete(savedSubmission._id);
+      }
+      return res.status(500).json({ message: "Failed to link submission to task, submission rolled back." });
     }
-    res.json(submission);
+
+    // Respond with the created submission
+    res.status(201).json({
+      message: "Submission added successfully",
+      submission: savedSubmission
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error adding submission:", error);
+    // If the initial submission creation fails, no need for rollback as it wasn't created
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
