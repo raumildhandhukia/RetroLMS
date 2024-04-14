@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 
@@ -21,51 +21,34 @@ interface Prof {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const roleRef = useRef("");
-  const showCreatePasswordRef = useRef(false);
-  useEffect(() => {
-    const checkAuthentication = async () => {
-      try {
-        // Make a request to the server to check the authentication status
-        const response = await fetch("http://localhost:8080/check-auth", {
-          method: "GET",
-          credentials: "include", // Include cookies in the request
-        });
+  const [role, setRole] = useState<string>('');
+  const [showPasswordCreatePage, setShowPasswordCreatePage] = useState<boolean>(false);
 
-        if (response.ok) {
-          // User is authenticated, redirect to the landing page
+  // useEffect(() => {
+  //   const checkAuthentication = async () => {
+  //     try {
+  //       const response = await fetch("http://localhost:8080/check-auth", {
+  //         method: "GET",
+  //         credentials: "include", // Include cookies in the request
+  //       });
 
-          const data = await response.json();
-          const role = data.role;
-          const showCreatePassword = data.resetPassword;
-          if (role === "student") {
-      if (showCreatePassword) {
-          navigate("/createPassword", { state: { firstName: data.profile.firstName, lastName: data.profile.lastName } });
-      } else {
-        navigate("/dashboard");
-      }
-    } else  {
-      navigate("/dashboard");
-    }
-
-          
-        } else {
-          // User is not authenticated, continue rendering the login page
-          console.log("User not authenticated");
-        }
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-      }
-    };
-
-    checkAuthentication();
-  }, [navigate]);
+  //       if (response.ok) {
+  //         redirectToRole();
+  //       } else {
+  //         console.log("User not authenticated");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking authentication:", error);
+  //     }
+  //   };
+  //   checkAuthentication();
+  // }, []);
 
   const [credentials, setCredentials] = useState<Credentials>({
     username: "",
     password: "",
   });
-  
+
   const handleLogin = async () => {
     try {
       // Send credentials to the server
@@ -77,26 +60,51 @@ const Login: React.FC = () => {
         credentials: "include",
         body: JSON.stringify(credentials),
       });
-
       if (response.ok) {
-        const data = await response.json();
-        roleRef.current = data.role;
-        showCreatePasswordRef.current = data.resetPassword;
-        if (roleRef.current === "student") {
-          if (showCreatePasswordRef.current) {
-              navigate("/createPassword", { state: { firstName: data.profile.firstName, lastName: data.profile.lastName } });
-          } else {
-              navigate("/dashboard");
-            }
-          } else  {
-               navigate("/dashboard");
-          }
+        redirectToRole();
       } else {
         console.error("Login failed");
       }
     } catch (error) {
       console.error("Error during login:", error);
     }
+  };
+
+  const getProfile = async () => {
+        try {
+          const response = await fetch("http://localhost:8080/profile", {
+            method: "GET",
+            credentials: "include",
+          });
+          if (response.ok) {
+            const data:Prof = await response.json();
+            setRole(data.role);
+            setShowPasswordCreatePage(data.resetPassword);
+          } else {
+            console.log("User not found");
+          }
+        } catch (error) {
+          console.error("Error checking for profile", error);
+        }
+      };
+
+  const redirectToRole = () => {
+    
+    getProfile();
+    console.log(role)
+    if (role === "student") {
+      if (showPasswordCreatePage) {
+          navigate("/createPassword");
+      } else {
+        navigate("/dashboard");
+      }
+      
+    } else if (role === "instructor") {
+      debugger;
+      navigate("/dashboard");
+    }
+
+    // window.location.href = "/dashboard";
   };
 
 return (
@@ -145,7 +153,6 @@ return (
           </button>
         </form>
       </div>
-     
     </div>
   );
 

@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const authMiddleware = require("../middleware/authMiddleware.js");
-
+const JWT = require("jsonwebtoken");
 
 router.use(cookieParser());
 
@@ -20,14 +20,14 @@ function generateRandomUser() {
   const username = faker.internet.userName(firstName, lastName);
   const password = faker.internet.password();
   return {
-      username,
-      password,
-      role: "student",
-      profile: {
-          firstName,
-          lastName,
-          email: `${username}@gmail.com`
-      }
+    username,
+    password,
+    role: "student",
+    profile: {
+      firstName,
+      lastName,
+      email: `${username}@gmail.com`,
+    },
   };
 }
 
@@ -55,7 +55,6 @@ async function generateRespectiveObject(role, userId) {
 
 router.post("/signup", async (req, res) => {
   try {
-
     const { username, password, role, profile } = req.body;
     // Check if the user already exists
     const existingUser = await User.findOne({
@@ -114,8 +113,20 @@ router.post("/login", async (req, res) => {
     // You may also create a refresh token if needed
     // const refreshToken = createRefreshToken();
     res.cookie("jwt", token, { httpOnly: true });
-
-    res.json({ success: true });
+    let currency = null;
+    let resetPassword = false;
+    if (user.role === "student") {
+      const student = await Student.findOne({ userId: user._id });
+      currency = student.currentCurrency;
+      resetPassword = student.resetPassword;
+    }
+    res.status(201).json({
+      profile: user.profile,
+      username: user.username,
+      role: user.role,
+      currency: currency,
+      resetPassword: resetPassword,
+    });
     // res.json({ token });
   } catch (error) {
     console.error(error);
@@ -129,7 +140,7 @@ router.get("/logout", async (req, res) => {
   res.status(200).json({ message: "Logout successful" });
 });
 
-router.get("/check-auth", (req, res) => {
+router.get("/check-auth", async (req, res) => {
   // Retrieve the JWT from the request cookies
   const token = req.cookies && req.cookies["jwt"];
 
@@ -141,7 +152,27 @@ router.get("/check-auth", (req, res) => {
   try {
     // Verify the JWT signature and check expiration
     const decoded = jwt.verify(token, secretKey);
-    res.status(200).json({ message: "Authentication successful" });
+
+    const username = decoded.username;
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    let currency = null;
+    let resetPassword = false;
+    if (user.role === "student") {
+      const student = await Student.findOne({ userId: user._id });
+      currency = student.currentCurrency;
+      resetPassword = student.resetPassword;
+    }
+    res.status(200).json({
+      profile: user.profile,
+      username: user.username,
+      role: user.role,
+      currency: currency,
+      resetPassword: resetPassword,
+    });
 
     // If verification succeeds, the JWT is valid
   } catch (error) {
@@ -150,34 +181,71 @@ router.get("/check-auth", (req, res) => {
   }
 });
 
-
-router.post("/studentSignup", async(req, res) => {
-  const {count,courseId} = req.body;
+router.post("/studentSignup", async (req, res) => {
+  const { count, courseId } = req.body;
   const students = [];
   for (let i = 0; i < count; i++) {
     const newUser = generateRandomUser();
     try {
-        const user = new User(newUser);
-        await user.save();
+      const user = new User(newUser);
+      await user.save();
 
-        const student = new Student({
-            userId: user._id,
-            enrolledCourses: [courseId]
-        });
-        await student.save();
-        students.push(student);
+      const student = new Student({
+        userId: user._id,
+        studentPassword: newUser.password,
+        resetPassword: true,
+        enrolledCourses: [courseId],
+      });
+      await student.save();
+      students.push(student);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error creating student' });
+      console.error(error);
+      return res.status(500).json({ message: "Error creating student" });
     }
-}
-
-res.status(201).json({
+  }
+  res.status(201).json({
     message: `${count} students created and enrolled in course ${courseId}`,
     // students: students
+  });
 });
 
-  
-})
+router.post("/updateStudent", async (req, res) => {
+  try {
+    const jwt = req.cookies && req.cookies.jwt;
+    const decoded = JWT.decode(jwt);
+    const username = decoded.username;
+    const user = await User.findOne({ username });
+    const userId = user._id;
+    user.password = req.body.password;
+    user.profile.firstName = req.body.firstName;
+    user.profile.lastName = req.body.lastName;
+    user.save();
+    const student = await Student.findOne({ userId });
+    student.resetPassword = false;
+    student.studentPassword = "**********";
+    student.save();
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+router.post("/regeneratePassword", async (req, res) => {
+  try {
+    const studentId = req.body.studentId;
+    const student = await Student.findById(studentId);
+    const user = await User.findById(student.userId);
+    const password = faker.internet.password();
+    user.password = password;
+    user.save();
+    student.resetPassword = true;
+    student.studentPassword = password;
+    student.save();
+    res.status(200).json({ message: "Password Generated", password });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 module.exports = router;

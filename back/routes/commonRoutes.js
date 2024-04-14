@@ -40,15 +40,18 @@ router.get("/profile", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     let currency = null;
+    let resetPassword = false;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
+      resetPassword = student.resetPassword;
     }
     res.status(200).json({
       profile: user.profile,
       username: user.username,
       role: user.role,
       currency: currency,
+      resetPassword: resetPassword,
     });
   } catch (error) {
     console.error(error);
@@ -73,6 +76,17 @@ router.get("/getAllCourses", courseController.getAllCourses);
 // Route to add a course to the student
 router.post("/enrollstudent", courseController.enrollCourse);
 
+// Route to delete a student from course
+router.delete(
+  "/deleteStudent/:studentId",
+  courseController.deleteStudentFromCourse
+);
+
+router.get(
+  "/getEnrolledStudents/:courseId",
+  courseController.getEnrolledStudents
+);
+
 //Method to delete the course and also to remove it from the enrolledCourses array of all students.
 router.delete(
   "/courses",
@@ -81,11 +95,11 @@ router.delete(
 );
 
 //Method to get Students enrolled in given course
-router.get(
-  "/course/:courseId",
-  middleware(["student", "instructor"]),
-  courseController.getStudentsByCourseId
-);
+// router.get(
+//   "/course/:courseId",
+//   middleware(["student", "instructor"]),
+//   courseController.getStudentsByCourseId
+// );
 
 // ================= Routes for Task =================== //
 

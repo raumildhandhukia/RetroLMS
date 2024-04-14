@@ -17,6 +17,7 @@ import studentsData from './Components/Leaderboard/students.json'
 import AddItem from "./Components/Shop/AddItem";
 import Leaderboard from './Components/Leaderboard/Leaderboard';
 import AddTask from "./Components/Task/AddTask";
+import CreatePassword from "./Components/CreatePassword";
 
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard/*" element={<Dashboard />} />
             <Route path="/courses" element={<StudentPage />} />
-            {/*<Route path="/tasks" element={<Tasks />} />*/}
+            <Route path="/createPassword" element={<CreatePassword />} />
             <Route path="/task" element={<Task />} />
             <Route path="/instructorDashboard" element={<InstructorDashboard />} />
             {/* <Route path="/course/:id" element={<CourseDetailPage/>} /> */}
