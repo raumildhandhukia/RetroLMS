@@ -140,7 +140,7 @@ router.get("/logout", async (req, res) => {
   res.status(200).json({ message: "Logout successful" });
 });
 
-router.get("/check-auth", (req, res) => {
+router.get("/check-auth", async (req, res) => {
   // Retrieve the JWT from the request cookies
   const token = req.cookies && req.cookies["jwt"];
 
@@ -152,7 +152,27 @@ router.get("/check-auth", (req, res) => {
   try {
     // Verify the JWT signature and check expiration
     const decoded = jwt.verify(token, secretKey);
-    res.status(200).json({ message: "Authentication successful" });
+
+    const username = decoded.username;
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    let currency = null;
+    let resetPassword = false;
+    if (user.role === "student") {
+      const student = await Student.findOne({ userId: user._id });
+      currency = student.currentCurrency;
+      resetPassword = student.resetPassword;
+    }
+    res.status(200).json({
+      profile: user.profile,
+      username: user.username,
+      role: user.role,
+      currency: currency,
+      resetPassword: resetPassword,
+    });
 
     // If verification succeeds, the JWT is valid
   } catch (error) {

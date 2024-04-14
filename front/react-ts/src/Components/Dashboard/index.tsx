@@ -42,13 +42,12 @@ const Dashboard: React.FC = () => {
           method: "GET",
           credentials: "include", // Include cookies in the request
         }); 
+        const data = await response.json();
 
         if (!response.ok) {
-          // User is authenticated, redirect to the landing page
           navigate("/login");
-        } else {
-          // User is not authenticated, continue rendering the login page
-          console.log("User not authenticated");
+        } else if (data.role === "student" && data.resetPassword) {
+          navigate("/createPassword");
         }
       } catch (error) {
         console.error("Error checking authentication:", error);

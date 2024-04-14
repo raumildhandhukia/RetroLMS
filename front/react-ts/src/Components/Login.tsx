@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +21,8 @@ interface Prof {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const roleRef = useRef("");
+  const showCreatePasswordRef = useRef(false);
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -32,7 +34,22 @@ const Login: React.FC = () => {
 
         if (response.ok) {
           // User is authenticated, redirect to the landing page
-          redirectToRole();
+
+          const data = await response.json();
+          const role = data.role;
+          const showCreatePassword = data.resetPassword;
+          debugger;
+          if (role === "student") {
+      if (showCreatePassword) {
+          navigate("/createPassword");
+      } else {
+        navigate("/dashboard");
+      }
+    } else  {
+      navigate("/dashboard");
+    }
+
+          
         } else {
           // User is not authenticated, continue rendering the login page
           console.log("User not authenticated");
@@ -49,8 +66,7 @@ const Login: React.FC = () => {
     username: "",
     password: "",
   });
-  let role = "";
-  let showPasswordCreatePage = false;
+  
   const handleLogin = async () => {
     try {
       // Send credentials to the server
@@ -65,27 +81,22 @@ const Login: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        role = data.role;
-        showPasswordCreatePage = data.resetPassword;
-        redirectToRole();
+        roleRef.current = data.role;
+        showCreatePasswordRef.current = data.resetPassword;
+        if (roleRef.current === "student") {
+          if (showCreatePasswordRef.current) {
+              navigate("/createPassword");
+          } else {
+              navigate("/dashboard");
+            }
+          } else  {
+               navigate("/dashboard");
+          }
       } else {
         console.error("Login failed");
       }
     } catch (error) {
       console.error("Error during login:", error);
-    }
-  };
-
-  const redirectToRole = () => {
-    console.log("Role:", role);
-    if (role === "student") {
-      if (showPasswordCreatePage) {
-          navigate("/createPassword");
-      } else {
-        navigate("/dashboard");
-      }
-    } else  {
-      navigate("/dashboard");
     }
   };
 
