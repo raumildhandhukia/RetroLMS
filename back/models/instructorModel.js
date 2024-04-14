@@ -14,7 +14,12 @@ const instructorSchema = new mongoose.Schema(
         ref: "Course",
       },
     ],
+    resetPasswordConfig: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   {
     timestamps: true,
   }

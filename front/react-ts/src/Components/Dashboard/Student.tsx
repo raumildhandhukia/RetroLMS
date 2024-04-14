@@ -29,6 +29,7 @@ const StudentData: React.FC<StudentProps> = ({ student, handleBack }) => {
             <div className="nes-container is-rounded is-dark student-info" style={{ textAlign: "left" }}>
                 <p>Full Name: {student.fullName}</p>
                 <p>Password: {student.password}</p>
+                <p>Email: {student.userName}</p>
             </div>
             <button className="nes-btn is-success" style={{
                 marginTop: "5rem",

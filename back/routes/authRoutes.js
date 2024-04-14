@@ -9,6 +9,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const authMiddleware = require("../middleware/authMiddleware.js");
+const JWT = require("jsonwebtoken");
 
 router.use(cookieParser());
 
@@ -112,8 +113,20 @@ router.post("/login", async (req, res) => {
     // You may also create a refresh token if needed
     // const refreshToken = createRefreshToken();
     res.cookie("jwt", token, { httpOnly: true });
-
-    res.json({ success: true });
+    let currency = null;
+    let resetPassword = false;
+    if (user.role === "student") {
+      const student = await Student.findOne({ userId: user._id });
+      currency = student.currentCurrency;
+      resetPassword = student.resetPassword;
+    }
+    res.status(201).json({
+      profile: user.profile,
+      username: user.username,
+      role: user.role,
+      currency: currency,
+      resetPassword: resetPassword,
+    });
     // res.json({ token });
   } catch (error) {
     console.error(error);
@@ -160,6 +173,7 @@ router.post("/studentSignup", async (req, res) => {
       const student = new Student({
         userId: user._id,
         studentPassword: newUser.password,
+        resetPassword: true,
         enrolledCourses: [courseId],
       });
       await student.save();
@@ -169,11 +183,30 @@ router.post("/studentSignup", async (req, res) => {
       return res.status(500).json({ message: "Error creating student" });
     }
   }
-
   res.status(201).json({
     message: `${count} students created and enrolled in course ${courseId}`,
     // students: students
   });
+});
+
+router.post("/updateStudent", async (req, res) => {
+  try {
+    const jwt = req.cookies && req.cookies.jwt;
+    const decoded = JWT.decode(jwt);
+    const username = decoded.username;
+    const user = await User.findOne({ username });
+    const userId = user._id;
+    user.password = req.body.password;
+    user.save();
+    const student = await Student.findOne({ userId });
+    student.resetPassword = false;
+    student.studentPassword = "**********";
+    student.save();
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 module.exports = router;

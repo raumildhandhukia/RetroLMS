@@ -28,6 +28,14 @@ const studentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    resetPassword: {
+      type: Boolean,
+      default: false,
+    },
+    resetName: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

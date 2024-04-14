@@ -40,15 +40,18 @@ router.get("/profile", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     let currency = null;
+    let resetPassword = false;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
+      resetPassword = student.resetPassword;
     }
     res.status(200).json({
       profile: user.profile,
       username: user.username,
       role: user.role,
       currency: currency,
+      resetPassword: resetPassword,
     });
   } catch (error) {
     console.error(error);

@@ -21,36 +21,34 @@ interface Prof {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    const checkAuthentication = async () => {
-      try {
-        // Make a request to the server to check the authentication status
-        const response = await fetch("http://localhost:8080/check-auth", {
-          method: "GET",
-          credentials: "include", // Include cookies in the request
-        });
+  const [role, setRole] = useState<string>('');
+  const [showPasswordCreatePage, setShowPasswordCreatePage] = useState<boolean>(false);
 
-        if (response.ok) {
-          // User is authenticated, redirect to the landing page
-          redirectToRole();
-        } else {
-          // User is not authenticated, continue rendering the login page
-          console.log("User not authenticated");
-        }
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const checkAuthentication = async () => {
+  //     try {
+  //       const response = await fetch("http://localhost:8080/check-auth", {
+  //         method: "GET",
+  //         credentials: "include", // Include cookies in the request
+  //       });
 
-    checkAuthentication();
-  }, [navigate]);
+  //       if (response.ok) {
+  //         redirectToRole();
+  //       } else {
+  //         console.log("User not authenticated");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking authentication:", error);
+  //     }
+  //   };
+  //   checkAuthentication();
+  // }, []);
 
   const [credentials, setCredentials] = useState<Credentials>({
     username: "",
     password: "",
   });
-  let role = "";
-  let showPasswordCreatePage = false;
+
   const handleLogin = async () => {
     try {
       // Send credentials to the server
@@ -62,11 +60,7 @@ const Login: React.FC = () => {
         credentials: "include",
         body: JSON.stringify(credentials),
       });
-
       if (response.ok) {
-        const data = await response.json();
-        role = data.role;
-        showPasswordCreatePage = data.resetPassword;
         redirectToRole();
       } else {
         console.error("Login failed");
@@ -76,17 +70,41 @@ const Login: React.FC = () => {
     }
   };
 
+  const getProfile = async () => {
+        try {
+          const response = await fetch("http://localhost:8080/profile", {
+            method: "GET",
+            credentials: "include",
+          });
+          if (response.ok) {
+            const data:Prof = await response.json();
+            setRole(data.role);
+            setShowPasswordCreatePage(data.resetPassword);
+          } else {
+            console.log("User not found");
+          }
+        } catch (error) {
+          console.error("Error checking for profile", error);
+        }
+      };
+
   const redirectToRole = () => {
-    console.log("Role:", role);
+    
+    getProfile();
+    console.log(role)
     if (role === "student") {
       if (showPasswordCreatePage) {
           navigate("/createPassword");
       } else {
         navigate("/dashboard");
       }
-    } else  {
+      
+    } else if (role === "instructor") {
+      debugger;
       navigate("/dashboard");
     }
+
+    // window.location.href = "/dashboard";
   };
 
 return (
@@ -135,7 +153,6 @@ return (
           </button>
         </form>
       </div>
-     
     </div>
   );
 

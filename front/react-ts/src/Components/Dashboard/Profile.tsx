@@ -15,10 +15,12 @@ interface Prof {
         email: string;
     };
     currency: number | null;
+    resetPasswordConfig: boolean;
 }
 
 const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
     const [profile, setProfile] = useState<Prof | null>(null);
+    // const [resetPasswordConfig, setResetPasswordConfig] = useState<boolean>(false);
     const profileRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -38,6 +40,7 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
             }
         };
         checkProfile();
+        // setResetPasswordConfig(profile?.resetPasswordConfig || false);
 
         // Add event listener to close sidebar when clicking outside
         const handleClickOutside = (event: MouseEvent) => {
@@ -52,23 +55,27 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
         };
     }, [onClose]);
 
+    // const handleResetPasswordConfig = () => {
+    //     setResetPasswordConfig(!resetPasswordConfig);
+    // }
+
     return (
-        <div className='main-container' ref={profileRef} style={{width:"max-content"}}>
+        <div className='main-container' ref={profileRef}>
             <div className='header-container is-rounded'>
                 <div className='close-button'>
                     <X onClick={onClose} />
                 </div>
             </div>
             
-
-            
-            <hr className='nes-line' />
             {profile?.role === 'student' ? (
-                <div className="nes-container is-dark with-title">
+                <div>
+                    <hr className='nes-line' />
+                    <div className="nes-container is-dark with-title">
                     <p className="title">Balance</p>
                     <p className='nes-text'>$ {profile?.currency}</p>
                 </div>
-
+                </div>
+                
             ) : null}
             <hr className='nes-line' />
             <div className="nes-container is-dark with-title">
@@ -86,6 +93,13 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
                         <p>Email: {profile?.profile.email}</p>
                     </div>
             </div>
+            {/* <hr className='nes-line' />
+            <div className="nes-container is-dark with-title">
+                <label>
+                    <input type="checkbox" className="nes-checkbox is-dark" checked={resetPasswordConfig} onChange={handleResetPasswordConfig}/>
+                    <span>Create password when students logges in for first time?</span>
+                </label>
+            </div> */}
             <hr className='nes-line' />
 
             <div className="nes-container is-dark with-title">
