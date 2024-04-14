@@ -208,5 +208,22 @@ router.post("/updateStudent", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+router.post("/regeneratePassword", async (req, res) => {
+  try {
+    const studentId = req.body.studentId;
+    const student = await Student.findById(studentId);
+    const user = await User.findById(student.userId);
+    const password = faker.internet.password();
+    user.password = password;
+    user.save();
+    student.resetPassword = true;
+    student.studentPassword = password;
+    student.save();
+    res.status(200).json({ message: "Password Generated", password });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 module.exports = router;
