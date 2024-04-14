@@ -217,6 +217,8 @@ router.post("/updateStudent", async (req, res) => {
     const user = await User.findOne({ username });
     const userId = user._id;
     user.password = req.body.password;
+    user.profile.firstName = req.body.firstName;
+    user.profile.lastName = req.body.lastName;
     user.save();
     const student = await Student.findOne({ userId });
     student.resetPassword = false;

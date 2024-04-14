@@ -38,10 +38,9 @@ const Login: React.FC = () => {
           const data = await response.json();
           const role = data.role;
           const showCreatePassword = data.resetPassword;
-          debugger;
           if (role === "student") {
       if (showCreatePassword) {
-          navigate("/createPassword");
+          navigate("/createPassword", { state: { firstName: data.profile.firstName, lastName: data.profile.lastName } });
       } else {
         navigate("/dashboard");
       }
@@ -85,7 +84,7 @@ const Login: React.FC = () => {
         showCreatePasswordRef.current = data.resetPassword;
         if (roleRef.current === "student") {
           if (showCreatePasswordRef.current) {
-              navigate("/createPassword");
+              navigate("/createPassword", { state: { firstName: data.profile.firstName, lastName: data.profile.lastName } });
           } else {
               navigate("/dashboard");
             }

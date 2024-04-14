@@ -1,46 +1,92 @@
-import React, { useState } from 'react'; 
+import React, { useEffect, useState } from 'react'; 
 import './CreatePassword.css';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const CreatePassword: React.FC = () => {
+const CreatePassword: React.FC = (props) => {
 
     const [password, setPassword] = useState<string>('');
+    const [errorString, setErrorString] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [showErrorString, setShowErrorString] = useState<boolean>(false);
+    const [firstName, setFirstName] = useState<string>('');
+    const [lastName, setLastName] = useState<string>('');
     const navigate = useNavigate();
+    const location = useLocation();
+    const data = location.state;
 
-    const updatePassword = async ()=>{
-        if (password && password === confirmPassword) {
-                try{
+    useEffect(() => {
+        setFirstName(data.firstName);
+        setLastName(data.lastName);
+    }, []);
+
+    const updatePassword = async () => {
+        const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*[0-9].*[0-9]).{8,}$/; // Regex for password format
+
+            if (firstName.trim() === '' || lastName.trim() === '' || password.trim() === '' || confirmPassword.trim() === '') {
+                setErrorString('Please fill in all fields');
+                setShowErrorString(true);
+            } else if (password !== confirmPassword) {
+                setErrorString('Passwords do not match');
+                setShowErrorString(true);
+            } else if (!passwordRegex.test(password)) {
+                setErrorString('Password must contain at least 8 characters including at least 2 numbers and at least 1 special character');
+                setShowErrorString(true);
+            } else {
+                try {
                     const response = await fetch('http://localhost:8080/updateStudent', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
+                            firstName,
+                            lastName,
                             password
                         }),
                         credentials: 'include',
                     });
                     if (!response.ok) {
-                        throw new Error('Failed to update password');
+                        setErrorString('Failed to update password');
+                        setShowErrorString(true);
                     } else {
                         navigate('/dashboard');
                     } 
                 } catch (error) {
-                    console.error("Error updating password:", error);
+                   setErrorString('Failed to update password');
+                   setShowErrorString(true);
                 }
-            } else {
-                setShowErrorString(true);
             }
-    };
+        };
+
 
 
     return (
     <div className="nes-container is-dark with-title flex-container">
         <div className="center-container">
-        
-            <h1>Please create a new password for your account</h1>
+
+            <h1>Personal Information & Password Creation</h1>
+                <div className="nes-container is-dark with-title" style={{marginTop:"50px"}}>
+                    <p className="title">First Name</p>
+                    <input 
+                        type="text"
+                        style={{color: 'black'}} 
+                        id="firstName" 
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className="nes-input" 
+                        value={firstName} 
+                    />
+                </div>
+                <div className="nes-container is-dark with-title" style={{marginTop:"15px"}}>
+                    <p className="title">Last Name</p>
+                    <input 
+                        type="text"
+                        style={{color: 'black'}} 
+                        id="lastName" 
+                        onChange={(e) => setLastName(e.target.value)}
+                        className="nes-input" 
+                        value={lastName} 
+                    />
+                </div>
                 <div className="nes-container is-dark with-title" style={{marginTop:"50px"}}>
                     <p className="title">Password</p>
                     <input 
@@ -66,7 +112,7 @@ const CreatePassword: React.FC = () => {
             
 
                 <div style={{marginTop:"15px"}}>
-                    <p className="error-message" style={{ display: showErrorString ? 'block' : 'none', color: "red" }}>Passwords do not match</p>
+                    <p className="error-message" style={{ display: showErrorString ? 'block' : 'none', color: "red" }}>{errorString}</p>
                 </div>
                 <button type="button" className="nes-btn is-success" onClick={updatePassword}>Create Password</button>
         </div>
