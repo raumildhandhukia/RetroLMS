@@ -5,6 +5,41 @@ const Instructor = require("../models/instructorModel");
 const JWT = require("jsonwebtoken");
 
 const courseController = {
+  getEnrolledStudents: async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const students = await Student.find({ enrolledCourses: courseId });
+      const studentsData = await Promise.all(
+        students.map(async (student) => {
+          const user = await User.findById(student.userId);
+          return {
+            studentId: student._id,
+            userId: student.userId,
+            userName: user.username,
+            fullName: user.profile.firstName + " " + user.profile.lastName,
+            password: student.studentPassword,
+          };
+        })
+      );
+      res.status(200).json(studentsData);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+
+  deleteStudentFromCourse: async (req, res) => {
+    try {
+      const { studentId } = req.params;
+      const student = await Student.findByIdAndDelete(studentId);
+
+      res.status(200).json({ message: "Student deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+
   createCourse: async (req, res) => {
     try {
       const { title, instructorId, courseKey } = req.body;
@@ -201,24 +236,24 @@ const courseController = {
     }
   },
 
-  getStudentsByCourseId: async (req, res) => {
-    try {
-      if (!req.params) {
-        res.status(422).json({ message: "Missing Parameter" });
-      }
-      const courseId = req.params.courseId;
-      const students = await Student.find({
-        enrolledCourses: courseId,
-      }).populate("userId");
-      if (!students.length) {
-        return res
-          .status(404)
-          .json({ message: "No students found enrolled in this course" });
-      }
-      res.status(200).json(students.map((student) => student.userId.profile));
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  },
+  // getStudentsByCourseId: async (req, res) => {
+  //   try {
+  //     if (!req.params) {
+  //       res.status(422).json({ message: "Missing Parameter" });
+  //     }
+  //     const courseId = req.params.courseId;
+  //     const students = await Student.find({
+  //       enrolledCourses: courseId,
+  //     }).populate("userId");
+  //     if (!students.length) {
+  //       return res
+  //         .status(404)
+  //         .json({ message: "No students found enrolled in this course" });
+  //     }
+  //     res.status(200).json(students.map((student) => student.userId.profile));
+  //   } catch (err) {
+  //     res.status(500).json({ message: err.message });
+  //   }
+  // },
 };
 module.exports = courseController;

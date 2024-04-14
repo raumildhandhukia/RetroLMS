@@ -73,6 +73,17 @@ router.get("/getAllCourses", courseController.getAllCourses);
 // Route to add a course to the student
 router.post("/enrollstudent", courseController.enrollCourse);
 
+// Route to delete a student from course
+router.delete(
+  "/deleteStudent/:studentId",
+  courseController.deleteStudentFromCourse
+);
+
+router.get(
+  "/getEnrolledStudents/:courseId",
+  courseController.getEnrolledStudents
+);
+
 //Method to delete the course and also to remove it from the enrolledCourses array of all students.
 router.delete(
   "/courses",
@@ -81,11 +92,11 @@ router.delete(
 );
 
 //Method to get Students enrolled in given course
-router.get(
-  "/course/:courseId",
-  middleware(["student", "instructor"]),
-  courseController.getStudentsByCourseId
-);
+// router.get(
+//   "/course/:courseId",
+//   middleware(["student", "instructor"]),
+//   courseController.getStudentsByCourseId
+// );
 
 // ================= Routes for Task =================== //
 

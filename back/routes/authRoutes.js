@@ -10,7 +10,6 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const authMiddleware = require("../middleware/authMiddleware.js");
 
-
 router.use(cookieParser());
 
 const secretKey = process.env.JWT_SECRET_KEY;
@@ -20,14 +19,14 @@ function generateRandomUser() {
   const username = faker.internet.userName(firstName, lastName);
   const password = faker.internet.password();
   return {
-      username,
-      password,
-      role: "student",
-      profile: {
-          firstName,
-          lastName,
-          email: `${username}@gmail.com`
-      }
+    username,
+    password,
+    role: "student",
+    profile: {
+      firstName,
+      lastName,
+      email: `${username}@gmail.com`,
+    },
   };
 }
 
@@ -55,7 +54,6 @@ async function generateRespectiveObject(role, userId) {
 
 router.post("/signup", async (req, res) => {
   try {
-
     const { username, password, role, profile } = req.body;
     // Check if the user already exists
     const existingUser = await User.findOne({
@@ -150,34 +148,32 @@ router.get("/check-auth", (req, res) => {
   }
 });
 
-
-router.post("/studentSignup", async(req, res) => {
-  const {count,courseId} = req.body;
+router.post("/studentSignup", async (req, res) => {
+  const { count, courseId } = req.body;
   const students = [];
   for (let i = 0; i < count; i++) {
     const newUser = generateRandomUser();
     try {
-        const user = new User(newUser);
-        await user.save();
+      const user = new User(newUser);
+      await user.save();
 
-        const student = new Student({
-            userId: user._id,
-            enrolledCourses: [courseId]
-        });
-        await student.save();
-        students.push(student);
+      const student = new Student({
+        userId: user._id,
+        studentPassword: newUser.password,
+        enrolledCourses: [courseId],
+      });
+      await student.save();
+      students.push(student);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error creating student' });
+      console.error(error);
+      return res.status(500).json({ message: "Error creating student" });
     }
-}
+  }
 
-res.status(201).json({
+  res.status(201).json({
     message: `${count} students created and enrolled in course ${courseId}`,
     // students: students
+  });
 });
-
-  
-})
 
 module.exports = router;

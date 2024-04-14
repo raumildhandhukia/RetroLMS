@@ -8,6 +8,10 @@ const studentSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    studentPassword: {
+      type: String,
+      required: true,
+    },
     enrolledCourses: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -22,9 +26,8 @@ const studentSchema = new mongoose.Schema(
     ],
     currentCurrency: {
       type: Number,
-      default: 0
+      default: 0,
     },
-    
   },
   {
     timestamps: true,

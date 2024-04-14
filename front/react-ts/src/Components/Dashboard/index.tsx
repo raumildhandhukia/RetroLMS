@@ -15,6 +15,7 @@ import { ok } from 'assert';
 import DeletePrompt from './DeletePrompt';
 import GradingSubmission from '../GradingSubmission/GradingSubmission';
 import Profile from './Profile';
+import Students from './Students';
 
 export interface Course {
     _id: string;
@@ -129,7 +130,7 @@ const Dashboard: React.FC = () => {
    
     const menuItems = role === 'student' ? 
                     ['Home', 'Tasks', 'LeaderBoard', 'BuyItems'] : 
-                    ['Home', 'Tasks', 'LeaderBoard', 'BuyItems', 'Delete', 'GradingSubmission'];
+                    ['Home', 'Tasks', 'LeaderBoard', 'BuyItems', 'Delete', 'GradingSubmission', 'Students'];
 
     const handleCourseCreate = () => {
         setSelectedItem('CreateCourse');
@@ -230,7 +231,7 @@ const Dashboard: React.FC = () => {
                     {selectedItem === 'BuyItems' && <Items role={role} courseId={selectedCourse}/>}
                     {selectedItem === 'Delete' && <DeletePrompt/>}
                     {selectedItem === 'GradingSubmission' && <GradingSubmission />}
-                    {/* {selectedItem === 'CreateCourse' && <CreateCourse/>} */}
+                    {selectedItem === 'Students' && <Students courseId={selectedCourse}/>}
                     </div>
                 </div>
                
