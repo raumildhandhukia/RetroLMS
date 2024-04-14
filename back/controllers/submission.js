@@ -7,61 +7,66 @@ const Instructor = require("../models/instructorModel");
 const JWT = require("jsonwebtoken");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
-const fs = require("fs");
+const fs = require('fs').promises;
 const xlsx = require("xlsx");
+const mongoose = require('mongoose');
 
 // Create a new submission
 exports.gradingMutlipleSubmission = async (req, res) => {
-  try {
-    if (req.file) {
-      const workbook = xlsx.readFile(req.file.path);
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      // Convert sheet to JSON
-      const data = xlsx.utils.sheet_to_json(worksheet);
-      for (const item of data) {
-        const username = item.username;
-        const user = await User.findOne({ username });
-        const studentId = user._id;
-        const subBody = {
-          studentId: studentId,
-          taskId: item.taskId,
-          points_recevied: item.mark,
-          current_state: true,
-        };
-        console.log(subBody);
-        const submission = new Submission(subBody);
+  if (!req.file) {
+    return res.status(400).send("No file uploaded.");
+  }
 
-        await submission.save();
-        try {
-          // Attempt to update the corresponding Task
-          await Task.findByIdAndUpdate(
-            subBody.taskId,
-            { $push: { submissionId: submission._id } }, // Use $push to add the new task's ID to the task array
-            { new: true, upsert: false } // upsert:false ensures that no new Course is created if it doesn't exist
-          );
-        } catch (taskUpdateError) {
-          // If an error occurs during the course update, log it and return an error response
-          console.error(
-            "Error updating task with new submission:",
-            taskUpdateError
-          );
-          await Submission.findByIdAndDelete(submission._id);
-          return res.status(500).json({
-            message: "Error updating task with new submission.",
-          });
-        }
-        // If everything goes well, return success response
-        res.status(201).json({
-          message: `Submission created successfully.`,
-        });
+  const workbook = xlsx.readFile(req.file.path);
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+  const data = xlsx.utils.sheet_to_json(worksheet);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    for (const item of data) {
+      const { taskId, points, username } = item;
+      const user = await User.findOne({ username });
+      const studentId = user._id;
+
+      if (!studentId || !taskId) {
+        throw new Error("Missing studentId or taskId in some entries");
       }
 
-      // Optionally, delete the file after parsing if you don't need to keep it
-      fs.unlinkSync(req.file.path);
+      // Create a new submission document
+      const submission = new Submission({
+        studentId,
+        taskId,
+        points_recevied: points,
+        current_state: true,
+      });
+      await submission.save({ session });
+
+      // Update Task document by pushing new submission ID
+      await Task.findByIdAndUpdate(
+        taskId,
+        {
+          $push: { submissionId: submission._id },
+        },
+        { session }
+      );
     }
+    await session.commitTransaction();
+    res.send("Submissions processed and tasks updated.");
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    await session.abortTransaction();
+    console.error("Error processing file:", error);
+    res.status(500).send(`Error processing file: ${error.message}`);
+  } finally {
+    session.endSession();
+    try {
+      await fs.unlink(req.file.path);
+      console.log('File deleted successfully');
+  } catch (err) {
+      console.error('Failed to delete file:', err);
+  }
+
   }
 };
 
@@ -76,7 +81,7 @@ exports.gradingSingleSubmission = async (req, res) => {
       studentId,
       taskId,
       points_recevied: pointsReceived,
-      current_state: currentState
+      current_state: currentState,
     });
 
     // Save the submission to the database
@@ -84,11 +89,10 @@ exports.gradingSingleSubmission = async (req, res) => {
 
     try {
       // Attempt to update the corresponding Task document
-      console.log(savedSubmission._id)
       await Task.findByIdAndUpdate(
         taskId,
-        { $push: { submissionId: savedSubmission._id } }, // Use $push to add the submission ID to the task's submissionId array
-        { new: true } // Return the updated document
+        { $push: { submissionId: savedSubmission._id } },
+        { new: true }
       );
     } catch (error) {
       // If an error occurs while updating the Task, rollback the Submission creation
@@ -96,13 +100,17 @@ exports.gradingSingleSubmission = async (req, res) => {
       if (savedSubmission) {
         await Submission.findByIdAndDelete(savedSubmission._id);
       }
-      return res.status(500).json({ message: "Failed to link submission to task, submission rolled back." });
+      return res
+        .status(500)
+        .json({
+          message: "Failed to link submission to task, submission rolled back.",
+        });
     }
 
     // Respond with the created submission
     res.status(201).json({
       message: "Submission added successfully",
-      submission: savedSubmission
+      submission: savedSubmission,
     });
   } catch (error) {
     console.error("Error adding submission:", error);
@@ -124,7 +132,7 @@ exports.allocatePointsToStudent = async (req, res) => {
     const submission = await Submission.findByIdAndUpdate(
       submissionId,
       { points_received: pointsReceived },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
     if (!submission) {

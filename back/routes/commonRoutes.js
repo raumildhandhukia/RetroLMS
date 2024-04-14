@@ -128,17 +128,17 @@ router.get(
 
 // ======================= Routes for Submission ====================== //
 
-// router.post(
-//   "/grading/:courseId",
-//   middleware(["instructor"]),
-//   upload.single("file"),
-//   submissionController.gradingMutlipleSubmission
-// );
+router.post(
+  "/gradingMutipleSubmission",
+  // middleware(["instructor"]),
+  upload.single("file"),
+  submissionController.gradingMutlipleSubmission
+);
 
-// router.post(
-//   "/grading/:courseId/:taskId",
-//   submissionController.gradingSingleSubmission
-// );
+router.post(
+  "/gradingSingleSubmission",
+  submissionController.gradingSingleSubmission
+);
 
 // ======================= Routes for Transaction ====================== //
 router.post("/requestItem", itemController.requestItem);
