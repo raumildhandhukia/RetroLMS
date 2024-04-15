@@ -36,7 +36,6 @@ exports.addTask = async (req, res) => {
     const savedTask = await taskItem.save();
     try {
       // Attempt to update the corresponding Course
-      console.log(taskObj.courseId, savedTask._id);
       await Course.findByIdAndUpdate(
         taskObj.courseId,
         { $push: { task: savedTask._id } }, // Use $push to add the new task's ID to the task array
@@ -143,7 +142,7 @@ exports.getTaskById = async (req, res) => {
   }
 };
 
-exports.getTaskByCourseId = async (req, res) => {
+exports.getTasksByCourseId = async (req, res) => {
   try {
     const tasks = await Task.find({ courseId: req.body.courseId });
     if (tasks) {

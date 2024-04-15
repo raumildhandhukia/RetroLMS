@@ -23,37 +23,98 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   const data = xlsx.utils.sheet_to_json(worksheet);
   const session = await mongoose.startSession();
   session.startTransaction();
-
+  skipUserNames = [];
   try {
     for (const item of data) {
       const { taskId, points, username } = item;
       const user = await User.findOne({ username });
-      const studentId = user._id;
+      const userStudentId = user._id;
 
-      if (!studentId || !taskId) {
-        throw new Error("Missing studentId or taskId in some entries");
+      if (!userStudentId || !taskId) {
+        throw new Error("Missing userStudentId or taskId in some entries");
       }
 
-      // Create a new submission document
-      const submission = new Submission({
-        studentId,
-        taskId,
-        points_recevied: points,
-        current_state: true,
-      });
-      await submission.save({ session });
-
-      // Update Task document by pushing new submission ID
-      await Task.findByIdAndUpdate(
-        taskId,
+      // Check if the student already completed this task
+      const student = await Student.findOne(
         {
-          $push: { submissionId: submission._id },
+          userId: userStudentId,
+          completedTask: { $in: [taskId] },
         },
+        null,
         { session }
       );
+      if (student) {
+        skipUserNames.push(username);
+        try {
+          const submission = await Submission.findOne({
+            taskId: taskId,
+            studentId: userStudentId,
+          });
+          if (submission) {
+            const oldPoints = submission.points; // Existing points
+            // Step 3: Update the submission with new points
+            submission.points = points;
+            await submission.save();
+
+            // Step 4: Retrieve the associated student using studentId
+            const student = await Student.findOne({
+              userId: userStudentId,
+            });
+            if (student) {
+              const pointsDifference = points - oldPoints;
+              student.currentCurrency += pointsDifference;
+              await student.save();
+            }
+          }
+        } catch (error) {
+          console.error(
+            "Error updating submission model after for duplicate:",
+            error
+          );
+        }
+      } else {
+        // Create a new submission document
+        const submission = new Submission({
+          studentId: userStudentId,
+          userStudentId,
+          taskId,
+          points: points,
+        });
+        await submission.save({ session });
+
+        // Update Task document by pushing new submission ID
+        await Task.findByIdAndUpdate(
+          taskId,
+          {
+            $push: { submissionId: submission._id },
+          },
+          { session }
+        );
+        try {
+          const updatedStudent = await Student.findOneAndUpdate(
+            { userId: userStudentId },
+            {
+              $push: { completedTask: taskId },
+              $inc: { currentCurrency: points },
+            },
+            { new: true, session }
+          );
+        } catch (error) {
+          console.error(
+            "Error updating student model after submission:",
+            error
+          );
+        }
+      }
     }
     await session.commitTransaction();
-    res.send("Submissions processed and tasks updated.");
+    if (skipUserNames.length > 0) {
+      res.send(`Marks Updated for ${skipUserNames.join(", ")}.`);
+    } else {
+      res.send(
+        "Submissions processed, tasks updated, and student tasks marked as completed for all users"
+      );
+    }
   } catch (error) {
     await session.abortTransaction();
     console.error("Error processing file:", error);
@@ -69,6 +130,8 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   }
 };
 
+// Get all submissions for given Task ID
+
 // Grading a submission by ID
 exports.gradingSingleSubmission = async (req, res) => {
   let savedSubmission = null;
@@ -79,19 +142,23 @@ exports.gradingSingleSubmission = async (req, res) => {
     const submission = new Submission({
       studentId,
       taskId,
-      points_recevied: pointsReceived,
-      current_state: currentState,
+      points: pointsReceived,
     });
-
-    // Save the submission to the database
     savedSubmission = await submission.save();
 
     try {
-      // Attempt to update the corresponding Task document
       await Task.findByIdAndUpdate(
         taskId,
         { $push: { submissionId: savedSubmission._id } },
         { new: true }
+      );
+      // Update Student document by adding taskId to completedTask
+      await Student.findOneAndUpdate(
+        { userId: studentId },
+        {
+          $push: { completedTask: taskId },
+        },
+        { session }
       );
     } catch (error) {
       // If an error occurs while updating the Task, rollback the Submission creation
