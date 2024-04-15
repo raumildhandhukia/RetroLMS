@@ -61,7 +61,7 @@ const courseController = {
         });
         await course.save();
         // Attempt to update the instructor's coursesTeaching array
-        const instructor = await Instructor.findOne({ userId: instructorId });
+        const instructor = await Instructor.findOne({ _id: instructorId });
         if (!instructor) {
           // Instructor not found, roll back course creation
           await Course.findByIdAndDelete(course._id);

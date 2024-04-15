@@ -7,9 +7,9 @@ const Instructor = require("../models/instructorModel");
 const JWT = require("jsonwebtoken");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
-const fs = require('fs').promises;
+const fs = require("fs").promises;
 const xlsx = require("xlsx");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Create a new submission
 exports.gradingMutlipleSubmission = async (req, res) => {
@@ -23,20 +23,35 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   const data = xlsx.utils.sheet_to_json(worksheet);
   const session = await mongoose.startSession();
   session.startTransaction();
-
+  skipUserNames = [];
   try {
     for (const item of data) {
       const { taskId, points, username } = item;
       const user = await User.findOne({ username });
-      const studentId = user._id;
+      const userStudentId = user._id;
 
-      if (!studentId || !taskId) {
-        throw new Error("Missing studentId or taskId in some entries");
+      if (!userStudentId || !taskId) {
+        throw new Error("Missing userStudentId or taskId in some entries");
+      }
+
+      // Check if the student already completed this task
+      const student = await Student.findOne(
+        {
+          userId: userStudentId,
+          completedTask: { $in: [taskId] },
+        },
+        null,
+        { session }
+      );
+
+      if (student) {
+        skipUserNames.push(username);
+        continue; // Skip this iteration and do not create a new submission
       }
 
       // Create a new submission document
       const submission = new Submission({
-        studentId,
+        userStudentId,
         taskId,
         points_recevied: points,
         current_state: true,
@@ -51,9 +66,28 @@ exports.gradingMutlipleSubmission = async (req, res) => {
         },
         { session }
       );
+      try {
+        const updatedStudent = await Student.findOneAndUpdate(
+          { userId: userStudentId },
+          { $push: { completedTask: taskId } },
+          { new: true, session }
+        );
+      } catch (error) {
+        console.error("Error updating student model after submission:", error);
+      }
     }
     await session.commitTransaction();
-    res.send("Submissions processed and tasks updated.");
+    if (skipUserNames.length > 0) {
+      res.send(
+        `Submissions processed, tasks updated, and student tasks marked But skipped ${skipUserNames.join(
+          ", "
+        )}.`
+      );
+    } else {
+      res.send(
+        "Submissions processed, tasks updated, and student tasks marked as completed for all users"
+      );
+    }
   } catch (error) {
     await session.abortTransaction();
     console.error("Error processing file:", error);
@@ -62,13 +96,14 @@ exports.gradingMutlipleSubmission = async (req, res) => {
     session.endSession();
     try {
       await fs.unlink(req.file.path);
-      console.log('File deleted successfully');
-  } catch (err) {
-      console.error('Failed to delete file:', err);
-  }
-
+      console.log("File deleted successfully");
+    } catch (err) {
+      console.error("Failed to delete file:", err);
+    }
   }
 };
+
+// Get all submissions for given Task ID
 
 // Grading a submission by ID
 exports.gradingSingleSubmission = async (req, res) => {
@@ -83,16 +118,21 @@ exports.gradingSingleSubmission = async (req, res) => {
       points_recevied: pointsReceived,
       current_state: currentState,
     });
-
-    // Save the submission to the database
     savedSubmission = await submission.save();
 
     try {
-      // Attempt to update the corresponding Task document
       await Task.findByIdAndUpdate(
         taskId,
         { $push: { submissionId: savedSubmission._id } },
         { new: true }
+      );
+      // Update Student document by adding taskId to completedTask
+      await Student.findOneAndUpdate(
+        { userId: studentId },
+        {
+          $push: { completedTask: taskId },
+        },
+        { session }
       );
     } catch (error) {
       // If an error occurs while updating the Task, rollback the Submission creation
@@ -100,11 +140,9 @@ exports.gradingSingleSubmission = async (req, res) => {
       if (savedSubmission) {
         await Submission.findByIdAndDelete(savedSubmission._id);
       }
-      return res
-        .status(500)
-        .json({
-          message: "Failed to link submission to task, submission rolled back.",
-        });
+      return res.status(500).json({
+        message: "Failed to link submission to task, submission rolled back.",
+      });
     }
 
     // Respond with the created submission
