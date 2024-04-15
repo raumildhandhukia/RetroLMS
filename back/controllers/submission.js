@@ -51,9 +51,9 @@ exports.gradingMutlipleSubmission = async (req, res) => {
             studentId: userStudentId,
           });
           if (submission) {
-            const oldPoints = submission.points_recevied; // Existing points
+            const oldPoints = submission.points; // Existing points
             // Step 3: Update the submission with new points
-            submission.points_recevied = points;
+            submission.points = points;
             await submission.save();
 
             // Step 4: Retrieve the associated student using studentId
@@ -78,8 +78,7 @@ exports.gradingMutlipleSubmission = async (req, res) => {
           studentId: userStudentId,
           userStudentId,
           taskId,
-          points_recevied: points,
-          current_state: true,
+          points: points,
         });
         await submission.save({ session });
 
@@ -143,8 +142,7 @@ exports.gradingSingleSubmission = async (req, res) => {
     const submission = new Submission({
       studentId,
       taskId,
-      points_recevied: pointsReceived,
-      current_state: currentState,
+      points: pointsReceived,
     });
     savedSubmission = await submission.save();
 
