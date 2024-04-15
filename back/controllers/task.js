@@ -23,7 +23,6 @@ exports.addTask = async (req, res) => {
     const savedTask = await taskItem.save();
     try {
       // Attempt to update the corresponding Course
-      console.log(taskObj.courseId, savedTask._id);
       await Course.findByIdAndUpdate(
         taskObj.courseId,
         { $push: { task: savedTask._id } }, // Use $push to add the new task's ID to the task array

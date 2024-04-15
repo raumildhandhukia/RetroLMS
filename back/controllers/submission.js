@@ -43,46 +43,74 @@ exports.gradingMutlipleSubmission = async (req, res) => {
         null,
         { session }
       );
-
       if (student) {
         skipUserNames.push(username);
-        continue; // Skip this iteration and do not create a new submission
-      }
+        try {
+          const submission = await Submission.findOne({
+            taskId: taskId,
+            studentId: userStudentId,
+          });
+          if (submission) {
+            const oldPoints = submission.points_recevied; // Existing points
+            // Step 3: Update the submission with new points
+            submission.points_recevied = points;
+            await submission.save();
 
-      // Create a new submission document
-      const submission = new Submission({
-        userStudentId,
-        taskId,
-        points_recevied: points,
-        current_state: true,
-      });
-      await submission.save({ session });
+            // Step 4: Retrieve the associated student using studentId
+            const student = await Student.findOne({
+              userId: userStudentId,
+            });
+            if (student) {
+              const pointsDifference = points - oldPoints;
+              student.currentCurrency += pointsDifference;
+              await student.save();
+            }
+          }
+        } catch (error) {
+          console.error(
+            "Error updating submission model after for duplicate:",
+            error
+          );
+        }
+      } else {
+        // Create a new submission document
+        const submission = new Submission({
+          studentId: userStudentId,
+          userStudentId,
+          taskId,
+          points_recevied: points,
+          current_state: true,
+        });
+        await submission.save({ session });
 
-      // Update Task document by pushing new submission ID
-      await Task.findByIdAndUpdate(
-        taskId,
-        {
-          $push: { submissionId: submission._id },
-        },
-        { session }
-      );
-      try {
-        const updatedStudent = await Student.findOneAndUpdate(
-          { userId: userStudentId },
-          { $push: { completedTask: taskId } },
-          { new: true, session }
+        // Update Task document by pushing new submission ID
+        await Task.findByIdAndUpdate(
+          taskId,
+          {
+            $push: { submissionId: submission._id },
+          },
+          { session }
         );
-      } catch (error) {
-        console.error("Error updating student model after submission:", error);
+        try {
+          const updatedStudent = await Student.findOneAndUpdate(
+            { userId: userStudentId },
+            {
+              $push: { completedTask: taskId },
+              $inc: { currentCurrency: points },
+            },
+            { new: true, session }
+          );
+        } catch (error) {
+          console.error(
+            "Error updating student model after submission:",
+            error
+          );
+        }
       }
     }
     await session.commitTransaction();
     if (skipUserNames.length > 0) {
-      res.send(
-        `Submissions processed, tasks updated, and student tasks marked But skipped ${skipUserNames.join(
-          ", "
-        )}.`
-      );
+      res.send(`Marks Updated for ${skipUserNames.join(", ")}.`);
     } else {
       res.send(
         "Submissions processed, tasks updated, and student tasks marked as completed for all users"
