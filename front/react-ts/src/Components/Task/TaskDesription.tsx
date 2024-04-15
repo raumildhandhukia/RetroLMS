@@ -44,7 +44,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
                 credentials: 'include',
             });
             if (!response.ok) {
-                throw new Error('Failed to fetch items');
+                console.log('Failed to fetch grade points')
             }
             const data = await response.json();
             setGradePoints(data.grade);

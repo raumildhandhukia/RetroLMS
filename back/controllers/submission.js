@@ -120,11 +120,13 @@ exports.allocatePointsToStudent = async (req, res) => {
   const { submissionId } = req.params;
   const { points } = req.body;
   try {
-    const submission = await Submission.findByIdAndUpdate(
-      submissionId,
-      { points },
-      { new: true }
-    );
+    const submission = await Submission.findById(submissionId);
+    const student = await Student.findOne({ _id: submission.studentId });
+    difference = points - submission.points;
+    student.currentCurrency += difference;
+    submission.points = points;
+    await student.save();
+    await submission.save();
     res.status(200).json(submission);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -166,7 +168,7 @@ exports.getStudentGrades = async (req, res) => {
   });
 
   if (!submission) {
-    return res.status(404).json({ message: "Submission not found" });
+    return res.status(401).json({ message: "Submission not found" });
   } else {
     res.status(200).json({ grade: submission.points });
   }
