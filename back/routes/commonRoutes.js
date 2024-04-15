@@ -141,6 +141,14 @@ router.get(
 );
 
 // ======================= Routes for Submission ====================== //
+router.get(
+  "/getSubmissionsByTask/:taskId",
+  submissionController.getSubmissionsForTask
+);
+router.put(
+  "/updateSubmission/:submissionId",
+  submissionController.allocatePointsToStudent
+);
 
 router.post(
   "/gradingMutipleSubmission",
@@ -153,6 +161,8 @@ router.post(
   "/gradingSingleSubmission",
   submissionController.gradingSingleSubmission
 );
+
+router.get("/getGradePoints/:taskId", submissionController.getStudentGrades);
 
 // ======================= Routes for Transaction ====================== //
 router.post("/requestItem", itemController.requestItem);

@@ -12,6 +12,7 @@ interface Task {
   details: string;
   point: number;
   course: string;
+  graded: boolean;
 }
 
 interface TaskListProps {

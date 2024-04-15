@@ -4,6 +4,7 @@ const User = require("../models/userModel.js");
 const Instructor = require("../models/instructorModel.js");
 const Student = require("../models/studentModel.js");
 const Course = require("../models/courseModel");
+const Submission = require("../models/submissionModel");
 
 exports.addTask = async (req, res) => {
   try {
@@ -16,10 +17,22 @@ exports.addTask = async (req, res) => {
       point: req.body.point,
       courseId: req.body.courseId,
       deadline: req.body.deadline,
+      graded: false,
+      submissionIds: [],
       // submissionId: req.body.submissionId,
     };
-    // Save the new Task document
     const taskItem = new Task(taskObj);
+    const students = await Student.find({ enrolledCourses: taskObj.courseId });
+    students.forEach(async (student) => {
+      const submission = new Submission({
+        taskId: taskItem._id,
+        studentId: student._id,
+        points: 0,
+      });
+      await submission.save();
+      taskItem.submissionIds.push(submission._id);
+    });
+    // Save the new Task document
     const savedTask = await taskItem.save();
     try {
       // Attempt to update the corresponding Course
@@ -36,6 +49,7 @@ exports.addTask = async (req, res) => {
         message: "Error updating course with new task.",
       });
     }
+
     // If everything goes well, return success response
     res.status(201).json({
       message: `Task: ${taskObj.title} created successfully.`,
@@ -102,6 +116,9 @@ exports.getAllTasks = async (req, res) => {
 exports.deleteTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
+    const submissions = await Submission.find({ taskId: req.params.id });
+    const submissionIds = submissions.map((submission) => submission._id);
+    await Submission.deleteMany({ _id: { $in: submissionIds } });
     if (task) {
       res.status(200).json({ message: "Task deleted successfully" });
     } else {

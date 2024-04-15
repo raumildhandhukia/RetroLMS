@@ -1,32 +1,37 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   details: {
     type: String,
-    required: true
+    required: true,
   },
   point: {
     type: Number,
-    required: true
+    required: true,
   },
-  courseId:{
+  courseId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course'
+    ref: "Course",
   },
-  deadline:{
-    type: Date
+  deadline: {
+    type: Date,
   },
-  submissionId:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Submission'
-  }]
-
+  submissionIds: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Submission",
+    },
+  ],
+  graded: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const Task = mongoose.model('Task', taskSchema);
+const Task = mongoose.model("Task", taskSchema);
 
 module.exports = Task;

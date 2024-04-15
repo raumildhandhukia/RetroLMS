@@ -186,27 +186,59 @@ exports.gradingSingleSubmission = async (req, res) => {
 };
 
 exports.allocatePointsToStudent = async (req, res) => {
-  const { submissionId, pointsReceived } = req.body;
-
-  if (!submissionId || pointsReceived === undefined) {
-    return res
-      .status(400)
-      .json({ message: "Submission ID and points received are required." });
-  }
-
+  const { submissionId } = req.params;
+  const { points } = req.body;
   try {
-    const submission = await Submission.findByIdAndUpdate(
-      submissionId,
-      { points_received: pointsReceived },
-      { new: true }
-    );
-
-    if (!submission) {
-      return res.status(404).json({ message: "Submission not found." });
-    }
-
+    const submission = await Submission.findById(submissionId);
+    const student = await Student.findOne({ _id: submission.studentId });
+    difference = points - submission.points;
+    student.currentCurrency += difference;
+    submission.points = points;
+    await student.save();
+    await submission.save();
     res.status(200).json(submission);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getSubmissionsForTask = async (req, res) => {
+  const { taskId } = req.params;
+
+  try {
+    const submissions = await Submission.find({ taskId });
+    const submissionsWithStudentName = await Promise.all(
+      submissions.map(async (submission) => {
+        const student = await Student.findOne({ _id: submission.studentId });
+        const user = await User.findOne({ _id: student.userId });
+        return {
+          ...submission.toObject(),
+          studentName: user.profile.firstName + " " + user.profile.lastName,
+        };
+      })
+    );
+
+    res.status(200).json(submissionsWithStudentName);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getStudentGrades = async (req, res) => {
+  const { taskId } = req.params;
+  const jwt = req.cookies && req.cookies.jwt;
+  const decoded = JWT.decode(jwt);
+  const username = decoded.username;
+  const user = await User.findOne({ username });
+  const student = await Student.findOne({ userId: user._id });
+  const submission = await Submission.findOne({
+    taskId,
+    studentId: student._id,
+  });
+
+  if (!submission) {
+    return res.status(401).json({ message: "Submission not found" });
+  } else {
+    res.status(200).json({ grade: submission.points });
   }
 };
