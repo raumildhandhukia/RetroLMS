@@ -58,16 +58,8 @@ router.get("/profile", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-router.post(
-  "/createcourse",
-  onlyRolesMiddleware(["instructor", "admin"]),
-  courseController.createCourse
-);
-router.post(
-  "/editCourse",
-  middleware(["instructor", "admin"]),
-  courseController.editCourse
-);
+router.post("/createcourse", courseController.createCourse);
+router.post("/editCourse", courseController.editCourse);
 
 router.get("/coursesById", courseController.getCourseByUserId);
 
@@ -88,11 +80,7 @@ router.get(
 );
 
 //Method to delete the course and also to remove it from the enrolledCourses array of all students.
-router.delete(
-  "/courses",
-  middleware(["admin", "instructor"]),
-  courseController.deleteCourse
-);
+router.delete("/courses", courseController.deleteCourse);
 
 //Method to get Students enrolled in given course
 // router.get(
