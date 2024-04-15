@@ -34,6 +34,8 @@ const Dashboard: React.FC = () => {
     const [role, setRole] = useState<string>('');
     const [currency, setCurrency] = useState<number|null>(null);
 
+   
+
     useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -80,6 +82,17 @@ const Dashboard: React.FC = () => {
     }, []);
 
     const [courses, setCourses] = useState<Course[]>([]);
+    const updateCourses = (courseId: string, title: string, courseKey: string, details: string) => {
+        const updatedCourses = courses.map(course => {
+            if (course._id === courseId) {
+                course.title = title;
+                course.courseKey = courseKey;
+                course.details = details;
+            }
+            return course;
+        });
+        setCourses(updatedCourses);
+    }
     
     useEffect(() => {
     const getCourses = async () => {
@@ -115,6 +128,7 @@ const Dashboard: React.FC = () => {
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<string>();
     const [selectedItem, setSelectedItem] = useState<string>('Home');
+    
     const navigate = useNavigate();
 
     const handleCloseSidebar = () => {
@@ -224,11 +238,23 @@ const Dashboard: React.FC = () => {
                         {menuItems.map((item, index) => <div className='text-1xl custom-styling' onClick={() => handleItemClick(item)}>{item}</div>)}
                     </div>
                     <div className='detail-container'>
-                    {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]}/>}
+                    {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'LeaderBoard' && <Leaderboard />}
                     {selectedItem === 'Tasks' && <Tasks courseId = {selectedCourse} role={role}/>}
                     {selectedItem === 'BuyItems' && <Items role={role} courseId={selectedCourse}/>}
-                    {selectedItem === 'Delete' && <DeletePrompt/>}
+                    {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{
+                        setSelectedItem('Home');
+                    }}
+                    handleBackToDashboard={()=>{
+                        setSelectedComponent(null);
+                        const updatedCourses = courses.filter(course => course._id !== selectedCourse);
+                        setCourses(updatedCourses);
+                        setSelectedCourse('');
+                        setSelectedItem('');
+                        setSidebarOpen(false);
+                    }}
+                    courseId={selectedCourse}
+                    />}
                     {selectedItem === 'GradingSubmission' && <GradingSubmission />}
                     {selectedItem === 'Students' && <Students courseId={selectedCourse}/>}
                     </div>
