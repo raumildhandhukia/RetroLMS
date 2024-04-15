@@ -2,6 +2,8 @@ const User = require("../models/userModel");
 const Course = require("../models/courseModel");
 const Student = require("../models/studentModel");
 const Instructor = require("../models/instructorModel");
+const Submission = require("../models/submissionModel");
+const Transaction = require("../models/transactionModel");
 const JWT = require("jsonwebtoken");
 
 const courseController = {
@@ -31,8 +33,13 @@ const courseController = {
   deleteStudentFromCourse: async (req, res) => {
     try {
       const { studentId } = req.params;
-      const student = await Student.findByIdAndDelete(studentId);
-
+      await Student.findByIdAndDelete(studentId);
+      const submissions = await Submission.find({ studentId });
+      const submissionIds = submissions.map((submission) => submission._id);
+      await Submission.deleteMany({ _id: { $in: submissionIds } });
+      const transactions = await Transaction.find({ studentId });
+      const transactionIds = transactions.map((transaction) => transaction._id);
+      await Transaction.deleteMany({ _id: { $in: transactionIds } });
       res.status(200).json({ message: "Student deleted successfully" });
     } catch (error) {
       console.error(error);
@@ -120,7 +127,7 @@ const courseController = {
     try {
       const { courseId } = req.body;
       console.log(courseId);
-      jwt = req.cookies && req.cookies.jwt;
+      const jwt = req.cookies && req.cookies.jwt;
       const decoded = JWT.decode(jwt);
       const username = decoded.username;
       const user = await User.findOne({ username });

@@ -47,8 +47,6 @@ const Login: React.FC = () => {
     } else  {
       navigate("/dashboard");
     }
-
-          
         } else {
           // User is not authenticated, continue rendering the login page
           console.log("User not authenticated");
@@ -145,7 +143,7 @@ return (
           </button>
         </form>
       </div>
-     
+
     </div>
   );
 

@@ -12,13 +12,9 @@ const submissionModel = new mongoose.Schema(
       ref: "Task",
       require: true,
     },
-    points_recevied: {
+    points: {
       type: Number,
     },
-    current_state:{
-      type: Boolean,
-      require: true
-    }
   },
   {
     timestamps: true,

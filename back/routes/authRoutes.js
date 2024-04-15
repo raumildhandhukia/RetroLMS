@@ -10,6 +10,8 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const authMiddleware = require("../middleware/authMiddleware.js");
 const JWT = require("jsonwebtoken");
+const Task = require("../models/taskModel.js");
+const Submission = require("../models/submissionModel.js");
 
 router.use(cookieParser());
 
@@ -198,6 +200,18 @@ router.post("/studentSignup", async (req, res) => {
       });
       await student.save();
       students.push(student);
+      const tasks = await Task.find({ courseId });
+      const taskIds = tasks.map((task) => task._id);
+      await Promise.all(
+        taskIds.map(async (taskId) => {
+          const newSubmission = new Submission({
+            taskId,
+            studentId: student._id,
+            points: 0,
+          });
+          return await newSubmission.save();
+        })
+      );
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Error creating student" });
