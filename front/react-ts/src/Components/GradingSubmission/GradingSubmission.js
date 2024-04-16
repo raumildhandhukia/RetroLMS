@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import 'nes.css/css/nes.min.css';
 import './GradingSubmission.css';
+import * as XLSX from 'xlsx';
 
 const GradingSubmission = () => {
   useEffect(() => {
     const fetchTasksByCourseId = async () => {
-      const courseId = '65ee27ba76ac94ef4a77bdc0';
+      const courseId = '661c32cd3a41487e46b0d48e';
       try {
-        const response = await fetch(`http://localhost:8080/task/getTaskByCourseId?courseId=${courseId}`, {
+        const response = await fetch(`http://localhost:8080/task/getTasksByCourseId?courseId=${courseId}`, {
+          
           method: "GET", 
           credentials: "include", 
         });
         if (response.ok) {
           const tasks = await response.json();
-          console.log("Tasks:", tasks);
           // Handle tasks data as needed (e.g., update state)
         } else {
           console.log("Failed to fetch tasks");
@@ -26,15 +27,25 @@ const GradingSubmission = () => {
   
     fetchTasksByCourseId();
   }, []);
-  
-  // Sample student data
-  const [students, setStudents] = useState([
-    { id: 1, name: 'Student 1', points: '' },
-    { id: 2, name: 'Student 2', points: '' },
-    { id: 3, name: 'Student 3', points: '' },
-    { id: 4, name: 'Student 4', points: '' },
-    { id: 5, name: 'Student 5', points: '' }
-  ]);
+  const [data, setData] = useState([]);
+
+  const handleFile = (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const binaryStr = e.target.result;
+      const workbook = XLSX.read(binaryStr, {type:'binary'});
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(sheet);
+      setData(data);
+    };
+    reader.readAsBinaryString(file);
+  };
 
   // Sample tasks
   const [tasks, setTasks] = useState([
@@ -46,14 +57,6 @@ const GradingSubmission = () => {
   // State for selected task
   const [selectedTask, setSelectedTask] = useState('');
 
-  // Handler for input change
-  const handleInputChange = (id, value) => {
-    const updatedStudents = students.map(student =>
-      student.id === id ? { ...student, points: value } : student
-    );
-    setStudents(updatedStudents);
-  };
-
   // Handler for selecting task
   const handleTaskSelect = e => {
     setSelectedTask(e.target.value);
@@ -62,11 +65,18 @@ const GradingSubmission = () => {
   // Handler for saving points
   const handleSavePoints = () => {
     // Implement your logic for saving points here
-    console.log('Points saved:', students);
   };
 
   return (
     <div>
+      <div className='submission-header'>
+      <input
+          type="file"
+          accept=".xlsx, .xls"
+          onChange={handleFile}
+          id="fileInput"
+          className="input"
+        />
       <div className='grading-header'>
             <select value={selectedTask} onChange={handleTaskSelect} className="eightBitSelect">
                 <option value="">Select a Task</option>
@@ -75,6 +85,8 @@ const GradingSubmission = () => {
                     {task.name}
                 </option>))} 
             </select>
+      </div>
+      
       </div>
       <h2>List of Students for Selected Task</h2>
       <table>
@@ -86,29 +98,17 @@ const GradingSubmission = () => {
           </tr>
         </thead>
         <tbody>
-          {/* Map through students and render input fields */}
-          {students.map(student => (
-            <tr key={student.id}>
-              <td>{student.name}</td>
-              <td>
-                <input
-                  type="number"
-                  value={student.points}
-                  onChange={e => handleInputChange(student.id, e.target.value)}
-                />
-              </td>
-              <td><button onClick={handleSavePoints}>Save</button></td>
-            </tr>
-          ))}
+          {data.map((item, index) => (
+          <tr key={index}>
+            <td>{item.username}</td>
+            <td>{item.points}</td>
+            <td><button onClick={handleSavePoints}>Save</button></td>
+          </tr>
+        ))}
         </tbody>
-      </table>
-
-      {/* Button to save points */}
-      
+      </table>     
     </div>
   );
 };
 
 export default GradingSubmission;
-
-
