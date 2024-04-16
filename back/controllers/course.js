@@ -262,5 +262,74 @@ const courseController = {
   //     res.status(500).json({ message: err.message });
   //   }
   // },
+
+  getLeaderBoard: async (req, res) => {
+    const { courseId } = req.body;
+
+    try {
+      let matchStage = {};
+      if (courseId) {
+        matchStage = { enrolledCourses: mongoose.Types.ObjectId(courseId) };
+      }
+
+      const pipeline = [
+        {
+          $match: matchStage,
+        },
+        {
+          $lookup: {
+            from: "courses",
+            localField: "enrolledCourses",
+            foreignField: "_id",
+            as: "courseDetails",
+          },
+        },
+        {
+          $unwind: "$courseDetails",
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userDetails",
+          },
+        },
+        {
+          $unwind: "$userDetails",
+        },
+        {
+          $sort: { currentCurrency: -1 },
+        },
+        {
+          $group: {
+            _id: "$courseDetails._id",
+            students: {
+              $push: {
+                username: "$userDetails.username",
+                currentCurrency: "$currentCurrency",
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            courseId: "$_id",
+            students: 1,
+            _id: 0,
+          },
+        },
+      ];
+
+      const leaderboard = await Student.aggregate(pipeline);
+
+      res.send({
+        leaderboard,
+      });
+    } catch (error) {
+      console.error("Failed to retrieve leaderboard:", error);
+      res.status(500).send("Error retrieving leaderboard");
+    }
+  },
 };
 module.exports = courseController;
