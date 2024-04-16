@@ -4,6 +4,8 @@ const Student = require("../models/studentModel");
 const Instructor = require("../models/instructorModel");
 const Submission = require("../models/submissionModel");
 const Transaction = require("../models/transactionModel");
+const Task = require("../models/taskModel");
+const Item = require("../models/itemModel");
 const JWT = require("jsonwebtoken");
 
 const courseController = {
@@ -49,31 +51,31 @@ const courseController = {
 
   createCourse: async (req, res) => {
     try {
-      const { title, instructorId, courseKey } = req.body;
+      const jwt = req.cookies && req.cookies.jwt;
+      const decoded = JWT.decode(jwt);
+      const username = decoded.username;
+      const user = await User.findOne({ username });
+      const userId = user._id;
+      const instructor = await Instructor.findOne({ userId });
+      const instructorId = instructor._id;
+      const { title, courseKey, details } = req.body;
       let course = await Course.findOne({ title });
 
       if (course) {
-        // Course exists, update it
-        course.instructorId = instructorId;
-        course.courseKey = courseKey;
-        await course.save();
+        return res.status(400).json({
+          message: "A course with the same title already exists",
+        });
 
         // No need to update the instructor here since the course already exists
       } else {
         // Create a new course
         course = new Course({
           title,
-          instructorId,
+          details,
           courseKey,
+          instructorId,
         });
         await course.save();
-        // Attempt to update the instructor's coursesTeaching array
-        const instructor = await Instructor.findOne({ _id: instructorId });
-        if (!instructor) {
-          // Instructor not found, roll back course creation
-          await Course.findByIdAndDelete(course._id);
-          return res.status(404).json({ message: "Instructor not found" });
-        }
 
         instructor.coursesTeaching.push(course._id);
         await instructor.save();
@@ -92,10 +94,10 @@ const courseController = {
   editCourse: async (req, res) => {
     try {
       // Authorize user
-      const jwt = req.cookies && req.cookies.jwt;
-      const decoded = JWT.decode(jwt);
-      const username = decoded.username;
-      const user = await User.findOne({ username });
+      // const jwt = req.cookies && req.cookies.jwt;
+      // const decoded = JWT.decode(jwt);
+      // const username = decoded.username;
+      // const user = await User.findOne({ username });
 
       const { courseId, title, courseKey, details } = req.body;
       // Check if there's another course with the same title
@@ -157,30 +159,38 @@ const courseController = {
 
   deleteCourse: async (req, res) => {
     try {
-      const { title, instructorId, courseKey } = req.body;
+      const { courseId } = req.body;
+      const students = await Student.find({ enrolledCourses: courseId });
+      const studentIds = students.map((student) => student._id);
+      for (const studentId of studentIds) {
+        await Student.findByIdAndDelete(studentId);
+        const submissions = await Submission.find({ studentId });
+        const submissionIds = submissions.map((submission) => submission._id);
 
-      // Find the course to be deleted based on the input
-      let query = {};
-      if (title && instructorId) {
-        query = { title, instructorId };
-      } else if (instructorId && courseKey) {
-        query = { instructorId, courseKey };
-      } else {
-        return res.status(400).json({ message: "Invalid input" });
+        // Delete submissions
+        await Submission.deleteMany({ _id: { $in: submissionIds } });
+
+        const transactions = await Transaction.find({ studentId });
+        const transactionIds = transactions.map(
+          (transaction) => transaction._id
+        );
+
+        // Delete transactions
+        await Transaction.deleteMany({ _id: { $in: transactionIds } });
       }
 
-      // Delete the course
-      const deletedCourse = await Course.findOneAndDelete(query);
+      const tasks = await Task.find({ courseId });
+      const taskIds = tasks.map((task) => task._id);
+      await Task.deleteMany({ _id: { $in: taskIds } });
+      const deletedCourse = await Course.findByIdAndDelete(courseId);
+
+      const items = await Item.find({ courseId });
+      const itemIds = items.map((item) => item._id);
+      await Item.deleteMany({ _id: { $in: itemIds } });
 
       if (!deletedCourse) {
         return res.status(404).json({ message: "Course not found" });
       }
-
-      // Remove the deleted course from the enrolledCourses array of all students
-      await Student.updateMany(
-        { enrolledCourses: deletedCourse._id },
-        { $pull: { enrolledCourses: deletedCourse._id } }
-      );
 
       res.status(200).json({ message: "Course deleted successfully" });
     } catch (error) {
