@@ -20,16 +20,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
         <div className="item-list-container">
           <div className="nes-container with-title is-centered">
             <p className="title">{courseName}</p>
-            <div className="item-list-content">
-              <h2>Items List</h2>
-              <table className="nes-table is-bordered is-centered">
-                <thead>
-                  <tr>
-                    <th className="item-title">Item Title</th>
-                    <th className="price">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
+         
                   {items.map((item) => (
                     <tr key={item._id} className="item-item">
                       {/* Use onClick to call navigateToTaskDescription on click */}
@@ -37,9 +28,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseName }) => {
                       <td>{item.itemPrice}</td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                
           </div>
         </div>
       );

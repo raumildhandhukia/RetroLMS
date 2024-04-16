@@ -13,7 +13,6 @@ import Items from '../Shop/Items';
 import CreateCourse from './CreateCourse';
 import { ok } from 'assert';
 import DeletePrompt from './DeletePrompt';
-import GradingSubmission from '../GradingSubmission/GradingSubmission';
 import Profile from './Profile';
 import Students from './Students';
 
@@ -142,8 +141,8 @@ const Dashboard: React.FC = () => {
 
    
     const menuItems = role === 'student' ? 
-                    ['Home', 'Tasks', 'LeaderBoard', 'BuyItems'] : 
-                    ['Home', 'Tasks', 'LeaderBoard', 'BuyItems', 'Delete', 'GradingSubmission', 'Students'];
+                    ['Home', 'Task', 'Leaderboard', 'Shop'] : 
+                    ['Home', 'Task', 'Leaderboard', 'Shop', 'Students', 'Delete'];
 
     const handleCourseCreate = () => {
         setSelectedItem('CreateCourse');
@@ -239,13 +238,13 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className='detail-container'>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
-                    {selectedItem === 'LeaderBoard' && <Leaderboard />}
-                    {selectedItem === 'Tasks' && <Tasks courseId = {selectedCourse} role={role}/>}
-                    {selectedItem === 'BuyItems' && <Items role={role} courseId={selectedCourse}/>}
+                    {selectedItem === 'Leaderboard' && <Leaderboard />}
+                    {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
+                    {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse}/>}
                     {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{
                         setSelectedItem('Home');
                     }}
-                    handleBackToDashboard={()=>{
+                    handleBackToDashboard={ () => {
                         setSelectedComponent(null);
                         const updatedCourses = courses.filter(course => course._id !== selectedCourse);
                         setCourses(updatedCourses);
@@ -255,7 +254,6 @@ const Dashboard: React.FC = () => {
                     }}
                     courseId={selectedCourse}
                     />}
-                    {selectedItem === 'GradingSubmission' && <GradingSubmission />}
                     {selectedItem === 'Students' && <Students courseId={selectedCourse}/>}
                     </div>
                 </div>

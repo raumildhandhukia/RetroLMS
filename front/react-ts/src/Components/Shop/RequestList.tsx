@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Item } from './Items';
+import './RequestList.css';
 
 interface RequestListProps {
     item: Item | null;
@@ -65,17 +66,15 @@ const RequestList: React.FC<RequestListProps> = ({
     };
 
     return (
-    <div>
-        <h1>Request List</h1>
+    <div className='nes-container with-title request-container is-dark'>
+        <p className="title">Request List</p>
         <ol className="nes-list is-decimal">
         {transactions.map((transaction) => (
-            <ul key={transaction?._id} className="nes-container with-title">
+            <ul key={transaction?._id} className="nes-container with-title is-rounded is-dark">
             <p className="title">{transaction?.username}</p>
-            <div className="nes-btn-group" style={{ marginTop: '25px' }}>
+            <div className="nes-btn-group" style={{ marginTop: '25px', marginBottom:'10px' }}>
                 {transaction?.status === 'Awaiting' ? (<div><button className="nes-btn is-success" style={{ marginRight: '25px' }} onClick={() => manageRequest("Approval", transaction._id)}>Accept</button>
                 <button className="nes-btn is-error" style={{ marginRight: '25px' }} onClick={() => manageRequest("Reject", transaction._id)}>Reject</button></div>):<button className="nes-btn is-warning" onClick={() => manageRequest("Awaiting", transaction._id)}>Reset</button>}
-                
-                
             </div>
             </ul>
         ))}
