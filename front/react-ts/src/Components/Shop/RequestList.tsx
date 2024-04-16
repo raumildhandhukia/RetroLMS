@@ -66,7 +66,7 @@ const RequestList: React.FC<RequestListProps> = ({
     };
 
     return (
-    <div className='nes-container with-title request-container is-dark'>
+    <div className='nes-container with-title request-container is-dark' style={{width: '63vw', minHeight:'80vh'}}>
         <p className="title">Request List</p>
         <ol className="nes-list is-decimal">
         {transactions.map((transaction) => (
@@ -79,7 +79,7 @@ const RequestList: React.FC<RequestListProps> = ({
             </ul>
         ))}
         </ol>
-        <button className="nes-btn" onClick={() => handleBack()}>Back</button>
+        <button className="nes-btn" style={{}} onClick={() => handleBack()}>Back</button>
     </div>
     );
 };

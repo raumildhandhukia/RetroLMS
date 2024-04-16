@@ -92,8 +92,8 @@ const editCourseDetails = async () => {
     }
 
     return (
-        <div className="container flex">
-            <div className="flex flex-1 flex-col">
+        <div className="">
+            <div className="">
                 <div onDoubleClick={handleDetailsDoubleClick}>
                     {isEditingDetails ? (
                         <div>
@@ -128,14 +128,6 @@ const editCourseDetails = async () => {
                     
                     
                 </div>
-                {/* <p><strong>Term:</strong> {demo.term}</p>
-                <p><strong>Instructor:</strong> {demo.instructor.name} (<a href={`mailto:${demo.instructor.email}`}>{demo.instructor.email}</a>)</p>
-                <p><strong>Office Hours:</strong> {demo.officeHours}</p>
-                <p><strong>Zoom Link:</strong> <a href={demo.zoomLink}>{demo.zoomLink}</a></p>
-                <p><strong>Teaching Assistant:</strong> {demo.ta.name} (<a href={`mailto:${demo.ta.email}`}>{demo.ta.email}</a>)</p>
-                <p><strong>Grader:</strong> {demo.grader.name} (<a href={`mailto:${demo.grader.email}`}>{demo.grader.email}</a>)</p>
-                <p><strong>Syllabus:</strong> <a href={demo.syllabusLink}>Download Syllabus</a></p>
-                <p><strong>Modules:</strong> <a href={demo.modulesLink}>Go to Modules</a></p> */}
             </div>
         </div>
     );

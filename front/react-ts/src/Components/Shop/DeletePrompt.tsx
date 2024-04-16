@@ -34,7 +34,7 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({item, redirectToItemList, up
 
 
     return (
-        <div className="is-centered nes-container is-dark with-title">
+        <div className="is-centered nes-container is-dark with-title" style={{width: '63vw',}}>
             <p className="title">{item?.itemName}</p>
             <div id="delete-prompt">
                 Are you sure you want to delete this Item?

@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import TransactionBadge from './TransactionBadge';
+import Loader from '../Loader';
 import { Item } from './Items';
 
 interface ItemProps {
   item: Item;
   role: string;
+  studentBalance: number;
   handleItemDescription: Function;
   handleItemRequest: Function;
   handleItemBuy: Function;
@@ -19,8 +21,9 @@ interface Transaction {
 }
 
 
-const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, handleItemRequest, handleItemBuy }) => {
+const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, handleItemRequest, handleItemBuy, studentBalance }) => {
     const [transaction, setTransaction] = useState<Transaction|null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const getTransction = async () => {
@@ -40,9 +43,16 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
             }
             } catch (error) {
             console.error('Error fetching tasks:', error);
+            } finally {
+                setLoading(false);
             }
         };
-        getTransction();
+        if (role === 'student') {
+            getTransction();
+        } else {
+            setLoading(false);
+        }
+        
     }, []);
 
     
@@ -51,7 +61,8 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
         <div 
             className="nes-container is-centered is-rounded is-dark item-card"
             onClick={() => handleItemDescription(item)}>
-            
+            { loading ? <Loader /> :
+            <>
             <div className="item-content">
                 <span>{item.itemName}</span>
                 <p>{item.itemDescription}</p>
@@ -66,12 +77,13 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                 ) : 
                 transaction ? 
                 <button className="nes-btn is-disabled buy-button">{transaction.status}</button>:
-                <button className="nes-btn buy-button" onClick={(e)=>{
+                <button className={`nes-btn buy-button` + (studentBalance < item.itemPrice ? ' is-disabled' : '')}
+                onClick={(e)=>{
                     e.stopPropagation();
                     handleItemBuy(item);
                 }}>Buy</button>
             }
-            
+        </>}
         </div>
     );
 

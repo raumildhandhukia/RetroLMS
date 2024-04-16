@@ -14,11 +14,12 @@ interface ItemListProps {
     courseId: string;
     role: string;
     update: Function;
+    studentBalance: number;
 }
 
 
 
-const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role, update }) => {
+const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, studentBalance }) => {
     const [createItem, setCreateItem] = React.useState<boolean>(false);
     const [showItem, setShowItem] = React.useState<boolean>(false);
     const [selectedItem, setSelectedItem] = React.useState<Item | null>(null);
@@ -75,7 +76,7 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role, up
               {/* <p className="title">{courseName}</p> */}
               <div className="item-list-content">
               {items.map((item, index) => (
-                <ItemCard key={`item-${index}`} item={item} role={role} 
+                <ItemCard key={`item-${index}`} item={item} role={role} studentBalance={studentBalance}
                 handleItemDescription={handleItemDescription} handleItemRequest={handleItemRequest} 
                 handleItemBuy={handleBuyRequest}/>
               ))}

@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from 'react';
 import 'nes.css/css/nes.min.css';
 import './ItemDescription.css'; // Import custom styles
@@ -6,6 +5,7 @@ import { Item } from './Items'; // Import the Item interface
 import DeletePrompt from './DeletePrompt';
 import RequestList from './RequestList';
 import TreansactionBadge from './TransactionBadge';
+import Loader from '../Loader';
 
 interface ItemDescriptionProps {
     selectedItem: Item|null;
@@ -34,6 +34,7 @@ const ItemDescription: React.FC<ItemDescriptionProps> = ({selectedItem:item, upd
   const [errorMessage, setErrorMessage] = useState('');
   const [transaction, setTransaction] = useState<Transaction|null>(null);
   const [openRequests, setOpenRequests] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleEditMode = () => {
     setIsEditing(true);
@@ -130,17 +131,23 @@ const getTransction = async () => {
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     if (role === 'student') {
       getTransction();
-    };
-  });
+    } else {
+      setLoading(false);
+    }
+    
+  }, []);
 
   const mainStyle = {
-    width: '100vh',
+    width: '63vw',
+    height: '75vh',
   };
 
   const renderTextDescription = () => (
@@ -182,12 +189,16 @@ const getTransction = async () => {
                     <div className="nes-field description-field" style={{marginTop:'5vh'}}>
                         <label htmlFor="description_field">Description:</label>
                         {!isEditing ?
-                        <p>{description}</p>
+                        <p style={{
+                          height: '35vh',
+                        }}>{description}</p>
                         :
                         <textarea
                             id="description_field"
                             className="nes-textarea is-dark"
-                            
+                            style={{
+                          height: '35vh',
+                        }}
                             value={description}
                             onChange={(e) => setdescription(e.target.value)}
                             rows={5}

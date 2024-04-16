@@ -14,6 +14,8 @@
 .item-card {
     /* Allow the height to adjust based on content */
     max-height: 30vh;
+    min-height: 20vh;
+    min-width: 44vh;
     /* Limit maximum height */
     overflow: hidden;
     position: relative;

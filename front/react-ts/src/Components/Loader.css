@@ -1,0 +1,49 @@
+.pixel-loader {
+    width: 2px;
+    height: 2px;
+    background: black;
+    color: white;
+    margin: 8vh 20vh;
+    box-shadow: 1px 1px 0 0,
+        -1px -1px 0 0,
+        1px -1px 0 0,
+        -1px 1px 0 0,
+        0 1px 0 0,
+        1px 0 0 0,
+        -1px 0 0 0,
+        0 -1px 0 0;
+    animation: anim 1s linear infinite;
+}
+
+@keyframes anim {
+    0% {
+        -webkit-filter: hue-rotate(0deg);
+    }
+
+    50% {
+        box-shadow: 10px 10px 0 0,
+            -10px -10px 0 0,
+            10px -10px 0 0,
+            -10px 10px 0 0,
+            0 10px 0 0,
+            10px 0 0 0,
+            -10px 0 0 0,
+            0 -10px 0 0;
+    }
+
+    75% {
+        box-shadow: 10px 10px 0 0,
+            -10px -10px 0 0,
+            10px -10px 0 0,
+            -10px 10px 0 0,
+            0 10px 0 0,
+            10px 0 0 0,
+            -10px 0 0 0,
+            0 -10px 0 0;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        -webkit-filter: hue-rotate(360deg);
+    }
+}
