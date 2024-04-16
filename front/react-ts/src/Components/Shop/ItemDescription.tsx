@@ -40,6 +40,10 @@ const ItemDescription: React.FC<ItemDescriptionProps> = ({selectedItem:item, upd
     handleUpdateTask();
   }
 
+  const handleBackFromDeletePrompt = () => {
+    setIsDeleating(false);
+  }
+
   const handleDeleteMode = () => {
     setIsDeleating(true);
   } 
@@ -51,7 +55,7 @@ const ItemDescription: React.FC<ItemDescriptionProps> = ({selectedItem:item, upd
 
   const handleUpdateTask = async () => {
     if (isEditing) {
-      if (!title || !description || !expiry || !price) {
+      if (!title || !description || !price) {
         setErrorMessage('All fields are required.');
         return;
       }
@@ -65,8 +69,7 @@ const ItemDescription: React.FC<ItemDescriptionProps> = ({selectedItem:item, upd
           body: JSON.stringify({
             itemName:title,
             itemDescription: description,
-            itemPrice: price,
-            itemExpiry: expiry,
+            itemPrice: price
           })
         });
 
@@ -82,7 +85,7 @@ const ItemDescription: React.FC<ItemDescriptionProps> = ({selectedItem:item, upd
     }
   };
 
-  const handleBuyRequest = async () => {
+  const handleBuyRequest = async (selectedItem = item) => {
     try {
       const response = await fetch("http://localhost:8080/requestItem", {
         method: "POST",
@@ -91,8 +94,8 @@ const ItemDescription: React.FC<ItemDescriptionProps> = ({selectedItem:item, upd
                 },
         credentials: 'include',
         body: JSON.stringify({
-          itemId: item?._id,
-          price: item?.itemPrice
+          itemId: selectedItem?._id,
+          price: selectedItem?.itemPrice
         })
       });
       if (response.ok) {
@@ -140,14 +143,12 @@ const getTransction = async () => {
     width: '100vh',
   };
 
-  return (
-        <div className="task-description-container">
-            <div className="nes-container with-title is-centered" style={mainStyle}>
-                <p className="title">{title}</p>
-                {
-                openRequests ? <RequestList item={item} handleBack={handleBackFromRequestList} /> :
-                (!isDeleating ? (<div>
-                    <div className="field-container">
+  const renderTextDescription = () => (
+    <div >
+            <div className="nes-container with-title is-centered is-dark" style={mainStyle}>
+                {/* <p className="title">{title}</p>               */}
+                  <div>
+                    <div className="field-container-two">
                         <div className="nes-field">
                             <label htmlFor="title_field">Title:</label>
                             {!isEditing ?
@@ -156,26 +157,14 @@ const getTransction = async () => {
                             <input
                                 type="text"
                                 id="title_field"
-                                className="nes-input"
+                                className="nes-input is-dark"
+                                style={{color:'#fff'}}
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                             />
                             }
                         </div>
-                        <div className="nes-field">
-                            <label htmlFor="deadline_field">Expiry:</label>
-                            {!isEditing ?
-                            <p>{expiry}</p>
-                            :
-                            <input
-                                type="text"
-                                id="deadline_field"
-                                className="nes-input"
-                                value={expiry}
-                                onChange={(e) => setExpiry(Number(e.target.value))}
-                            />
-                            }
-                        </div>
+                      
                         <div className="nes-field">
                             <label htmlFor="points_field">Price:</label>
                             {!isEditing ?
@@ -184,20 +173,21 @@ const getTransction = async () => {
                             <input
                                 type="number"
                                 id="points_field"
-                                className="nes-input"
+                                className="nes-input is-dark"
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
                             />}
                         </div>
                     </div>
-                    <div className="nes-field description-field">
+                    <div className="nes-field description-field" style={{marginTop:'5vh'}}>
                         <label htmlFor="description_field">Description:</label>
                         {!isEditing ?
                         <p>{description}</p>
                         :
                         <textarea
                             id="description_field"
-                            className="nes-textarea"
+                            className="nes-textarea is-dark"
+                            
                             value={description}
                             onChange={(e) => setdescription(e.target.value)}
                             rows={5}
@@ -207,7 +197,7 @@ const getTransction = async () => {
          
                     {errorMessage && <p className="nes-text is-error">{errorMessage}</p>}
               
-                    <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '10px'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '5vh'}}>
                         <button type="button" className='nes-btn is-error' onClick={() => {
                             handleBack();
                         }}>
@@ -223,16 +213,31 @@ const getTransction = async () => {
                             <button type='button' className='nes-btn is-primary' onClick={handleDeleteMode} >Delete</button>
                             <button type='button' className='nes-btn is-primary' onClick={handleRequestClick} >Requests</button>
 
-                        </>) : transaction ? <TreansactionBadge status={transaction.status}/> :
-                              <button type="button" className='nes-btn is-primary' onClick={handleBuyRequest} >Buy</button>}
+                        </>) : transaction ? <TreansactionBadge status={transaction.status} bagdeType='split'/> :
+                              <button type="button" className='nes-btn is-primary' onClick={()=>{handleBuyRequest()}} >Buy</button>}
                         
                     </div>
-                </div>) : <DeletePrompt item={item} redirectToItemList={handleBack} update={update}/>)
-                
-                }
-                
+                </div>   
             </div>
-        </div>
+        </div>           
+  );
+
+  const renderRequestComponent = () => (
+    <RequestList item={item} handleBack={handleBackFromRequestList} />
+  );
+
+  const renderDeleteComponent = () => (
+    <DeletePrompt item={item} redirectToItemList={handleBack} update={update} handleBackFromDeletePrompt={handleBackFromDeletePrompt}/>
+  );
+
+  return (      
+        <>
+          {
+            openRequests ? renderRequestComponent() :
+                !isDeleating ? renderTextDescription() : 
+                  renderDeleteComponent()  
+          }
+        </>
     );
 
   };

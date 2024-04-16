@@ -6,9 +6,10 @@ interface DeletePromptProps {
     item: Item | null;
     redirectToItemList: Function;
     update: Function;
+    handleBackFromDeletePrompt: Function;
 }
 
-const DeletePrompt: React.FC<DeletePromptProps> = ({item, redirectToItemList, update}) => {
+const DeletePrompt: React.FC<DeletePromptProps> = ({item, redirectToItemList, update, handleBackFromDeletePrompt}) => {
 
    const deleteItem =  async () => {
         try {
@@ -33,13 +34,14 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({item, redirectToItemList, up
 
 
     return (
-        <div>
+        <div className="is-centered nes-container is-dark with-title">
+            <p className="title">{item?.itemName}</p>
             <div id="delete-prompt">
                 Are you sure you want to delete this Item?
             </div>
-            <div>
+            <div style={{marginTop:'5vh'}}>
                 <button onClick={deleteItem} style={{ marginRight: '20px' }} className='nes-btn is-error'>Yes</button>
-                <button onClick={()=>{redirectToItemList()}} className="nes-btn is-primary">No</button>
+                <button onClick={()=>{handleBackFromDeletePrompt()}} className="nes-btn is-primary">No</button>
             </div>
             
         </div>

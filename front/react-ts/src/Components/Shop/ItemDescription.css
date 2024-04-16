@@ -12,6 +12,11 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
 }
+.field-container-two {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
 
 .description-field {
     grid-column: span 3;

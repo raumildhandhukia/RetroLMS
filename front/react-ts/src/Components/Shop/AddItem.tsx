@@ -1,7 +1,6 @@
 
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import 'nes.css/css/nes.min.css';
-import EightBitButton from '../Buttons/EightBitButton';
 
 interface AddItemProps {
   courseId: string;
@@ -44,16 +43,20 @@ const AddItem: React.FC<AddItemProps> = ({courseId, update, handleBack}) => {
   }
 
   return (
-    <div className="item-description-container mt-28">
-      <div className="nes-container with-title is-centered">
+    <div className="item-description-container">
+      <div className="nes-container with-title is-dark is-centered is-rounded" style={{
+        width: '100vh',
+        marginTop:'vh'
+      }}>
         <p className="title">Add Item</p>
-        <div className="field-container">
-              <div className="nes-field">
+        <div className='field-container-two'>
+              <div className="nes-field" >
                 <label htmlFor='name'>Name</label>
                 <input
+                style={{backgroundColor:'#212529'}}
                   type='text'
                   id='name'
-                  className="nes-input"
+                  className="nes-input is-dark"
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
                 />
@@ -61,39 +64,30 @@ const AddItem: React.FC<AddItemProps> = ({courseId, update, handleBack}) => {
               <div className="nes-field">
                 <label htmlFor='price'>Price</label>
                 <input
-                  type='text'
+                style={{backgroundColor:'#212529'}}
+                  type='number'
                   id='price'
-                  className="nes-input"
+                  className="nes-input is-dark"
                   value={itemPrice}
                   onChange={(e) => setItemPrice(Number(e.target.value))}
                 />
               </div>
-              <div className="nes-field">
-                <label htmlFor='expiry'>Expiry</label>
-                <input
-                  type='text'
-                  id='expiry'
-                  className="nes-input"
-                  value={itemExpiry}
-                  onChange={(e) => setItemExpiry(Number(e.target.value))}
-                />
-              </div>
         </div>
-        <div className="nes-field">
+        <div className="nes-field" style={{marginTop:'2vh'}}>
                 <label htmlFor='description'>Description</label>
-                <input
-                  type='text'
+                <textarea
+                  style={{backgroundColor:'#212529'}}
                   id='description'
-                  className="nes-input"
+                  className="nes-input is-dark"
                   value={itemDescription}
                   onChange={(e) => setItemDescription(e.target.value)}
                 />
               </div>
         <div className='flex items-start my-10'>
-          <button type="button" className='nes-btn is-primary' onClick={()=>{
+          <button type="button" className='nes-btn is-success' onClick={()=>{
             handleBack();
           }}>Back</button>
-          <button type="button" className='nes-btn is-primary' onClick={handleAddItem}>Add</button>
+          <button type="button" className='nes-btn is-primary' style={{marginLeft:'5vh'}} onClick={handleAddItem}>Add</button>
         </div>
       </div>
     </div>
