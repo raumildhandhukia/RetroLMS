@@ -6,9 +6,10 @@ interface AddTaskProps {
   showTaskList: Function;
   courseId: string;
   createTask: boolean;
+  update: Function;
 }
 
-const AddTask: React.FC<AddTaskProps> = ({showTaskList, courseId, createTask}) => {
+const AddTask: React.FC<AddTaskProps> = ({showTaskList, courseId, update}) => {
     const [title, setTitle] = useState('');
     const [deadline, setDeadline] = useState('');
     const [details, setDetails] = useState('');
@@ -44,6 +45,7 @@ const AddTask: React.FC<AddTaskProps> = ({showTaskList, courseId, createTask}) =
                 const responseData = await response.json();
                 throw new Error(responseData.message || 'Something went wrong!');
             } else {
+                update();
                 showTaskList();
             }
             

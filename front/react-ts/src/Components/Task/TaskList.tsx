@@ -59,7 +59,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
         <p className="title">{courseName}</p>
         {createTask ? (
           
-          <AddTask createTask = {createTask} showTaskList = {showTaskList} courseId = {courseId}/> ) : 
+          <AddTask createTask = {createTask} showTaskList = {showTaskList} courseId = {courseId} update={updateTasks}/> ) : 
           (<div className="task-list-content">
           <h2>Task List</h2>
           <table className="nes-table is-bordered is-centered">

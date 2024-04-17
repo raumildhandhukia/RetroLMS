@@ -5,6 +5,7 @@
     grid-gap: 20px;
     overflow: auto;
     max-height: 66vh;
+    min-height: 66vh;
 }
 
 .transaction-badge {
@@ -14,6 +15,8 @@
 .item-card {
     /* Allow the height to adjust based on content */
     max-height: 30vh;
+    min-height: 20vh;
+    min-width: 44vh;
     /* Limit maximum height */
     overflow: hidden;
     position: relative;
@@ -50,3 +53,8 @@
     font-size: 1.5vh;
     padding: 5px;
 }
+
+/* .no-shop {
+    width: 100vh;
+    height: 60vh;
+} */

@@ -17,9 +17,10 @@ export interface Item {
 interface ItemProps {
   role: string;
   courseId: string;
+  studentBalance: number;
 }
 
-const Items: React.FC<ItemProps> = ({ role, courseId }) => {
+const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
     const [items, setItems] = useState<Item[]>([]);
     // const [courseName, setCourseName] = useState<string>('SER517');
     // const [role, setRole] = useState<string>('');
@@ -63,7 +64,7 @@ const Items: React.FC<ItemProps> = ({ role, courseId }) => {
     }, [updateItems]);
   
     return (
-      <InstructorItemList items={items} courseId={courseId} role={role} update = {updateItemList} />
+      <InstructorItemList items={items} courseId={courseId} role={role} update = {updateItemList} studentBalance={studentBalance} />
     );
   };
 

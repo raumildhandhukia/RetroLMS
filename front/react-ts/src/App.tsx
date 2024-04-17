@@ -37,7 +37,6 @@ function App() {
             {/* <Route path="/items" element={<Items />} /> */}
             {/* <Route path="/items/add" element={<AddItem />} /> */}
             <Route path="/item" element={<Item />} />
-            {/* <Route path="/task/create" element={<AddTask />} /> */}
             <Route path="/task" element={<Task />} />
             <Route path="/leaderboard" element={<LeaderboardList students={studentsData.students}/>} />
         </Routes>

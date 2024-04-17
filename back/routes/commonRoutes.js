@@ -101,7 +101,7 @@ router.put("/task/update/:id", taskController.updateTask);
 router.post("/task/create", taskController.addTask);
 
 // Get Tasks By Course ID ()
-router.get("/task/getTasksByCourseId", taskController.getTasksByCourseId);
+router.post("/task/getTasksByCourseId", taskController.getTasksByCourseId);
 
 // ======================= Routes for Items and Shop ====================== //
 

@@ -223,13 +223,13 @@ const Dashboard: React.FC = () => {
                     {selectedComponent}
                 </>
             )}
-            <div className="flex flex-1 p-10 flex-col">
+            <div className="flex flex-1 p-10 flex-col" style={{}}>
             {selectedCourse ? (<div>
                     <div>
                     <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
-                     {role === 'student' ? (
+                     {/* {role === 'student' ? (
                         <div className='text-2xl'>Balance: $ {currency}</div>
-                     ) : null}
+                     ) : null} */} {/* Removed this part temporarily as it is not re-rendering */}
                     </div>
                 <hr/>
                 <div className='main-content'>
@@ -240,7 +240,7 @@ const Dashboard: React.FC = () => {
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard />}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
-                    {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse}/>}
+                    {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse} studentBalance={currency || 0}/>}
                     {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{
                         setSelectedItem('Home');
                     }}
