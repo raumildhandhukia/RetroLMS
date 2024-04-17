@@ -238,7 +238,7 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className='detail-container'>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
-                    {selectedItem === 'Leaderboard' && <Leaderboard />}
+                    {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
                     {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse} studentBalance={currency || 0}/>}
                     {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{
