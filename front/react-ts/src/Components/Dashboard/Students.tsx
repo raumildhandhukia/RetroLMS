@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import StudentData from './Student';
-
+import axios from 'axios';
 interface StudentProps {
     courseId: string;
 }
@@ -38,7 +38,28 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
         };
         fetchStudents();
     }
-    , [updateStudents, courseId]);
+    , [updateStudents, courseId]);  
+
+    const handleCsvFileDownload = async (url: string, filename: string) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/getEnrolledStudentsByCourseId/${courseId}`,
+          {
+            responseType: "blob",
+          }
+        );
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode!.removeChild(link);
+        window.URL.revokeObjectURL(url);    
+      } catch (error) {
+        console.error("Error generating students:", error);
+      }
+    };
 
     const handleGenerateStudents = async () => {
         try {
@@ -94,9 +115,17 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
                         type="button" 
                         onClick={handleGenerateStudents} 
                         className="nes-btn is-primary"
-                        style={{ width: "80%" }}
+                        style={{ width: "30%" }}
                     >
                         Generate Students
+                    </button>
+                    <button 
+                        type="button" 
+                        onClick={() => handleCsvFileDownload('/download-csv', 'data.csv')} 
+                        className="nes-btn is-primary"
+                        style={{ width: "30%", marginLeft:"1rem"}}
+                    >
+                        Download CSV
                     </button>
                 </div>
                 <div className="student-list" style={{ display: "flex", flexWrap: "wrap", marginTop: "1rem" }}>
