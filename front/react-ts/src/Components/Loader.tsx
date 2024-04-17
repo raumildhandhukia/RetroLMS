@@ -1,11 +1,15 @@
 import React from 'react';
 import "./Loader.css";
 
-const Loader = () => {
+interface LoaderProps {
+    style: any;
+
+}
+const Loader:React.FC<LoaderProps> = ({style}) => {
     return (
-   
-            <div className="pixel-loader"></div>
- 
+            <div className="pixel-loader" style={
+                style
+            }></div>
     )
 };
 
