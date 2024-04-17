@@ -276,74 +276,109 @@ const courseController = {
 
   getLeaderBoard: async (req, res) => {
     const { courseId } = req.body;
-    console.log(courseId);
-    try {
-      let matchStage = {};
-      if (courseId) {
-        matchStage = { enrolledCourses: new mongoose.Types.ObjectId(courseId) };
-        const pipeline = [
-          {
-            $match: matchStage,
-          },
-          {
-            $lookup: {
-              from: "courses",
-              localField: "enrolledCourses",
-              foreignField: "_id",
-              as: "courseDetails",
-            },
-          },
-          {
-            $unwind: "$courseDetails",
-          },
-          {
-            $lookup: {
-              from: "users",
-              localField: "userId",
-              foreignField: "_id",
-              as: "userDetails",
-            },
-          },
-          {
-            $unwind: "$userDetails",
-          },
-          {
-            $sort: { currentCurrency: -1 },
-          },
-          {
-            $group: {
-              _id: "$courseDetails._id",
-              students: {
-                $push: {
-                  username: "$userDetails.username",
-                  currentCurrency: "$currentCurrency",
-                },
-              },
-            },
-          },
-          {
-            $project: {
-              courseId: "$_id",
-              students: 1,
-              _id: 0,
-            },
-          },
-        ];
-  
-        const leaderboard = await Student.aggregate(pipeline);
-  
-        res.send({
-          leaderboard,
-        });
-      }
-      else{
-        res.status(500).send("CourseId is empty");
-      }
-      
-    } catch (error) {
-      console.error("Failed to retrieve leaderboard:", error);
-      res.status(500).send("Error retrieving leaderboard");
-    }
+    const taskIds = await Task.find({ courseId }).select("_id");
+    const studentIds = await Student.find({
+      enrolledCourses: courseId,
+    }).populate("userId");
+    const submissions = await Submission.find({
+      taskId: { $in: taskIds },
+      studentId: { $in: studentIds },
+    });
+    const studentScores = studentIds.map((studentId) => {
+      const studentSubmissions = submissions.filter(
+        (submission) => submission.studentId == studentId.id
+      );
+      const score = studentSubmissions.reduce((acc, submission) => {
+        return acc + submission.points;
+      }, 0);
+
+      const name =
+        studentId.userId.profile.firstName +
+        " " +
+        studentId.userId.profile.lastName;
+      return { name, score };
+    });
+
+    studentScores.sort((a, b) => b.score - a.score);
+    res.status(200).json(studentScores);
   },
+
+  //   getLeaderBoard: async (req, res) => {
+  //     const { courseId } = req.body;
+  //     console.log(courseId);
+  //     try {
+  //       let matchStage = {};
+  //       if (courseId) {
+  //         matchStage = { enrolledCourses: new mongoose.Types.ObjectId(courseId) };
+
+  //         const pipe = [
+  //           {
+  //             $match: matchStage,
+  //           },
+  //         ];
+
+  //         const pipeline = [
+  //           {
+  //             $match: matchStage,
+  //           },
+  //           {
+  //             $lookup: {
+  //               from: "courses",
+  //               localField: "enrolledCourses",
+  //               foreignField: "_id",
+  //               as: "courseDetails",
+  //             },
+  //           },
+  //           {
+  //             $unwind: "$courseDetails",
+  //           },
+  //           {
+  //             $lookup: {
+  //               from: "users",
+  //               localField: "userId",
+  //               foreignField: "_id",
+  //               as: "userDetails",
+  //             },
+  //           },
+  //           {
+  //             $unwind: "$userDetails",
+  //           },
+  //           {
+  //             $sort: { currentCurrency: -1 },
+  //           },
+  //           {
+  //             $group: {
+  //               _id: "$courseDetails._id",
+  //               students: {
+  //                 $push: {
+  //                   username: "$userDetails.username",
+  //                   currentCurrency: "$currentCurrency",
+  //                 },
+  //               },
+  //             },
+  //           },
+  //           {
+  //             $project: {
+  //               courseId: "$_id",
+  //               students: 1,
+  //               _id: 0,
+  //             },
+  //           },
+  //         ];
+
+  //         const leaderboard = await Student.aggregate(pipeline);
+
+  //         res.send({
+  //           leaderboard,
+  //         });
+  //       } else {
+  //         res.status(500).send("CourseId is empty");
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to retrieve leaderboard:", error);
+  //       res.status(500).send("Error retrieving leaderboard");
+  //     }
+  //   },
 };
+
 module.exports = courseController;
