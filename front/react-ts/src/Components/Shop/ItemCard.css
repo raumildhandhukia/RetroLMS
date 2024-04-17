@@ -5,6 +5,7 @@
     grid-gap: 20px;
     overflow: auto;
     max-height: 66vh;
+    min-height: 66vh;
 }
 
 .transaction-badge {
@@ -52,3 +53,8 @@
     font-size: 1.5vh;
     padding: 5px;
 }
+
+/* .no-shop {
+    width: 100vh;
+    height: 60vh;
+} */

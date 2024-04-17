@@ -23,30 +23,35 @@ interface Transaction {
 
 const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, handleItemRequest, handleItemBuy, studentBalance }) => {
     const [transaction, setTransaction] = useState<Transaction|null>(null);
+    const [transactionState, setTransactionState] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
+    const [update, setUpdate] = useState<boolean>(false);
+
+    const getTransction = async () => {
+                try {
+                const response = await fetch(`http://localhost:8080/getTrasactionsByItemByStudent/${item?._id}`, {
+                    method: 'GET',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch items');
+                } else {
+                    const transaction: Transaction = await response.json();
+                    setTransaction(transaction);
+                    setTransactionState(transaction.status);
+                }
+                } catch (error) {
+                console.error('Error fetching tasks:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
 
     useEffect(() => {
-        const getTransction = async () => {
-            try {
-            const response = await fetch(`http://localhost:8080/getTrasactionsByItemByStudent/${item?._id}`, {
-                method: 'GET',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                credentials: 'include'
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch items');
-            } else {
-                const transaction: Transaction = await response.json();
-                setTransaction(transaction);
-            }
-            } catch (error) {
-            console.error('Error fetching tasks:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        
         if (role === 'student') {
             getTransction();
         } else {
@@ -75,11 +80,12 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                         handleItemRequest(item);
                     }}>Requests</button>
                 ) : 
-                transaction ? 
-                <button className="nes-btn is-disabled buy-button">{transaction.status}</button>:
+                transactionState ? 
+                <button className="nes-btn is-disabled buy-button">{transactionState}</button>:
                 <button className={`nes-btn buy-button` + (studentBalance < item.itemPrice ? ' is-disabled' : '')}
                 onClick={(e)=>{
                     e.stopPropagation();
+                    setTransactionState('Awaiting');
                     handleItemBuy(item);
                 }}>Buy</button>
             }

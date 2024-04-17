@@ -70,28 +70,55 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role, up
     } 
   };
 
-    const renderShopComponent = () => (
-            
-            <div>
-              {/* <p className="title">{courseName}</p> */}
-              <div className="item-list-content">
-              {items.map((item, index) => (
-                <ItemCard key={`item-${index}`} item={item} role={role} studentBalance={studentBalance}
-                handleItemDescription={handleItemDescription} handleItemRequest={handleItemRequest} 
-                handleItemBuy={handleBuyRequest}/>
-              ))}
+  const renderNoShopComponent = () => (
+    <div>
+      <div className="">
+        <div className="nes-container is-rounded with-title" style={{width:'100vh'}}>
+          <p className="title">Shop</p>
+          <section className="message-right">
+            <div className="nes-balloon from-left is-dark" style={{ marginRight:'45%'}}>
+              <p>{role === 'instructor' ? "please add some items professor":"please come back later for items."}</p>
             </div>
+          </section>
+          <i style={{}} className="nes-octocat animate"></i>
+          <section className="message -right">
+            <div style={{marginLeft:'40%'}}className="nes-balloon from-right is-dark">
+              <p>{role === 'instructor' ? "my students could use some perks.":"waiting for that 'SKIP FINALS' perk."}</p>
+            </div>
+            <img style={{width: '100px', marginLeft:'88%'}} src={require('./avatar.png')} alt="My Icon" />
+          </section>
+        </div>
+      </div>
+      {role === 'instructor' && (
+        <div className="flex items-start ml-6" style={{ marginTop: "10px" }}>
+          <button type='button' className='nes-btn is-primary' onClick={handleAddItem}>Add Item</button>
+        </div>
+      )}
+    </div>
+  );
 
-              <div className="flex items-start ml-6" style={{
-                marginTop: "3vh"
-              
-              }}>
-                {
-                  role === 'instructor' ? (<button type='button' className='nes-btn is-primary' onClick={handleAddItem} >Add Item</button>) : null
-                }
-              </div>
-            </div>
-      );
+
+  const renderShopComponent = () => (
+  <div className='nes-container is-rounded with-title'>
+    <p className='title'>Shop</p>
+    <div className="item-list-content ">
+      {
+      items.map((item, index) => (
+        <ItemCard key={`item-${index}`} item={item} role={role} studentBalance={studentBalance}
+          handleItemDescription={handleItemDescription} handleItemRequest={handleItemRequest}
+          handleItemBuy={handleBuyRequest} />
+      ))
+      
+      }
+    </div>
+    {role === 'instructor' && (
+      <div className="flex items-start ml-6" style={{ marginTop: "10px" }}>
+        <button type='button' className='nes-btn is-primary' onClick={handleAddItem}>Add Item</button>
+      </div>
+    )}
+  </div>
+);
+
 
     const renderAddItemComponent = () => (
       <AddItem courseId={courseId} update={update} handleBack={handleBack}/>
@@ -110,7 +137,7 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role, up
             renderItemDescription() : 
             <div>
                   {
-                    createItem ? renderAddItemComponent() : showItemRequests ? renderRequestComponent() : renderShopComponent()
+                    createItem ? renderAddItemComponent() : showItemRequests ? renderRequestComponent() : items.length ? renderShopComponent() : renderNoShopComponent()
                   }
             </div>
           }

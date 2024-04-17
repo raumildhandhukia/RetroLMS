@@ -227,9 +227,9 @@ const Dashboard: React.FC = () => {
             {selectedCourse ? (<div>
                     <div>
                     <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
-                     {role === 'student' ? (
+                     {/* {role === 'student' ? (
                         <div className='text-2xl'>Balance: $ {currency}</div>
-                     ) : null}
+                     ) : null} */} {/* Removed this part temporarily as it is not re-rendering */}
                     </div>
                 <hr/>
                 <div className='main-content'>

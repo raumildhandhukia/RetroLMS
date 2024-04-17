@@ -66,22 +66,30 @@ const RequestList: React.FC<RequestListProps> = ({
     };
 
     return (
-    <div className='nes-container with-title request-container is-dark' style={{width: '63vw', minHeight:'80vh'}}>
-        <p className="title">Request List</p>
-        <ol className="nes-list is-decimal">
-        {transactions.map((transaction) => (
-            <ul key={transaction?._id} className="nes-container with-title is-rounded is-dark">
-            <p className="title">{transaction?.username}</p>
-            <div className="nes-btn-group" style={{ marginTop: '25px', marginBottom:'10px' }}>
-                {transaction?.status === 'Awaiting' ? (<div><button className="nes-btn is-success" style={{ marginRight: '25px' }} onClick={() => manageRequest("Approval", transaction._id)}>Accept</button>
-                <button className="nes-btn is-error" style={{ marginRight: '25px' }} onClick={() => manageRequest("Reject", transaction._id)}>Reject</button></div>):<button className="nes-btn is-warning" onClick={() => manageRequest("Awaiting", transaction._id)}>Reset</button>}
-            </div>
-            </ul>
-        ))}
-        </ol>
-        <button className="nes-btn" style={{}} onClick={() => handleBack()}>Back</button>
-    </div>
-    );
+  <div className='nes-container with-title request-container is-dark' style={{ width: '63vw', minHeight:'80vh' }}>
+    <p className="title">Request List</p>
+    <ol className="nes-list is-decimal">
+      {transactions.map((transaction) => (
+        <ul key={transaction?._id} className="nes-container with-title is-rounded is-dark" style={{width:"100vh"}}>
+          <p className="title">{transaction?.username}</p>
+          <div className="nes-btn-group" style={{ marginTop: '25px', marginBottom:'10px' }}>
+            {transaction?.status === 'Awaiting' ? (
+              <div>
+                <button className="nes-btn is-success" style={{ marginRight: '25px' }} onClick={() => manageRequest("Approval", transaction._id)}>Accept</button>
+                <button className="nes-btn is-error" style={{ marginRight: '25px' }} onClick={() => manageRequest("Reject", transaction._id)}>Reject</button>
+              </div>
+            ) : (
+              <button className="nes-btn is-warning" onClick={() => manageRequest("Awaiting", transaction._id)}>Reset</button>
+            )}
+          </div>
+        </ul>
+      ))}
+      
+    </ol>
+    <button className="nes-btn back-button" onClick={() => handleBack()}>Back</button>
+  </div>
+);
+
 };
 
 export default RequestList;
