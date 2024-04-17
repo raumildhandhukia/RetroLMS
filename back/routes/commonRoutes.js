@@ -74,6 +74,7 @@ router.get(
   courseController.getEnrolledStudents
 );
 
+router.get("/getEnrolledStudentsByCourseId/:courseId", courseController.getEnrolledStudentsByCourseIdExcel);
 //Method to delete the course and also to remove it from the enrolledCourses array of all students.
 router.delete("/courses", courseController.deleteCourse);
 
