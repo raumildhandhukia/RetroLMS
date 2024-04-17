@@ -7,6 +7,7 @@ const Transaction = require("../models/transactionModel");
 const Task = require("../models/taskModel");
 const Item = require("../models/itemModel");
 const JWT = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 const courseController = {
   getEnrolledStudents: async (req, res) => {
@@ -272,5 +273,77 @@ const courseController = {
   //     res.status(500).json({ message: err.message });
   //   }
   // },
+
+  getLeaderBoard: async (req, res) => {
+    const { courseId } = req.body;
+    console.log(courseId);
+    try {
+      let matchStage = {};
+      if (courseId) {
+        matchStage = { enrolledCourses: new mongoose.Types.ObjectId(courseId) };
+        const pipeline = [
+          {
+            $match: matchStage,
+          },
+          {
+            $lookup: {
+              from: "courses",
+              localField: "enrolledCourses",
+              foreignField: "_id",
+              as: "courseDetails",
+            },
+          },
+          {
+            $unwind: "$courseDetails",
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "_id",
+              as: "userDetails",
+            },
+          },
+          {
+            $unwind: "$userDetails",
+          },
+          {
+            $sort: { currentCurrency: -1 },
+          },
+          {
+            $group: {
+              _id: "$courseDetails._id",
+              students: {
+                $push: {
+                  username: "$userDetails.username",
+                  currentCurrency: "$currentCurrency",
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              courseId: "$_id",
+              students: 1,
+              _id: 0,
+            },
+          },
+        ];
+  
+        const leaderboard = await Student.aggregate(pipeline);
+  
+        res.send({
+          leaderboard,
+        });
+      }
+      else{
+        res.status(500).send("CourseId is empty");
+      }
+      
+    } catch (error) {
+      console.error("Failed to retrieve leaderboard:", error);
+      res.status(500).send("Error retrieving leaderboard");
+    }
+  },
 };
 module.exports = courseController;
