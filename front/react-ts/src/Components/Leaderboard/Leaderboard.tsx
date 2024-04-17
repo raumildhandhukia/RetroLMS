@@ -76,8 +76,22 @@ const renderLeaderboard = () => {
 
   const renderNoData = () => {
     return (
-      <div>
-        <h1>No data</h1>
+      <div className="">
+        <div className="nes-container is-rounded with-title" style={{width:'100vh'}}>
+          <p className="title" style={{color:"red"}}>Leaderboard</p>
+          <section className="message-right">
+            <div className="nes-balloon from-left" style={{ marginRight:'20%'}}>
+              <p>Hey there! Admin on duty. Let's bring in some new faces.</p>
+            </div>
+          </section>
+          <img style={{width:'80px'}} src={require('./avatar0.png')} alt="My Icon" />
+          <section className="message -right">
+            <div style={{marginLeft:'40%'}}className="nes-balloon from-right">
+              <p>Absolutely! Time to whip up a batch of fresh students.</p>
+            </div>
+            <img style={{width: '100px', marginLeft:'88%'}} src={require('../Shop/avatar.png')} alt="My Icon" />
+          </section>
+        </div>
       </div>
     );
   }

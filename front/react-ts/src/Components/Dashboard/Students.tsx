@@ -73,14 +73,29 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
         setUpdateStudents(!updateStudents);
     }
 
-   return (
-    <div className="nes-container with-title" style={{ fontSize: "0.8rem" }}>
+    const renderStudents = () => (
+        <div className="student-list" style={{ display: "flex", flexWrap: "wrap", marginTop: "1rem" }}>
 
-        {selectedStudent ? (<StudentData student={selectedStudent} handleBack = {handleBack}/>) : (
-            <div className='all-students-container'>
-                <p className="title">Students</p>
-                <label htmlFor="studentCount" className="nes-text" style={{ marginRight: "1rem" }}>Enter number of students to generate:</label>
-                <div className="nes-field" style={{ display: "flex", alignItems: "center" }}>
+                    {
+                    
+                    students.map((student, index) => (
+                        <div key={index} onClick={()=>{handleStudentClick(student)}}
+                        className="nes-container" style={{ marginRight: index%2 === 0 ? "1rem" : "0rem" , marginBottom: "1rem", width: "44vh"}}>
+                            <p>{student.fullName}</p>
+                        </div>
+                    ))
+                    }
+                </div>
+    );
+
+    const renderGuideToAddStudents = () => (
+        <div style={{
+            marginTop: "2rem",
+        }}>
+          <section className="message-right">
+            <div className="nes-balloon from-left" style={{marginRight:'20%'}}>
+              <p>Ah, the joyous task of conjuring student accounts. So, how many souls shall I enslave today?</p>
+              <div className="nes-field" style={{ display: "flex", alignItems: "center" }}>
                     <input 
                         type="number" 
                         id="studentCount" 
@@ -99,19 +114,31 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
                         Generate Students
                     </button>
                 </div>
-                <div className="student-list" style={{ display: "flex", flexWrap: "wrap", marginTop: "1rem" }}>
-                    {students.map((student, index) => (
-                        <div key={index} onClick={()=>{handleStudentClick(student)}}
-                        className="nes-container" style={{ marginRight: index%2 === 0 ? "1rem" : "0rem" , marginBottom: "1rem", width: "44vh"}}>
-                            <p>{student.fullName}</p>
-                        </div>
-                    ))}
-                </div>
             </div>
-        )}
-        
-        
-    </div>
+          </section>
+          <img style={{width:'80px'}} src={require('../Leaderboard/avatar0.png')} alt="My Icon" />
+      </div>
+    );
+
+
+   return (
+    <>
+        {selectedStudent ? (<StudentData student={selectedStudent} handleBack = {handleBack}/>) : (
+            <div className="nes-container with-title" style={{ fontSize: "0.8rem" }}>
+        <p className="title">Students</p>
+            <div className='all-students-container'>
+                
+                {
+                    renderGuideToAddStudents()
+                }
+                {
+                    renderStudents()
+                }
+                
+            </div>
+        </div>)}
+        </>
+    
 )
 
 

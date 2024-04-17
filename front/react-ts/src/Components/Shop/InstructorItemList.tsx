@@ -76,14 +76,15 @@ const InstructorItemList: React.FC<ItemListProps> = ({ items, courseId, role, up
         <div className="nes-container is-rounded with-title" style={{width:'100vh'}}>
           <p className="title">Shop</p>
           <section className="message-right">
-            <div className="nes-balloon from-left is-dark" style={{ marginRight:'45%'}}>
-              <p>{role === 'instructor' ? "please add some items professor":"please come back later for items."}</p>
+            <div className="nes-balloon from-left is-dark" style={{ marginRight:'', fontSize:'0.8rem'}}>
+              <p>{role === 'instructor' ? "More items for the shop, Professor? Let's dangle some shiny incentives in front of our students, shall we?":"Please come back later to skip the assignment or class."}</p>
             </div>
           </section>
-          <i style={{}} className="nes-octocat animate"></i>
+          {/* <i style={{}} className="nes-octocat animate"></i> */}
+          <img style={{width:'80px'}} src={require('../Leaderboard/avatar0.png')} alt="My Icon" />
           <section className="message -right">
-            <div style={{marginLeft:'40%'}}className="nes-balloon from-right is-dark">
-              <p>{role === 'instructor' ? "my students could use some perks.":"waiting for that 'SKIP FINALS' perk."}</p>
+            <div style={{marginLeft:'20%', fontSize:'0.8rem'}}className="nes-balloon from-right is-dark">
+              <p>{role === 'instructor' ? "Yes, because what's education without a little bribery?":"Waiting for that 'SKIP FINALS' perk."}</p>
             </div>
             <img style={{width: '100px', marginLeft:'88%'}} src={require('./avatar.png')} alt="My Icon" />
           </section>
