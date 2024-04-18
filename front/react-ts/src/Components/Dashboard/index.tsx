@@ -74,7 +74,6 @@ const Dashboard: React.FC = () => {
   
       checkProfile();
     }, []);
-
     const [courses, setCourses] = useState<Course[]>([]);
     const updateCourses = (courseId: string, title: string, courseKey: string, details: string) => {
         const updatedCourses = courses.map(course => {
