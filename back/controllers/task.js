@@ -16,7 +16,7 @@ exports.addTask = async (req, res) => {
       details: req.body.details,
       point: req.body.point,
       courseId: req.body.courseId,
-      deadline: req.body.deadline,
+      // deadline: req.body.deadline,
       graded: false,
       submissionIds: [],
       // submissionId: req.body.submissionId,

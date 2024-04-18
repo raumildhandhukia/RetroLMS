@@ -8,6 +8,7 @@ const Task = require("../models/taskModel");
 const Item = require("../models/itemModel");
 const JWT = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const { Parser } = require('json2csv');
 
 const courseController = {
   getEnrolledStudents: async (req, res) => {
@@ -254,25 +255,37 @@ const courseController = {
     }
   },
 
-  // getStudentsByCourseId: async (req, res) => {
-  //   try {
-  //     if (!req.params) {
-  //       res.status(422).json({ message: "Missing Parameter" });
-  //     }
-  //     const courseId = req.params.courseId;
-  //     const students = await Student.find({
-  //       enrolledCourses: courseId,
-  //     }).populate("userId");
-  //     if (!students.length) {
-  //       return res
-  //         .status(404)
-  //         .json({ message: "No students found enrolled in this course" });
-  //     }
-  //     res.status(200).json(students.map((student) => student.userId.profile));
-  //   } catch (err) {
-  //     res.status(500).json({ message: err.message });
-  //   }
-  // },
+  getEnrolledStudentsByCourseIdExcel: async (req, res) => {
+    try {
+      if (!req.body) {
+        res.status(422).json({ message: "Missing body" });
+      }
+      const courseId = req.params.courseId;
+      const students = await Student.find({
+        enrolledCourses: courseId,
+      }).populate("userId");
+      if (!students.length) {
+        return res
+          .status(404)
+          .json({ message: "No students found enrolled in this course" });
+      }
+      console.log(students)
+      const excelData = students.map((student) => {
+        return {
+          name: student.userId.profile.firstName + " " + student.userId.profile.lastName,
+          username: student.userId.username,
+          password: student.studentPassword,
+        }
+      })
+      const json2csvParser = new Parser();
+      const csv = json2csvParser.parse(excelData);
+      res.header('Content-Type', 'text/csv');
+      res.attachment('filename.csv');
+      res.status(200).send(csv);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
 
   getLeaderBoard: async (req, res) => {
     const { courseId } = req.body;
