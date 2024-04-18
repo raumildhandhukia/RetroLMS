@@ -1,17 +1,14 @@
-import React, { JSXElementConstructor, ReactElement, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, useParams, Routes, Outlet, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
-import { CircleUser, LogOut } from 'lucide-react';
 import Card from './Card';
 import asulogo from '../../asu.png'
-import {Link} from "react-router-dom";
 import CourseDetailPage from '../../CourseDetailPage';
 import Leaderboard from '../Leaderboard/Leaderboard';
 import Tasks from '../Task/Tasks';
 import Items from '../Shop/Items';
 import CreateCourse from './CreateCourse';
-import { ok } from 'assert';
 import DeletePrompt from './DeletePrompt';
 import Profile from './Profile';
 import Students from './Students';
@@ -32,8 +29,6 @@ export interface ISidebarItem {
 const Dashboard: React.FC = () => {
     const [role, setRole] = useState<string>('');
     const [currency, setCurrency] = useState<number|null>(null);
-
-   
 
     useEffect(() => {
     const checkAuthentication = async () => {
@@ -216,7 +211,9 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="container flex">
-          <div className="w-20 bg-gray-100 h-lvh flex flex-col">
+          <div className="w-20 bg-gray-100 h-lvh flex flex-col" style={{
+            position: 'fixed',
+          }}>
              <img src={asulogo} />
               {sidebarItems.map(sidebarItem =>
                   <SidebarItem key={sidebarItem.name} name={sidebarItem.name} onClick={handleIconClick} role={role}/>
@@ -227,23 +224,27 @@ const Dashboard: React.FC = () => {
                     {selectedComponent}
                 </>
             )}
-            <div className="flex flex-1 p-10 flex-col" style={{}}>
+            <div className="flex flex-1 p-10 flex-col" style={{
+
+            }}>
             {selectedCourse ? (<div>
-                    <div>
+                    <div style={{position:'fixed', marginLeft:'20vh', marginBottom:'20%'}}>
                     <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
+                    <hr/>
                      {/* {role === 'student' ? (
                         <div className='text-2xl'>Balance: $ {currency}</div>
                      ) : null} */} {/* Removed this part temporarily as it is not re-rendering */}
                     </div>
-                <hr/>
+                
                 <div className='main-content'>
-                    <div>
+                    
+                    <div style={{position:'fixed', marginLeft:'20vh', marginTop:'10vh'}}>
                         {menuItems.map((item, index) => <div className='text-1xl custom-styling' 
                         onClick={
                             () => handleItemClick(item)
                         }>{item}</div>)}
                     </div>
-                    <div className='detail-container'>
+                    <div className='detail-container' style={{marginLeft:'47vh'}}>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
@@ -267,7 +268,10 @@ const Dashboard: React.FC = () => {
                
             </div>) : (
             selectedItem === 'CreateCourse' ? (<CreateCourse/>) : 
-            (<div>
+            (<div style={{
+                marginLeft:'20vh'
+            
+            }}>
                 <p className="text-3xl">Dashboard</p>
                 <div className='w-full flex flex-wrap mt-10'>
                     {courses.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
