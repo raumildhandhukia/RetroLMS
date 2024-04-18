@@ -91,7 +91,7 @@ const renderLeaderboard = () => {
             </div>
           </section>
           <img className="imgInvert" style={{
-            filter: 'invert(1)',
+            filter: 'invert(0.9)',
             width:'80px',
             }} src={require('./avatar0.png')} alt="My Icon" />
           <section className="message -right">

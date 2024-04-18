@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import 'nes.css/css/nes.min.css';
-import './TaskDescription.css';
 import DeletePrompt from './DeletePrompt';
 import Grading from './Grading';
 
@@ -24,7 +23,6 @@ interface TaskDescriptionProps {
 const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onClickBack, updateTasks, role}) => {
     const [title, setTitle] = useState(task.title);
     const [details, setDetails] = useState(task.details);
-    const [deadline, setDeadline] = useState(task.deadline);
     const [point, setPoint] = useState(task.point+"");
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +57,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
     const handleUpdateTask = async () => {
         if (isEditing) {
 
-            if (!title || !deadline || !details || !point) {
+            if (!title || !details || !point) {
                 setErrorMessage('All fields are required.');
                 return;
             }
@@ -74,7 +72,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        title, details, point, deadline, graded
+                        title, details, point, graded
                     })
                 });
 
@@ -93,7 +91,6 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
             updateTasks();
             task.title = title;
             task.details = details;
-            task.deadline = deadline;
             task.point = parseInt(point);
             task.graded = graded;
         } else {
@@ -114,8 +111,10 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
     }
     
     const renderDescriptionPage = () => (
-            <div>
-                <div className="field-container">
+            <div style={{
+                width: '100vh',
+            }}>
+                <div className="field-container-two">
                     <div className="nes-field">
                         <label htmlFor="title_field">Title:</label>
                         {!isEditing ?
@@ -130,20 +129,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
                         />
                         }
                     </div>
-                    <div className="nes-field">
-                        <label htmlFor="deadline_field">Deadline:</label>
-                        {!isEditing ?
-                        <p onDoubleClick={handleEditMode}>{task.deadline}</p>
-                        :
-                        <input
-                            type="text"
-                            id="deadline_field"
-                            className="nes-input"
-                            value={deadline}
-                            onChange={(e) => setDeadline(e.target.value)}
-                        />
-                        }
-                    </div>
+      
                     <div className="nes-field">
                         <label htmlFor="points_field">Max Points:</label>
                         {!isEditing ?
@@ -161,14 +147,17 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
                 <div className="nes-field description-field">
                     <label htmlFor="description_field">Description:</label>
                     {!isEditing ?
-                    <p onDoubleClick={handleEditMode}>{task.details}</p>
+                    <p style={{
+                        textAlign: 'left',
+                        minHeight: '40vh',
+                    }} onDoubleClick={handleEditMode}>{task.details}</p>
                     :
                     <textarea
                         id="description_field"
                         className="nes-textarea"
                         value={details}
                         onChange={(e) => setDetails(e.target.value)}
-                        rows={5}
+                        rows={12}
                     />}
                 </div>
                 <div className="nes-field description-field">
@@ -230,8 +219,8 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({selectedTask:task, onC
 
     return (
     <div className="task-description-container" >
-        <div className="nes-container with-title is-centered" style={{marginTop:"auto"}} >
-            <p className="title">{title}</p>
+        <div className="nes-container with-title is-centered" style={{marginTop:"auto", minWidth:'100vh', minHeight:'80vh'}} >
+            <p className="title">{title}{isGrading && ' Grading Panel'}</p>
             {
             !isGrading ?
                 !isDeleating ? 

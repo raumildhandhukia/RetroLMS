@@ -37,15 +37,31 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({task, redirectToTaskList}) =
     };
 
 
+    const renderDeletePrompt = () => (
+        <div className="">
+          <section className="message-right" style={{marginRight:'50%'}}>
+            <div className="nes-balloon from-left">
+              <p style={{textAlign:'left'}}>You are about to delete this task. Are you sure?</p>
+            </div>
+          </section>
+          <img style={{width:'80px'}} src={require('../Leaderboard/avatar0.png')} alt="My Icon" />
+          <section className="message -right" style={{marginLeft:'30%'}}>
+            <div style={{marginLeft:'30%', marginTop:'-50px'}}className="nes-balloon from-right">
+              <p style={{textAlign:'left'}}>I decide things.</p>
+                      <button className="nes-btn is-error" onClick={deleteTask}>Yes</button>
+                <button className="nes-btn is-success" onClick={()=>{
+                    redirectToTaskList();
+                }} style={{marginLeft:"10vh"}}>No</button>
+            </div>
+            <img style={{width: '100px', marginLeft:'88%'}} src={require('../Shop/avatar.png')} alt="My Icon" />
+          </section>
+        </div>
+     
+    );
+
     return (
         <div>
-            <div id="delete-prompt">
-                Are you sure you want to delete this Task?
-            </div>
-            <div>
-                <button onClick={deleteTask} style={{ marginRight: '20px' }} className='nes-btn is-error'>Yes</button>
-                <button onClick={()=>{redirectToTaskList()}} className="nes-btn is-primary">No</button>
-            </div>
+            {renderDeletePrompt()}
             
         </div>
     )
