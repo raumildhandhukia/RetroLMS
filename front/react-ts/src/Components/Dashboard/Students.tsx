@@ -30,7 +30,7 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
         }
         , 3000);
         const t2 = setTimeout(() => {
-            setLoaderMessege('I am almost there, Please wait')
+            setLoaderMessege('I am too slow, I am afraid AI will take over my job')
         }, 6000);
 
         return () => {
