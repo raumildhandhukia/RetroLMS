@@ -15,7 +15,6 @@ import { ISidebarItem } from '.'
       Logout: <LogOut />,
     };
     
-  
     const handleItemClick = () => {
       onClick(name);
     };

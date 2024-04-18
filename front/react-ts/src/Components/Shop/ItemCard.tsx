@@ -65,7 +65,7 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
         <div 
             className="nes-container is-centered is-rounded is-dark item-card"
             onClick={() => handleItemDescription(item)}>
-            { loading ? <Loader /> :
+            { loading ? <Loader style={{color:'white'}}/> :
             <>
             <div className="item-content">
                 <span>{item.itemName}</span>
