@@ -68,20 +68,29 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
             { loading ? <Loader style={{color:'white'}}/> :
             <>
             <div className="item-content">
-                <span>{item.itemName}</span>
-                <p style={{}}>{item.itemDescription}</p>
-                <span>${item.itemPrice}</span>
+                <span style={{
+                    color:'cyan'
+                }}>{item.itemName}</span>
+                <p style={{color:'cyan'}}>{item.itemDescription}</p>
+                <span style={{
+                    color:'gold'
+                }}>${item.itemPrice}</span>
             </div>
             {
                 role === "instructor" ? (
-                    <button className="nes-btn buy-button" onClick={(e)=>{
+                    <button className="nes-btn buy-button" style={{
+                        backgroundColor:'#2bba29'
+                    }} onClick={(e)=>{
                         e.stopPropagation();
                         handleItemRequest(item);
                     }}>Requests</button>
                 ) : 
                 transactionState ? 
                 <button className="nes-btn is-disabled buy-button">{transactionState}</button>:
-                <button className={`nes-btn buy-button` + (studentBalance < item.itemPrice ? ' is-disabled' : '')}
+                <button style={{
+                    backgroundColor:'gold'
+                
+                }} className={`nes-btn buy-button` + (studentBalance < item.itemPrice ? ' is-disabled' : '')}
                 onClick={(e)=>{
                     e.stopPropagation();
                     setTransactionState('Awaiting');
