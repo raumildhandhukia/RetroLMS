@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
-import ItemList from './ItemList';
-import InstructorItemList from "./InstructorItemList";
+import ItemList from "./ItemList";
+import Loader from "../Loader";
 
 export interface Item {
     _id: string;
@@ -22,6 +22,7 @@ interface ItemProps {
 
 const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
     const [items, setItems] = useState<Item[]>([]);
+    const [loading, setLoading] = React.useState<boolean>(true);
     // const [courseName, setCourseName] = useState<string>('SER517');
     // const [role, setRole] = useState<string>('');
     const navigate = useNavigate();
@@ -57,14 +58,36 @@ const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
           setItems(items)
         } catch (error) {
           console.error('Error fetching tasks:', error);
+        } finally {
+          setLoading(false);
         }
       };
   
       fetchItems();
     }, [updateItems]);
-  
+
+    const renderLoader = () => 
+       (
+      <div className="nes-container is-rounded" style={{
+        width: '100vh',
+        height: '82vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+          <Loader style={{
+            color: 'black',
+            marginTop: '-2rem',
+          }} />
+      </div>
+      )  
     return (
-      <InstructorItemList items={items} courseId={courseId} role={role} update = {updateItemList} studentBalance={studentBalance} />
+      <>
+      { 
+      loading ? renderLoader() :
+      <ItemList items={items} courseId={courseId} role={role} update = {updateItemList} studentBalance={studentBalance} />
+      }
+      </>
     );
   };
 

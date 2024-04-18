@@ -25,7 +25,6 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
     const [transaction, setTransaction] = useState<Transaction|null>(null);
     const [transactionState, setTransactionState] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
-    const [update, setUpdate] = useState<boolean>(false);
 
     const getTransction = async () => {
                 try {
@@ -66,11 +65,11 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
         <div 
             className="nes-container is-centered is-rounded is-dark item-card"
             onClick={() => handleItemDescription(item)}>
-            { loading ? <Loader /> :
+            { loading ? <Loader style={{color:'white'}}/> :
             <>
             <div className="item-content">
                 <span>{item.itemName}</span>
-                <p>{item.itemDescription}</p>
+                <p style={{}}>{item.itemDescription}</p>
                 <span>${item.itemPrice}</span>
             </div>
             {

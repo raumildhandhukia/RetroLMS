@@ -18,7 +18,7 @@ const onlyRolesMiddleware = require("../middleware/onlyRolesMiddleware");
 const upload = multer({ dest: "uploads/" });
 
 // Route for all users to view the leaderboard
-router.get("/leaderboard", courseController.getLeaderBoard);
+router.post("/leaderboard", courseController.getLeaderBoard);
 
 // =============== User Profile routes =============== //
 
