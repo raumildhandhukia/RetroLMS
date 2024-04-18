@@ -194,7 +194,7 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
     const renderLoader = () => (
         <div>
             <div className="nes-container with-title" style={{ 
-            fontSize: "0.8rem",  width: "100vh", height:'78vh',
+            fontSize: "0.8rem",  minWidth: "100vh", height:'78vh',
              }}>
         <p className="title">Students</p>
         <section className="message-right">
@@ -217,7 +217,7 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
         selectedStudent ? (<StudentData student={selectedStudent} handleBack = {handleBack}/>) : (
             <div className="nes-container with-title" style={{ fontSize: "0.8rem" }}>
         <p className="title">Students</p>
-            <div className='all-students-container'>
+            <div className='all-students-container' style={{minWidth:'100vh'}}>
                 
                 {
                     renderGuideToAddStudents()
