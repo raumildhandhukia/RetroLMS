@@ -70,7 +70,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
               textAlign: 'left',
               maxHeight: '60px',
             }}>
-              <p style={{marginBottom:'-5px' }}>Sure, let's add to their misery.</p>
+              <strong style={{marginBottom:'-5px' }}>Sure, let's add to their misery.</strong>
               <div className="nes-field" style={{marginLeft:'85px' }}>
                     <button 
               className="nes-btn is-primary"

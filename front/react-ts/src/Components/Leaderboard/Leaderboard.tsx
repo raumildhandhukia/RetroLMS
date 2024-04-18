@@ -45,7 +45,7 @@ const Leaderboard: React.FC<LBProps> = ({courseId}) => {
 const renderLeaderboard = () => {
   return (
     <div className="nes-container with-title is-dark" style={{
-      height: '80vh',
+      minHeight: '80vh',
     }}>
       <p className="title" style={{
         color: 'yellow',
@@ -80,8 +80,8 @@ const renderLeaderboard = () => {
   const renderNoData = () => {
     return (
         <div className="nes-container is-rounded with-title is-dark" style={{
-          width:'108vh',
-          height:'78vh',
+          minWidth:'108vh',
+          minHeight:'78vh',
           
           }}>
           <p className="title" style={{color:"yellow"}}>Leaderboard</p>
