@@ -53,40 +53,56 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
     }
   };
 
+  const convertIsoToReadable = (iso: string) => {
+    const date = new Date(iso);
+
+    const readableDate = date.toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+    });
+
+    return readableDate == "Invalid Date" ? "" : readableDate;
+  }
+
   return (
     <div className="task-list-container">
-      {!selectedTask ? (<div className="nes-container with-title is-centered">
-        <p className="title">{courseName}</p>
+      {!selectedTask ? (<div className="nes-container with-title is-centered is-rounded">
+        <p className="title text-[#305974]">{courseName} {createTask ? "Create Task": "Task List"}</p>
         {createTask ? (
           
           <AddTask createTask = {createTask} showTaskList = {showTaskList} courseId = {courseId} update={updateTasks}/> ) : 
           (<div className="task-list-content">
-          <h2>Task List</h2>
-          <table className="nes-table is-bordered is-centered">
+          <table className="nes-table is-bordered is-centered is-dark">
             <thead>
-              <tr>
+              <tr className='text-[#a4c7de] task-header'>
                 <th className="task-title">Task Title</th>
                 <th className="task-deadline">Task Deadline</th>
-                <th className="task-points">Task Title</th>
+                <th className="task-points">Task Points</th>
               </tr>
             </thead>
             <tbody>
               {tasks.map((task) => (
-                <tr key={task._id} className="task-item" onClick={() => handleTaskClick(task)}>
+                <tr key={task._id} className="task-item text-[#5facdf]" onClick={() => handleTaskClick(task)}>
                   {/* Use onClick to call handleTaskClick on click */}
-                  <td >{task.title}</td>
-                  <td >{task.deadline}</td>
-                  <td >{task.point}</td>
+                  <td>{task.title}</td>
+                  <td>{convertIsoToReadable(task.deadline)}</td>
+                  <td>{task.point}</td>
                 </tr>
               ))}
             </tbody>
             
           </table>
-          {role === 'instructor' ? (<button 
-            className="nes-btn is-primary"
-            onClick={() => setCreateTask(true)}>
-                Add Task
-          </button>) : null}
+          {role === 'instructor' ? (
+          <div className='mt-10'>
+            <button 
+              className="nes-btn is-primary"
+              onClick={() => setCreateTask(true)}>
+                  Add Task
+            </button>
+          </div>
+        ) : null}
           
         </div>
           )

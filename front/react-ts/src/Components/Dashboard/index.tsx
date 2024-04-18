@@ -150,7 +150,11 @@ const Dashboard: React.FC = () => {
     };
 
     const handleItemClick = (item: string) => {
-        setSelectedItem(item);
+        setSelectedItem('');
+        setTimeout(() => {
+            setSelectedItem(item);
+        } , 0);
+
     };
 
     const handleLogOut = async () => {
@@ -183,14 +187,14 @@ const Dashboard: React.FC = () => {
             case 'MyCourses':
                 setSelectedComponent(
                 <div className='overlay-courses'>
-                <CoursesSidebar 
-                    onClose={handleCloseSidebar} 
-                    courses={courses} 
-                    onCourseClick={handleCourseClick}
-                    setComponent={handleCourseCreate}
-                    role={role}
-                    /></div>
-                );
+                    <CoursesSidebar 
+                        onClose={handleCloseSidebar} 
+                        courses={courses} 
+                        onCourseClick={handleCourseClick}
+                        setComponent={handleCourseCreate}
+                        role={role}
+                        /></div>
+                    );
                 setSidebarOpen(!isSidebarOpen);
                 break;
             case 'Logout':
@@ -234,7 +238,10 @@ const Dashboard: React.FC = () => {
                 <hr/>
                 <div className='main-content'>
                     <div>
-                        {menuItems.map((item, index) => <div className='text-1xl custom-styling' onClick={() => handleItemClick(item)}>{item}</div>)}
+                        {menuItems.map((item, index) => <div className='text-1xl custom-styling' 
+                        onClick={
+                            () => handleItemClick(item)
+                        }>{item}</div>)}
                     </div>
                     <div className='detail-container'>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
