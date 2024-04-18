@@ -1,6 +1,6 @@
 import { CircleUser, LogOut, LucideIcon, LucideProps, X } from 'lucide-react'
-import React from 'react'
-import {useState} from 'react'
+import React, { useEffect } from 'react'
+import {useState, useRef } from 'react'
 import './CoursesSidebar.css'
 import { Course } from '.'
 
@@ -9,9 +9,10 @@ interface CoursesSidebarProps {
     onCourseClick: (description: string) => void;
     setComponent: () => void;
     courses: Course[];
+    role: string;
   }
   
-const CoursesSidebar: React.FC<CoursesSidebarProps> = ({ onClose, courses,  onCourseClick, setComponent}) => {
+const CoursesSidebar: React.FC<CoursesSidebarProps> = ({ onClose, courses,  onCourseClick, setComponent, role}) => {
   const handleCourseClick = (description: string) => {
     // Pass the clicked course description to the parent function
     onCourseClick(description);
@@ -21,21 +22,39 @@ const handleAddCourse = () => {
   setComponent()
 }
   const [showAllCourses, setShowAllCourses] = useState(true);
+  const corusesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Add event listener to close sidebar when clicking outside
+        const handleClickOutside = (event: MouseEvent) => {
+            if (corusesRef.current && !corusesRef.current.contains(event.target as Node)) {
+                onClose();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [onClose]
+  );
 
   return (
-    <div>
+    <div ref={corusesRef}>
       <div className='header-container'>
         <h1 className='heading'>Courses</h1>
         <div className='close-button'>
           <X onClick={onClose} />
         </div>
       </div>
-      <hr />
+      {role === 'instructor' ? (<><hr />
       <div className='second-heading nes-pointer' onClick={() => {
         onClose(); // Close the sidebar
         handleAddCourse(); // Handle the Add Course click
       }}>Add Course</div>
-      <hr />
+      <hr /></>) : null}
+      
+
       <hr />
       <h2 className='second-heading nes-pointer' onClick={() => {
         setShowAllCourses(!showAllCourses); // Toggle the state

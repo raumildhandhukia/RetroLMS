@@ -9,21 +9,16 @@ const JWT = require("jsonwebtoken");
 router.use(cookieParser());
 const taskController = require("../controllers/task");
 const courseController = require("../controllers/course");
-const itemController =  require("../controllers/item");
-const userController = require("../controllers/user")
-const submissionController = require("../controllers/submission")
-const middleware = require("../middleware/authMiddleware")
+const itemController = require("../controllers/item");
+const userController = require("../controllers/user");
+const submissionController = require("../controllers/submission");
+const middleware = require("../middleware/authMiddleware");
 const multer = require("multer");
 const onlyRolesMiddleware = require("../middleware/onlyRolesMiddleware");
-const upload = multer({ dest: 'uploads/' })
+const upload = multer({ dest: "uploads/" });
 
 // Route for all users to view the leaderboard
-router.get("/leaderboard", (req, res) => {
-  // Logic to view the leaderboard
-  res.send({
-    message: "You get the latest leaderboard.",
-  });
-});
+router.post("/leaderboard", courseController.getLeaderBoard);
 
 // =============== User Profile routes =============== //
 
@@ -39,47 +34,56 @@ router.get("/profile", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    let currency = null;
+    let resetPassword = false;
+    if (user.role === "student") {
+      const student = await Student.findOne({ userId: user._id });
+      currency = student.currentCurrency;
+      resetPassword = student.resetPassword;
+    }
     res.status(200).json({
       profile: user.profile,
       username: user.username,
       role: user.role,
+      currency: currency,
+      resetPassword: resetPassword,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
-router.post(
-  "/createcourse",
-  onlyRolesMiddleware(["instructor", "admin"]),
-  courseController.createCourse
-);
-router.post(
-  "/editCourse",
-  middleware(["instructor", "admin"]),
-  courseController.editCourse
-);
+router.post("/createcourse", courseController.createCourse);
+router.post("/editCourse", courseController.editCourse);
 
 router.get("/coursesById", courseController.getCourseByUserId);
 
 router.get("/getAllCourses", courseController.getAllCourses);
 
 // Route to add a course to the student
-router.post(
-  "/enrollstudent",
-  middleware(["student"]),
-  courseController.enrollCourse
+router.post("/enrollstudent", courseController.enrollCourse);
+
+// Route to delete a student from course
+router.delete(
+  "/deleteStudent/:studentId",
+  courseController.deleteStudentFromCourse
 );
 
-//Method to delete the course and also to remove it from the enrolledCourses array of all students.
-router.delete(
-  "/courses",
-  middleware(["admin", "instructor"]),
-  courseController.deleteCourse
+router.get(
+  "/getEnrolledStudents/:courseId",
+  courseController.getEnrolledStudents
 );
+
+router.get("/getEnrolledStudentsByCourseId/:courseId", courseController.getEnrolledStudentsByCourseIdExcel);
+//Method to delete the course and also to remove it from the enrolledCourses array of all students.
+router.delete("/courses", courseController.deleteCourse);
 
 //Method to get Students enrolled in given course
-router.get('/course/:courseId', middleware(['student', 'instructor']), courseController.getStudentsByCourseId);
+// router.get(
+//   "/course/:courseId",
+//   middleware(["student", "instructor"]),
+//   courseController.getStudentsByCourseId
+// );
 
 // ================= Routes for Task =================== //
 
@@ -98,30 +102,20 @@ router.put("/task/update/:id", taskController.updateTask);
 router.post("/task/create", taskController.addTask);
 
 // Get Tasks By Course ID ()
-router.post("/task/getTasksByCourseId", taskController.getTaskByCourseId);
+router.post("/task/getTasksByCourseId", taskController.getTasksByCourseId);
 
 // ======================= Routes for Items and Shop ====================== //
 
 // Route to create a new item
-router.post(
-  "/createitem",
-  middleware(["admin", "instructor"]),
-  itemController.createItem
-);
+router.post("/createitem", itemController.createItem);
 
 // Route to update an item by ID
-router.patch(
-  "/items/:itemId",
-  middleware(["admin", "instructor"]),
-  itemController.updateItem
-);
+router.patch("/items/:itemId", itemController.updateItem);
 
 // Route to get all items for a given course ID
-router.get(
-  "/items/course/:courseId",
-  middleware(["admin", "instructor"]),
-  itemController.getItemsByCourse
-);
+router.get("/items/course/:courseId", itemController.getItemsByCourse);
+
+router.delete("/items/:itemId", itemController.deleteItem);
 
 // Route to get a single item by ID (assuming the filter by course ID is handled internally based on user's login and permissions)
 router.get(
@@ -131,9 +125,43 @@ router.get(
 );
 
 // ======================= Routes for Submission ====================== //
+router.get(
+  "/getSubmissionsByTask/:taskId",
+  submissionController.getSubmissionsForTask
+);
+router.put(
+  "/updateSubmission/:submissionId",
+  submissionController.allocatePointsToStudent
+);
 
-router.post('/submit/:courseId', middleware(['instructor']), upload.single('file'),submissionController.createSubmission );
+router.post(
+  "/gradingMutipleSubmission",
+  // middleware(["instructor"]),
+  upload.single("file"),
+  submissionController.gradingMutlipleSubmission
+);
 
-router.post('grading/:courseId/:taskId', middleware(['instructor']), submissionController.gradingTask );
+router.post(
+  "/gradingSingleSubmission",
+  submissionController.gradingSingleSubmission
+);
+
+router.get("/getGradePoints/:taskId", submissionController.getStudentGrades);
+
+// ======================= Routes for Transaction ====================== //
+router.post("/requestItem", itemController.requestItem);
+router.get("/getTransactions/:courseId", itemController.getTransactions);
+router.get(
+  "/getTrasactionsByItemByStudent/:itemId",
+  itemController.getTransactionByItemByStudent
+);
+router.post(
+  "/updateTransaction/:transactionId",
+  itemController.updateTransaction
+);
+router.get(
+  "/getTransactionsByItem/:itemId",
+  itemController.getTransactionByItem
+);
 
 module.exports = router;

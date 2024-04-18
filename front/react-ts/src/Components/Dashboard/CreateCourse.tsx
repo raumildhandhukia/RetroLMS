@@ -33,14 +33,8 @@ const CreateCourse: React.FC = () => {
 
       if (!response.ok) {
         const responseData = await response.json();
-        throw new Error(responseData.message || 'Something went wrong!');
+       throw new Error(responseData.message || 'Something went wrong!');
       }
-
-      // Reset input fields after successful creation
-    //   setTitle('');
-    //   setCourseKey('');
-    //   setDetails('');
-    //   setErrorMessage('');
     navigate('/login');
       
     } catch (error: any) { // Type assertion or annotation to specify error type
@@ -50,25 +44,39 @@ const CreateCourse: React.FC = () => {
   };
 
   return (
-    <div className="nes-container is-rounded with-title">
-      <p className="title">Add Course</p>
-      <div className="nes-field">
-        <label htmlFor="title_field">Title:</label>
-        <input type="text" id="title_field" className="nes-input" value={title} onChange={(e) => setTitle(e.target.value)} />
-      </div>
-      <div className="nes-field">
-        <label htmlFor="course_key_field">Course Key:</label>
-        <input type="text" id="course_key_field" className="nes-input" value={courseKey} onChange={(e) => setCourseKey(e.target.value)} />
-      </div>
-      <div className="nes-field">
-        <label htmlFor="details_field">Details:</label>
-        <input type="text" id="details_field" className="nes-input" value={details} onChange={(e) => setDetails(e.target.value)} />
-      </div>
-      {errorMessage && <p className="nes-text is-error">{errorMessage}</p>}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-        <button type="button" className={`nes-btn is-primary ${isLoading && 'is-disabled'}`} onClick={handleCreateCourse} disabled={isLoading}>
-          {isLoading ? 'Creating...' : 'Create'}
-        </button>
+    <div className="create-course-container" style={{
+      marginLeft: '20vh',
+    }}>
+      <div className="nes-container is-rounded with-title">
+        <p className="title">Add Course</p>
+        <div style={{
+          display: 'inline-block',
+          width: '100%',
+          marginBottom: '10px'
+        }}>
+          <div className="nes-field">
+            <label htmlFor="title_field">Title:</label>
+            <input type="text" id="title_field" className="nes-input" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+          <div className="nes-field">
+            <label htmlFor="course_key_field">Course Key:</label>
+            <input type="text" id="course_key_field" className="nes-input" 
+            value={courseKey} onChange={(e) => {
+              if (e.target.value.length > 6) return;
+              setCourseKey(e.target.value);
+              }} />
+          </div>
+        </div>
+        <div className="nes-field">
+          <label htmlFor="details_field">Details:</label>
+          <textarea id="details_field" className="nes-textarea" value={details} onChange={(e) => setDetails(e.target.value)} />
+        </div>
+        {errorMessage && <p className="nes-text is-error">{errorMessage}</p>}
+        <div className="button-container">
+          <button type="button" className={`nes-btn is-primary ${isLoading && 'is-disabled'}`} onClick={handleCreateCourse} disabled={isLoading} style={{ marginTop: '10px' }}>
+            {isLoading ? 'Creating...' : 'Create'}
+          </button>
+        </div>
       </div>
     </div>
   );

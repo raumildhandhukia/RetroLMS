@@ -1,0 +1,60 @@
+.item-list-content {
+    display: grid;
+    max-width: 100vh;
+    grid-template-columns: repeat(auto-fill, minmax(40vh, 1fr));
+    grid-gap: 20px;
+    overflow: auto;
+    max-height: 66vh;
+    min-height: 66vh;
+}
+
+.transaction-badge {
+    position: 'absolute';
+    bottom: '15px',
+}
+.item-card {
+    /* Allow the height to adjust based on content */
+    max-height: 30vh;
+    min-height: 20vh;
+    min-width: 44vh;
+    /* Limit maximum height */
+    overflow: hidden;
+    position: relative;
+    /* Hide overflow content */
+}
+
+.item-content span {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.item-content p {
+    margin-top: 2vh;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* Hide overflow content in paragraphs */
+    text-overflow: ellipsis;
+    /* Add an ellipsis (...) for overflow text */
+    white-space: wrap;
+    /* Prevent text from wrapping */
+    font-size: 9px;
+    /* Reduced font size */
+}
+
+.buy-button {
+    margin-top: 3vh;
+    width: max-content;
+    font-size: 1.5vh;
+    padding: 5px;
+}
+
+/* .no-shop {
+    width: 100vh;
+    height: 60vh;
+} */

@@ -1,9 +1,7 @@
 import { CircleUser, LogOut, BookText, LayoutDashboard } from 'lucide-react'
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { ISidebarItem } from '.'
 
-
-  
   interface SidebarItemProps extends ISidebarItem {
     onClick: (name: string) => void;
     role:string
@@ -17,7 +15,6 @@ import { ISidebarItem } from '.'
       Logout: <LogOut />,
     };
     
-  
     const handleItemClick = () => {
       onClick(name);
     };
@@ -25,7 +22,7 @@ import { ISidebarItem } from '.'
     return (
       <div className='bg-zinc-700 w-full h-24 flex flex-col items-center justify-center' onClick={handleItemClick}>
         {React.cloneElement(sidebarItemsMapper[name] as React.ReactElement, { size: 35, color: 'white', strokeWidth: 1 })}
-        <p className='text-white text-center text-sm font-medium'>{name === 'Account' ? role : name}</p>
+        <p className='text-white text-center text-sm font-medium'>{name === 'Account' ? 'Profile' : name}</p>
       </div>
     );
   };

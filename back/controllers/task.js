@@ -4,6 +4,7 @@ const User = require("../models/userModel.js");
 const Instructor = require("../models/instructorModel.js");
 const Student = require("../models/studentModel.js");
 const Course = require("../models/courseModel");
+const Submission = require("../models/submissionModel");
 
 exports.addTask = async (req, res) => {
   try {
@@ -15,11 +16,23 @@ exports.addTask = async (req, res) => {
       details: req.body.details,
       point: req.body.point,
       courseId: req.body.courseId,
-      deadline: req.body.deadline,
+      // deadline: req.body.deadline,
+      graded: false,
+      submissionIds: [],
       // submissionId: req.body.submissionId,
     };
-    // Save the new Task document
     const taskItem = new Task(taskObj);
+    const students = await Student.find({ enrolledCourses: taskObj.courseId });
+    students.forEach(async (student) => {
+      const submission = new Submission({
+        taskId: taskItem._id,
+        studentId: student._id,
+        points: 0,
+      });
+      await submission.save();
+      taskItem.submissionIds.push(submission._id);
+    });
+    // Save the new Task document
     const savedTask = await taskItem.save();
     try {
       // Attempt to update the corresponding Course
@@ -30,12 +43,13 @@ exports.addTask = async (req, res) => {
       );
     } catch (courseUpdateError) {
       // If an error occurs during the course update, log it and return an error response
-      console.error('Error updating course with new task:', courseUpdateError);
+      console.error("Error updating course with new task:", courseUpdateError);
       await Task.findByIdAndDelete(savedTask._id);
       return res.status(500).json({
         message: "Error updating course with new task.",
       });
     }
+
     // If everything goes well, return success response
     res.status(201).json({
       message: `Task: ${taskObj.title} created successfully.`,
@@ -72,10 +86,10 @@ exports.getAllTasks = async (req, res) => {
   try {
     jwt = req.cookies && req.cookies.jwt;
     const decoded = JWT.decode(jwt);
-    console.log(decoded)
+    console.log(decoded);
     const username = decoded.username;
     const user = await User.findOne({ username });
-    console.log(user)
+    console.log(user);
     if (user.role === "student") {
       // If the user is a student, fetch enrolled courses
       const student = await Student.findOne({
@@ -87,7 +101,9 @@ exports.getAllTasks = async (req, res) => {
       const instructorId = await Instructor.findOne({
         userId: user._id,
       });
-      const tasks = await Task.find(instructorId).populate('courseId submissionId');
+      const tasks = await Task.find(instructorId).populate(
+        "courseId submissionId"
+      );
       res.status(200).json(tasks);
     } else {
       return res.status(400).json({ message: "Invalid user role" });
@@ -100,6 +116,9 @@ exports.getAllTasks = async (req, res) => {
 exports.deleteTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
+    const submissions = await Submission.find({ taskId: req.params.id });
+    const submissionIds = submissions.map((submission) => submission._id);
+    await Submission.deleteMany({ _id: { $in: submissionIds } });
     if (task) {
       res.status(200).json({ message: "Task deleted successfully" });
     } else {
@@ -123,7 +142,7 @@ exports.getTaskById = async (req, res) => {
   }
 };
 
-exports.getTaskByCourseId = async (req, res) => {
+exports.getTasksByCourseId = async (req, res) => {
   try {
     const tasks = await Task.find({ courseId: req.body.courseId });
     if (tasks) {

@@ -10,36 +10,22 @@ interface Task {
   details: string;
   point: number;
   course: string;
+  graded: boolean;
 }
 interface TaskProps {
   courseId: string;
+  role: string;
 }
 
-const Tasks: React.FC<TaskProps> = ({courseId}) => {
+const Tasks: React.FC<TaskProps> = ({courseId, role}) => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [courseName, setCourseName] = useState<string>('SER517');
-  const [role, setRole] = useState<string>('');
-  useEffect(() => {
-    console.log(courseId);
-    const checkProfile = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/profile", {
-          method: "GET",
-          credentials: "include", // Include cookies in the request
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setRole(data.role);
-        } else {
-          console.log("User not found");
-        }
-      } catch (error) {
-        console.error("Error checking for profile", error);
-      }
-    };
+  const [updateTask, setUpdateTask] = useState<boolean>(true);
+  const [courseName, setCourseName] = useState<string>('');
+  // const [role, setRole] = useState<string>('');
 
-    checkProfile();
-  }, []);
+  const handleUpdateTask = () => {
+    setUpdateTask(true);
+  }
 
   useEffect(() => {
     // Function to fetch tasks from the server
@@ -67,12 +53,15 @@ const Tasks: React.FC<TaskProps> = ({courseId}) => {
     };
 
     // Call the fetchTasks function when the component mounts
-    fetchTasks();
-  }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
+    if (updateTask) {
+      fetchTasks();
+      setUpdateTask(false);
+    }
+  }, [updateTask]); // The empty dependency array ensures that this effect runs only once when the component mounts
   return (
-      role === "student" ?
-          <TaskList tasks={tasks} courseName={courseName} courseId = {courseId}/> :
-    <InstructorTaskList tasks={tasks} courseName={courseName} courseId = {courseId}/>
+      
+          <TaskList tasks={tasks} courseName={courseName} courseId = {courseId} updateTasks = {handleUpdateTask} role = {role}/> 
+    
   );
 };
 

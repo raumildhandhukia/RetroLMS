@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
-import ItemList from './ItemList';
-import InstructorItemList from "./InstructorItemList";
+import ItemList from "./ItemList";
+import Loader from "../Loader";
 
 export interface Item {
     _id: string;
@@ -14,38 +14,32 @@ export interface Item {
     itemExpiry: number;
 }
 
-const Items: React.FC = () => {
+interface ItemProps {
+  role: string;
+  courseId: string;
+  studentBalance: number;
+}
+
+const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
     const [items, setItems] = useState<Item[]>([]);
-    const [courseName, setCourseName] = useState<string>('SER517');
-    const [role, setRole] = useState<string>('');
+    const [loading, setLoading] = React.useState<boolean>(true);
+    // const [courseName, setCourseName] = useState<string>('SER517');
+    // const [role, setRole] = useState<string>('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-      const checkProfile = async () => {
-        try {
-          const response = await fetch("http://localhost:8080/profile", {
-            method: "GET",
-            credentials: "include", // Include cookies in the request
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setRole(data.role);
-          } else {
-            console.log("User not found");
-          }
-        } catch (error) {
-          console.error("Error checking for profile", error);
-        }
-      };
-  
-      checkProfile();
-    }, []);
-  
+    const [updateItems, setUpdateItems] = useState<boolean>(false);
+
+
+    const updateItemList = () => {
+      setUpdateItems(!updateItems);
+    }
+
     useEffect(() => {
       // Function to fetch items from the server
       const fetchItems = async () => {
         try {
-          const courseId = '65ee276576ac94ef4a77bdba'; // Replace with the actual courseName
+          // const courseId = '65ee276576ac94ef4a77bdba'; // Replace with the actual courseName
+          console.log(courseId)
           const response = await fetch(`http://localhost:8080/items/course/${courseId}`, {
             method: 'GET',
             headers: {
@@ -53,7 +47,7 @@ const Items: React.FC = () => {
             },
             credentials: 'include'
           });
-          console.log(response)
+          // console.log(response)
   
           if (!response.ok) {
             throw new Error('Failed to fetch items');
@@ -64,16 +58,36 @@ const Items: React.FC = () => {
           setItems(items)
         } catch (error) {
           console.error('Error fetching tasks:', error);
+        } finally {
+          setLoading(false);
         }
       };
   
       fetchItems();
-    }, []);
-  
+    }, [updateItems]);
+
+    const renderLoader = () => 
+       (
+      <div className="nes-container is-rounded" style={{
+        width: '100vh',
+        height: '82vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+          <Loader style={{
+            color: 'black',
+            marginTop: '-2rem',
+          }} />
+      </div>
+      )  
     return (
-      role === "student" ? 
-      <ItemList items={items} courseName={courseName} /> : 
-      <InstructorItemList items={items} courseName={courseName} />
+      <>
+      { 
+      loading ? renderLoader() :
+      <ItemList items={items} courseId={courseId} role={role} update = {updateItemList} studentBalance={studentBalance} />
+      }
+      </>
     );
   };
 
