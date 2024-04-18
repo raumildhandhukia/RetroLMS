@@ -20,7 +20,7 @@ interface TaskProps {
 const Tasks: React.FC<TaskProps> = ({courseId, role}) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [updateTask, setUpdateTask] = useState<boolean>(true);
-  const [courseName, setCourseName] = useState<string>('SER517');
+  const [courseName, setCourseName] = useState<string>('');
   // const [role, setRole] = useState<string>('');
 
   const handleUpdateTask = () => {

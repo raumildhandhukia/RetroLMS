@@ -1,6 +1,8 @@
 import React, { useState, useEffect} from 'react';
 import StudentData from './Student';
+import Loader from '../Loader';
 import axios from 'axios';
+import { render } from '@testing-library/react';
 interface StudentProps {
     courseId: string;
 }
@@ -18,6 +20,42 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
     const [studentCount, setStudentCount] = useState<number>(1);
     const [updateStudents, setUpdateStudents] = useState<boolean>(false);
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [loaderMessege, setLoaderMessege] = useState<string>('Wait Wait, I am working on something');
+    const [stringOfExclamation, setStringOfExclamation] = useState<string>('!');
+
+    useEffect(() => {
+        const t1 = setTimeout(() => {
+            setLoaderMessege('Still working on it, Please wait')
+        }
+        , 3000);
+        const t2 = setTimeout(() => {
+            setLoaderMessege('I am almost there, Please wait')
+        }, 6000);
+
+        return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+        }
+    }, [loading]);
+
+    useEffect(() => {
+        const setStrings = () => {
+            if (stringOfExclamation.length > 2) {
+                setStringOfExclamation('!');
+            } else {
+                setStringOfExclamation(stringOfExclamation + '!');
+            }
+        }
+
+        const t1 = setInterval(() => {
+            setStrings()
+        } , 500);
+        return () => {
+            clearInterval(t1);
+        }
+    }, [stringOfExclamation, loading]);
+
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -31,9 +69,10 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
                 }
                 const students = await response.json();
                 setStudents(students);
-                console.log("Fetched students:", students)
             } catch (error) {
                 console.error("Error fetching students:", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchStudents();
@@ -62,6 +101,7 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
     };
 
     const handleGenerateStudents = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`http://localhost:8080/studentSignup`, {
                 method: "POST",
@@ -82,6 +122,8 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
             console.log("Generated students:", students)
         } catch (error) {
             console.error("Error generating students:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -149,10 +191,30 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
       </div>
     );
 
+    const renderLoader = () => (
+        <div>
+            <div className="nes-container with-title" style={{ 
+            fontSize: "0.8rem",  width: "100vh", height:'78vh',
+             }}>
+        <p className="title">Students</p>
+        <section className="message-right">
+            <div className="nes-balloon from-left" style={{marginRight:'20%', marginTop:'20vh', marginLeft:'20vh'}}>
+              <p>{loaderMessege} {stringOfExclamation}</p>
+              
+            </div>
+          </section>
+          <img style={{width:'80px', marginLeft:'13vh'}} src={require('../Leaderboard/avatar0.png')} alt="My Icon" />
+          </div>
+           </div>
+    );
+
 
    return (
     <>
-        {selectedStudent ? (<StudentData student={selectedStudent} handleBack = {handleBack}/>) : (
+        {
+        
+        loading ? renderLoader() : 
+        selectedStudent ? (<StudentData student={selectedStudent} handleBack = {handleBack}/>) : (
             <div className="nes-container with-title" style={{ fontSize: "0.8rem" }}>
         <p className="title">Students</p>
             <div className='all-students-container'>
