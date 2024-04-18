@@ -44,7 +44,9 @@ const CreateCourse: React.FC = () => {
   };
 
   return (
-    <div className="create-course-container">
+    <div className="create-course-container" style={{
+      marginLeft: '20vh',
+    }}>
       <div className="nes-container is-rounded with-title">
         <p className="title">Add Course</p>
         <div style={{
@@ -58,7 +60,11 @@ const CreateCourse: React.FC = () => {
           </div>
           <div className="nes-field">
             <label htmlFor="course_key_field">Course Key:</label>
-            <input type="text" id="course_key_field" className="nes-input" value={courseKey} onChange={(e) => setCourseKey(e.target.value)} />
+            <input type="text" id="course_key_field" className="nes-input" 
+            value={courseKey} onChange={(e) => {
+              if (e.target.value.length > 6) return;
+              setCourseKey(e.target.value);
+              }} />
           </div>
         </div>
         <div className="nes-field">
