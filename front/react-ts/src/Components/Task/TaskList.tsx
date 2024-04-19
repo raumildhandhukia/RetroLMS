@@ -97,7 +97,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
               marginLeft:'10px',
               marginTop:'10px'
             }}>
-              <strong style={{marginBottom:'-5px' }}>Enjoy the calm before the storm; your task tsunami's on its way!</strong>
+              <strong style={{marginBottom:'-5px' }}>{tasks.length > 0 ? "Finally you're here. I hope you have something to work on. Let's get those coins !!!" : 
+              "Enjoy the calm before the storm; your task tsunami's on its way!"}</strong>
             </div>            
           </div>
         )}
