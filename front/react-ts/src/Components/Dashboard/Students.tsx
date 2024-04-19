@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import StudentData from './Student';
-import Loader from '../Loader';
+import Loader from '../Other/Loader';
 import axios from 'axios';
 import { render } from '@testing-library/react';
 interface StudentProps {
@@ -30,7 +30,7 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
         }
         , 3000);
         const t2 = setTimeout(() => {
-            setLoaderMessege('I am almost there, Please wait')
+            setLoaderMessege('I am too slow, I am afraid AI will take over my job')
         }, 6000);
 
         return () => {
@@ -157,7 +157,7 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
         }}>
           <section className="message-right">
             <div className="nes-balloon from-left" style={{marginRight:'20%'}}>
-              <p>Ah, the joyous task of conjuring student accounts. So, how many souls shall I enslave today?</p>
+              <p>Ah, the duty of creating student accounts. So, how many souls shall I enslave today?</p>
               <div className="nes-field" style={{ display: "flex", alignItems: "center" }}>
                     <input 
                         type="number" 

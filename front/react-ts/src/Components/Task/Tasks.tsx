@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "nes.css/css/nes.min.css";
 import TaskList from "./TaskList";
-import InstructorTaskList from "./InstructorTaskList";
+
 
 interface Task {
   _id: string;

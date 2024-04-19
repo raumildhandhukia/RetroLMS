@@ -1,11 +1,11 @@
 .item-list-content {
     display: grid;
-    max-width: 100vh;
+    width: 100vh;
     grid-template-columns: repeat(auto-fill, minmax(40vh, 1fr));
-    grid-gap: 20px;
+    grid-gap: 10px;
     overflow: auto;
-    max-height: 66vh;
-    min-height: 66vh;
+    max-height: 56vh;
+    min-height: 70vh;
 }
 
 .transaction-badge {

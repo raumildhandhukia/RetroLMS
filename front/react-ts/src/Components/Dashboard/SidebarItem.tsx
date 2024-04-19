@@ -13,6 +13,7 @@ import { ISidebarItem } from '.'
       Dashboard: <LayoutDashboard />,
       MyCourses: <BookText />,
       Logout: <LogOut />,
+      Notifications: <LogOut />,
     };
     
     const handleItemClick = () => {

@@ -4,7 +4,7 @@ import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
 import Card from './Card';
 import asulogo from '../../asu.png'
-import CourseDetailPage from '../../CourseDetailPage';
+import CourseDetailPage from '../Other/CourseDetailPage';
 import Leaderboard from '../Leaderboard/Leaderboard';
 import Tasks from '../Task/Tasks';
 import Items from '../Shop/Items';
@@ -21,7 +21,7 @@ export interface Course {
 }
 
 export interface ISidebarItem {
-    name: "Account" | "Logout" | "MyCourses" | "Dashboard";
+    name: "Account" | "Logout" | "MyCourses" | "Dashboard" | "Notifications";
 }
 
 
@@ -124,7 +124,8 @@ const Dashboard: React.FC = () => {
         { name: "Account" },
         { name: "Dashboard"},
         { name: "MyCourses" },
-        { name: "Logout" }
+        { name: "Logout" },
+        { name: "Notifications"}
     ]
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
