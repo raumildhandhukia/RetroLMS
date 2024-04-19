@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import TransactionBadge from './TransactionBadge';
 import Loader from '../Loader';
 import { Item } from './Items';
+import coin from './spinningCoin.gif'
 
 interface ItemProps {
   item: Item;
@@ -73,9 +74,21 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                     color:'cyan'
                 }}>{item.itemName}</span>
                 <p style={{color:'cyan'}}>{item.itemDescription}</p>
+                <div style={{
+                    display:'flex',
+                    justifyContent:'center',
+                    alignItems:'center'
+                }}>
+                <img style={{
+                    width:'22px',
+                    height:'22px'
+                }} src={coin} alt='coin-spinning'/>
                 <span style={{
+                    marginTop:'4px',
+                    marginLeft:'3px',
                     color:'gold'
-                }}>${item.itemPrice}</span>
+                }}>{item.itemPrice}</span>
+                </div>
             </div>
             {
                 role === "instructor" ? (

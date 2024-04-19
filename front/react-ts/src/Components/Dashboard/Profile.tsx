@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import './CoursesSidebar.css';
+import coin from '../Shop/spinningCoin.gif';
 
 interface CoursesSidebarProps {
     onClose: () => void;
@@ -72,7 +73,12 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
                     <hr className='nes-line' />
                     <div className="nes-container is-dark with-title">
                     <p className="title">Balance</p>
-                    <p className='nes-text'>$ {profile?.currency}</p>
+                    <div style={{
+                        display: 'inline-flex',
+                    }}>
+                        <img src={coin} alt="coin" style={{width: '25px', height:'25px'}}/>
+                        <p style={{marginTop:'2px', marginLeft:'5px'}} className='nes-text'>{profile?.currency}</p>
+                    </div>
                 </div>
                 </div>
                 
