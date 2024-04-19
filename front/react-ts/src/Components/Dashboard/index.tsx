@@ -21,7 +21,7 @@ export interface Course {
 }
 
 export interface ISidebarItem {
-    name: "Account" | "Logout" | "MyCourses" | "Dashboard";
+    name: "Account" | "Logout" | "MyCourses" | "Dashboard" | "Notifications";
 }
 
 
@@ -115,7 +115,8 @@ const Dashboard: React.FC = () => {
         { name: "Account" },
         { name: "Dashboard"},
         { name: "MyCourses" },
-        { name: "Logout" }
+        { name: "Logout" },
+        { name: "Notifications"}
     ]
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);

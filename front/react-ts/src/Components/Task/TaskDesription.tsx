@@ -16,7 +16,6 @@ interface TaskDescriptionProps {
     onClickBack: Function;
     updateTasks: Function;
     role: string;
-
 }
 
 // Assuming this component is now for editing, not just displaying

@@ -102,14 +102,13 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
   const renderShopComponent = () => (
   <div className='nes-container is-rounded with-title'>
     <p className='title'>Shop</p>
-    <div className="item-list-content ">
+    <div className="item-list-content">
       {
       items.map((item, index) => (
         <ItemCard key={`item-${index}`} item={item} role={role} studentBalance={studentBalance}
           handleItemDescription={handleItemDescription} handleItemRequest={handleItemRequest}
           handleItemBuy={handleBuyRequest} />
       ))
-      
       }
     </div>
     {role === 'instructor' && (

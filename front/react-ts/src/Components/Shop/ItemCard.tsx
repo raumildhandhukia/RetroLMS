@@ -64,6 +64,7 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
     const renderShopComponent = () => (
         <div 
             className="nes-container is-centered is-rounded is-dark item-card"
+            style={{}}
             onClick={() => handleItemDescription(item)}>
             { loading ? <Loader style={{color:'white'}}/> :
             <>
@@ -93,6 +94,9 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                 }} className={`nes-btn buy-button` + (studentBalance < item.itemPrice ? ' is-disabled' : '')}
                 onClick={(e)=>{
                     e.stopPropagation();
+                    if (studentBalance < item.itemPrice) {
+                        return;
+                    }
                     setTransactionState('Awaiting');
                     handleItemBuy(item);
                 }}>Buy</button>
