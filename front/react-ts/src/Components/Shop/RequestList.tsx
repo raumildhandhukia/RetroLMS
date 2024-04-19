@@ -20,6 +20,31 @@ const RequestList: React.FC<RequestListProps> = ({
     handleBack,
 }) => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loaderMessage, setLoaderMessage] = useState('Fetching Transactions...');
+    const [stringOfExclamation, setStringOfExclamation] = useState('!');
+
+    useEffect(() => {
+        if (isLoading) {
+            const t1 = setTimeout(() => {
+                setLoaderMessage('Just a bit longer');
+            }, 3000);
+
+            const t2 = setTimeout(() => {
+                setLoaderMessage('Almost done');
+            }, 6000);
+
+            const t3 = setInterval(() => {
+                setStringOfExclamation((prev) => prev.length < 3 ? prev + '!' : '!');
+            }, 500);
+
+            return () => {
+                clearTimeout(t1);
+                clearTimeout(t2);
+                clearInterval(t3);
+            };
+        }
+    }, [isLoading]);
 
     useEffect(() => {
         getTransactions();
@@ -42,6 +67,9 @@ const RequestList: React.FC<RequestListProps> = ({
         } catch (error) {
             console.error('Error fetching transactions:', error);
         }
+        finally {
+            setIsLoading(false);
+        }
     };
 
     const manageRequest = async (status: string, transactionId: string) => {
@@ -62,6 +90,9 @@ const RequestList: React.FC<RequestListProps> = ({
             getTransactions();
         } catch (error) {
             console.error('Error managing request:', error);
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 

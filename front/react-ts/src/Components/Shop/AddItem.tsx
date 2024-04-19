@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import 'nes.css/css/nes.min.css';
 
 interface AddItemProps {
@@ -14,6 +14,31 @@ const AddItem: React.FC<AddItemProps> = ({courseId, update, handleBack}) => {
   const [itemDescription, setItemDescription] = useState<string>('');
   const [itemPrice, setItemPrice] = useState<number>(0);
   const [itemExpiry, setItemExpiry] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loaderMessage, setLoaderMessage] = useState('Creating Item...');
+  const [stringOfExclamation, setStringOfExclamation] = useState('!');
+
+    useEffect(() => {
+        if (isLoading) {
+            const t1 = setTimeout(() => {
+                setLoaderMessage('Just a bit longer');
+            }, 3000);
+
+            const t2 = setTimeout(() => {
+                setLoaderMessage('Almost done');
+            }, 6000);
+
+            const t3 = setInterval(() => {
+                setStringOfExclamation((prev) => prev.length < 3 ? prev + '!' : '!');
+            }, 500);
+
+            return () => {
+                clearTimeout(t1);
+                clearTimeout(t2);
+                clearInterval(t3);
+            };
+        }
+    }, [isLoading]);
 
   const handleAddItem = async () => {
     try {
@@ -40,11 +65,18 @@ const AddItem: React.FC<AddItemProps> = ({courseId, update, handleBack}) => {
     } catch (error) {
       console.error("Error creating item.", error);
     }
+    finally {
+        setIsLoading(false);
+    }
   }
 
   return (
     <div className="item-description-container">
-      <div className="nes-container with-title is-dark is-centered is-rounded" style={{
+        {isLoading ? (
+            <div className="loading-container" style={{ textAlign: 'center', paddingTop: '50px' }}>
+                <p>{loaderMessage}{stringOfExclamation}</p>
+            </div>
+        ) : (<div className="nes-container with-title is-dark is-centered is-rounded" style={{
         width: '100vh',
         marginTop:'vh'
       }}>
@@ -89,7 +121,7 @@ const AddItem: React.FC<AddItemProps> = ({courseId, update, handleBack}) => {
           }}>Back</button>
           <button type="button" className='nes-btn is-primary' style={{marginLeft:'5vh'}} onClick={handleAddItem}>Add</button>
         </div>
-      </div>
+      </div>)}
     </div>
   );
 };

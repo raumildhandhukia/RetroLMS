@@ -37,7 +37,6 @@ const Leaderboard: React.FC<LBProps> = ({courseId}) => {
     // Function to fetch students enrolled in the specified course
     const fetchStudents = async () => {
       try {
-
         const response = await fetch(`http://localhost:8080/leaderboard`, {
           method: 'POST',
           headers: {

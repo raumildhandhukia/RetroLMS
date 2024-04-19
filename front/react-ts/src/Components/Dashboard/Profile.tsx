@@ -96,7 +96,7 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
                     <X onClick={onClose} />
                 </div>
             </div>
-            
+
             {profile?.role === 'student' ? (
                 <div>
                     <hr className='nes-line' />
@@ -108,6 +108,11 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
                 
             ) : null}
             <hr className='nes-line' />
+            {isLoading ? (
+                <div className="loading-container" style={{ textAlign: 'center', paddingTop: '50px' }}>
+                    <p>{loaderMessage}{stringOfExclamation}</p>
+                </div>
+            ) : (
             <div className="nes-container is-dark with-title">
                     <p className="title">Profile</p>
 
@@ -122,7 +127,7 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
                     <div className="nes-container is-rounded is-dark">
                         <p>Email: {profile?.profile.email}</p>
                     </div>
-            </div>
+            </div>)}
             {/* <hr className='nes-line' />
             <div className="nes-container is-dark with-title">
                 <label>
