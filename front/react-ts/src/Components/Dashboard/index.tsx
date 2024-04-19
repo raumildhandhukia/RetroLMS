@@ -12,6 +12,7 @@ import CreateCourse from './CreateCourse';
 import DeletePrompt from './DeletePrompt';
 import Profile from './Profile';
 import Students from './Students';
+import NotificationList from '../Notifications/NotificationList';
 
 export interface Course {
     _id: string;
@@ -21,7 +22,7 @@ export interface Course {
 }
 
 export interface ISidebarItem {
-    name: "Account" | "Logout" | "MyCourses" | "Dashboard" | "Notifications";
+    name: "Account" | "Logout" | "MyCourses" | "Dashboard";
 }
 
 
@@ -115,8 +116,7 @@ const Dashboard: React.FC = () => {
         { name: "Account" },
         { name: "Dashboard"},
         { name: "MyCourses" },
-        { name: "Logout" },
-        { name: "Notifications"}
+        { name: "Logout" }
     ]
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
@@ -136,8 +136,8 @@ const Dashboard: React.FC = () => {
 
    
     const menuItems = role === 'student' ? 
-                    ['Home', 'Task', 'Leaderboard', 'Shop'] : 
-                    ['Home', 'Task', 'Leaderboard', 'Shop', 'Students', 'Delete'];
+                    ['Home', 'Notifications', 'Task', 'Leaderboard', 'Shop'] : 
+                    ['Home', 'Notifications', 'Task', 'Leaderboard', 'Shop', 'Students', 'Delete'];
 
     const handleCourseCreate = () => {
         setSelectedItem('CreateCourse');
@@ -245,29 +245,31 @@ const Dashboard: React.FC = () => {
                         }>{item}</div>)}
                     </div>
                     <div className='detail-container' style={{marginLeft:'47vh'}}>
+
+
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
                     {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse} studentBalance={currency || 0}/>}
-                    {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{
-                        setSelectedItem('Home');
-                    }}
-                    handleBackToDashboard={ () => {
-                        setSelectedComponent(null);
-                        const updatedCourses = courses.filter(course => course._id !== selectedCourse);
-                        setCourses(updatedCourses);
-                        setSelectedCourse('');
-                        setSelectedItem('');
-                        setSidebarOpen(false);
-                    }}
-                    courseId={selectedCourse}
-                    />}
+                    {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{setSelectedItem('Home');}}
+                            handleBackToDashboard={ () => {
+                                setSelectedComponent(null);
+                                const updatedCourses = courses.filter(course => course._id !== selectedCourse);
+                                setCourses(updatedCourses);
+                                setSelectedCourse('');
+                                setSelectedItem('');
+                                setSidebarOpen(false);
+                            }}
+                            courseId={selectedCourse}
+                            />
+                    }
                     {selectedItem === 'Students' && <Students courseId={selectedCourse}/>}
+                    {selectedItem === 'Notifications' && <NotificationList />}
                     </div>
                 </div>
                
             </div>) : (
-            selectedItem === 'CreateCourse' ? (<CreateCourse/>) : 
+            
             (<div style={{
                 marginLeft:'20vh'
             
