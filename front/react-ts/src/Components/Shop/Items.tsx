@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
 import ItemList from "./ItemList";
-import Loader from "../Loader";
+import Loader from "../Other/Loader";
 
 export interface Item {
     _id: string;

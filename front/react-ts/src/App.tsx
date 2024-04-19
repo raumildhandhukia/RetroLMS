@@ -1,15 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 // pages
-import Login from './Components/Login'
+import Login from './Components/Other/Login'
 import Dashboard from "./Components/Dashboard/index";
-import {CourseProvider} from "./CourseContext";
-import CreatePassword from "./Components/CreatePassword";
+import CreatePassword from "./Components/Other/CreatePassword";
 
 
 function App() {
   return (
-      <CourseProvider>
     <BrowserRouter>
       <main>
         <Routes>
@@ -20,7 +18,6 @@ function App() {
         </Routes>
       </main>
     </BrowserRouter>
-      </CourseProvider>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import TransactionBadge from './TransactionBadge';
-import Loader from '../Loader';
+import Loader from '../Other/Loader';
 import { Item } from './Items';
 import coin from './spinningCoin.gif'
 
@@ -73,7 +73,7 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                 <span style={{
                     color:'cyan'
                 }}>{item.itemName}</span>
-                <p style={{color:'cyan'}}>{item.itemDescription}</p>
+                <p style={{color:'cyan', minHeight:'50px'}}>{item.itemDescription}</p>
                 <div style={{
                     display:'flex',
                     justifyContent:'center',

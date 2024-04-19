@@ -4,7 +4,7 @@ import SidebarItem from './SidebarItem';
 import CoursesSidebar from './CoursesSidebar';
 import Card from './Card';
 import asulogo from '../../asu.png'
-import CourseDetailPage from '../../CourseDetailPage';
+import CourseDetailPage from '../Other/CourseDetailPage';
 import Leaderboard from '../Leaderboard/Leaderboard';
 import Tasks from '../Task/Tasks';
 import Items from '../Shop/Items';
