@@ -29,8 +29,11 @@ export interface ISidebarItem {
 const Dashboard: React.FC = () => {
     const [role, setRole] = useState<string>('');
     const [currency, setCurrency] = useState<number|null>(null);
-
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [loaderMessage, setLoaderMessage] = useState<string>('');
     useEffect(() => {
+        setLoaderMessage("Checking Authorization....");
+        setIsLoading(false);
     const checkAuthentication = async () => {
       try {
         // Make a request to the server to check the authentication status
@@ -47,12 +50,15 @@ const Dashboard: React.FC = () => {
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
+        setIsLoading(false);
       }
     };
 
     checkAuthentication();
   }, []);
     useEffect(() => {
+        setIsLoading(true);
+        setLoaderMessage("Fetching profile Details....");
       const checkProfile = async () => {
         try {
           const response = await fetch("http://localhost:8080/profile", {
@@ -69,6 +75,7 @@ const Dashboard: React.FC = () => {
           }
         } catch (error) {
           console.error("Error checking for profile", error);
+          setIsLoading(false);
         }
       };
   
@@ -88,6 +95,7 @@ const Dashboard: React.FC = () => {
     }
     
     useEffect(() => {
+        setLoaderMessage("Fetching Courses.....")
     const getCourses = async () => {
         try {
             const response = await fetch('http://localhost:8080/coursesById', {
@@ -105,6 +113,7 @@ const Dashboard: React.FC = () => {
             setCourses(res);
         } catch (error) {
             console.error('Error fetching courses:', error);
+            setIsLoading(false);
         }
     };
     getCourses();
@@ -152,6 +161,7 @@ const Dashboard: React.FC = () => {
     };
 
     const handleLogOut = async () => {
+        setLoaderMessage("Logging out....");
         try {
             const response = await fetch('http://localhost:8080/logout', {
                 method: 'GET',
@@ -164,6 +174,7 @@ const Dashboard: React.FC = () => {
             }
         } catch (error) {
             console.error('Error logging out', error);
+            setIsLoading(false);
         }
     }
     
@@ -210,6 +221,11 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="container flex">
+            {isLoading ? (
+            <div className="loading-container" style={{ textAlign: 'center', paddingTop: '50px' }}>
+                <p>{loaderMessage}</p>
+            </div>
+            ) : (
           <div className="w-20 bg-gray-100 h-lvh flex flex-col" style={{
             position: 'fixed',
           }}>
@@ -217,7 +233,7 @@ const Dashboard: React.FC = () => {
               {sidebarItems.map(sidebarItem =>
                   <SidebarItem key={sidebarItem.name} name={sidebarItem.name} onClick={handleIconClick} role={role}/>
               )}
-          </div>
+          </div>)}
            {isSidebarOpen && (
                 <>
                     {selectedComponent}
@@ -279,9 +295,6 @@ const Dashboard: React.FC = () => {
             )
         ) }
             </div>
-            {/* <Routes>
-                <Route path="/dashboard/home" element={<Outlet />} />
-            </Routes> */}
         </div>
 
     );

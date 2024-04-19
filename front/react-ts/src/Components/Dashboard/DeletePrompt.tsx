@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 interface DeletePromptProps {
     handleBack: Function;
@@ -11,8 +11,35 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({
     handleBackToDashboard,
     courseId
 }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [loaderMessage, setLoaderMessage] = useState('Deleting course...');
+    const [stringOfExclamation, setStringOfExclamation] = useState('!');
+
+    useEffect(() => {
+        if (isLoading) {
+            const t1 = setTimeout(() => {
+                setLoaderMessage('Just a bit longer');
+            }, 3000);
+
+            const t2 = setTimeout(() => {
+                setLoaderMessage('Almost done');
+            }, 6000);
+
+            const t3 = setInterval(() => {
+                setStringOfExclamation((prev) => prev.length < 3 ? prev + '!' : '!');
+            }, 500);
+
+            return () => {
+                clearTimeout(t1);
+                clearTimeout(t2);
+                clearInterval(t3);
+            };
+        }
+    }, [isLoading]);
 
     const deleteCourse = async () => {
+        setIsLoading(true);
+        setLoaderMessage('Deleting course data...');
         try {
             const response = await fetch("http://localhost:8080/courses", {
                 method: "DELETE",
@@ -30,6 +57,9 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({
         } catch (error) {
             console.error('Error deleting course:', error);
         }
+        finally {
+            setIsLoading(false);
+        }
     }
 
     const handleYes = () => {
@@ -39,6 +69,11 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({
 
     return (
         <div className="">
+            {isLoading ? (
+                <div className="loading-container" style={{ textAlign: 'center', paddingTop: '50px' }}>
+                    <p>{loaderMessage}{stringOfExclamation}</p>
+                </div>
+            ) : (
         <div className="nes-container is-rounded with-title" style={{width:'100vh'}}>
           <p className="title" style={{color:"red"}}>Warning !!!</p>
           <section className="message-right">
@@ -58,6 +93,7 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({
             <img style={{width: '100px', marginLeft:'88%'}} src={require('../Shop/avatar.png')} alt="My Icon" />
           </section>
         </div>
+                )}
       </div>
     )
 }
