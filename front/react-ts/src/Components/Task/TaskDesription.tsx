@@ -162,7 +162,7 @@ const handleFileChange = async (event:any) => {
       alert('Error uploading file: ' + error.message);
   }
 };
-    const renderDescriptionPage = () => (
+     const renderDescriptionPage = () => (
             <div style={{
                 width: '100vh',
             }}>
@@ -223,134 +223,47 @@ const handleFileChange = async (event:any) => {
                             </span>
                     </div>  
                     </div>
-                    : null}
+                    :
+
+                    <label htmlFor="graded_field">
+                    <input
+                        type="checkbox"
+                        id="graded_field"
+                        className="nes-checkbox"
+                        checked={graded}
+                        onChange={(e) => setGraded(!graded)}
+                    />
+                    <span>Graded</span>
+                    </label>
+                    }
                 </div>
-            </div>);
 
-    return (
-      <div>
-    <div className="task-description-container" >
-        <div className="nes-container with-title is-centered" style={{marginTop:"auto", minWidth:'100vh', minHeight:'80vh'}} >
-            <p className="title">{title}{isGrading && ' Grading Panel'}</p>
-            {
-            !isGrading ?
-                !isDeleating ? 
-                    renderDescriptionPage() : 
-                        <DeletePrompt task={task} redirectToTaskList={onClickBack}/> : 
-                            <Grading taskId={task._id}/>
-            }
-            
-        </div>
-        <div className="nes-field">
-          <label htmlFor="deadline_field">Deadline:</label>
-          {!isEditing ? (
-            <p onDoubleClick={handleEditMode}>{task.deadline}</p>
-          ) : (
-            <input
-              type="text"
-              id="deadline_field"
-              className="nes-input"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-            />
-          )}
-        </div>
-        <div className="nes-field">
-          <label htmlFor="points_field">Max Points:</label>
-          {!isEditing ? (
-            <p onDoubleClick={handleEditMode}>{task.point}</p>
-          ) : (
-            <input
-              type="number"
-              id="points_field"
-              className="nes-input"
-              value={point}
-              onChange={(e) => setPoint(e.target.value)}
-            />
-          )}
-        </div>
-      </div>
-      <div className="nes-field description-field">
-        <label htmlFor="description_field">Description:</label>
-        {!isEditing ? (
-          <p onDoubleClick={handleEditMode}>{task.details}</p>
-        ) : (
-          <textarea
-            id="description_field"
-            className="nes-textarea"
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            rows={5}
-          />
-        )}
-      </div>
-      <div className="nes-field description-field">
-        {!isEditing ? (
-          <div style={{ display: role === "instructor" ? "block" : "none" }}>
-            <div className="nes-badge is-splited" style={{ width: "40%" }}>
-              <span className="is-dark">Graded</span>
-              <span className={graded ? "is-primary" : "is-error"}>
-                {graded ? "YES" : "NO"}
-              </span>
-            </div>
-          </div>
-        ) : (
-          <label htmlFor="graded_field">
-            <input
-              type="checkbox"
-              id="graded_field"
-              className="nes-checkbox"
-              checked={graded}
-              onChange={(e) => setGraded(!graded)}
-            />
-            <span>Graded</span>
-          </label>
-        )}
-      </div>
+                {/* Error Message */}
+                {errorMessage && <p className="nes-text is-error">{errorMessage}</p>}
+                {/* Add Task Button */}
+                <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '10px'}}>
+                    <button type="button" className='nes-btn is-error' onClick={() => {
+                        onClickBack();
+                    }}>
+                        Back
+                    </button>
+                    <div className="nes-badge is-splited" style={{width:'40%', display:role==='student'?"block":"none"}}>
+                        <span className="is-dark">{graded?"Points":"Graded"}</span>
+                            <span className={graded ? 'is-primary' : 'is-error' }>
+                                {graded ? gradePoints : 'NO'}
+                            </span>
+                    </div>  
 
-      {/* Error Message */}
-      {errorMessage && <p className="nes-text is-error">{errorMessage}</p>}
-      {/* Add Task Button */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: "10px",
-        }}
-      >
-        <button
-          type="button"
-          className="nes-btn is-error"
-          onClick={() => {
-            onClickBack();
-          }}
-        >
-          Back
-        </button>
-        <div
-          className="nes-badge is-splited"
-          style={{
-            width: "40%",
-            display: role === "student" ? "block" : "none",
-          }}
-        >
-          <span className="is-dark">{graded ? "Points" : "Graded"}</span>
-          <span className={graded ? "is-primary" : "is-error"}>
-            {graded ? gradePoints : "NO"}
-          </span>
-        </div>
+                    {role === 'instructor' ? (<>
+                        
+                        <button type="button" className={`nes-btn is-primary ${isLoading && 'is-disabled'}`}
+                                onClick={handleUpdateTask} disabled={isLoading}>
+                            {isLoading ? 'Updating Task...' : 'Update Task'}
+                        </button>
 
-        {role === "instructor" ? (
-          <>
-            <button
-              type="button"
-              className={`nes-btn is-primary ${isLoading && "is-disabled"}`}
-              onClick={handleUpdateTask}
-              disabled={isLoading}
-            >
-              {isLoading ? "Updating Task..." : "Update Task"}
-            </button>
-            <div>
+                        <button type='button' className='nes-btn is-error' onClick={handleDelete} >Delete</button>
+                        <button type='button' className='nes-btn is-success' onClick={handleGrade} >Grade</button>
+                        <div>
               <input
                 type="file"
                 ref={fileInputRef}
@@ -367,25 +280,26 @@ const handleFileChange = async (event:any) => {
               </button>
             </div>
 
-            <button
-              type="button"
-              className="nes-btn is-error"
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
-            <button
-              type="button"
-              className="nes-btn is-success"
-              onClick={handleGrade}
-            >
-              Grade
-            </button>
-          </>
-        ) : null}
-      </div>
+                    </>) : null}
+                    
+                </div>
+            </div>);
+
+return (
+    <div className="task-description-container" >
+        <div className="nes-container with-title is-centered" style={{marginTop:"auto", minWidth:'100vh', minHeight:'80vh'}} >
+            <p className="title">{title}{isGrading && ' Grading Panel'}</p>
+            {
+            !isGrading ?
+                !isDeleating ? 
+                    renderDescriptionPage() : 
+                        <DeletePrompt task={task} redirectToTaskList={onClickBack}/> : 
+                            <Grading taskId={task._id}/>
+            }
+            
+        </div>
     </div>
-  );
+);
 
 };
 
