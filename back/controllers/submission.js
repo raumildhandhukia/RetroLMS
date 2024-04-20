@@ -12,6 +12,9 @@ const xlsx = require("xlsx");
 const mongoose = require("mongoose");
 
 function checkData(data){
+  if(data.length == 0){
+    return false;
+  }
   val= new Set();
   for(const item of data){
     if(val.has(item.username)){
@@ -25,12 +28,15 @@ function checkData(data){
 async function isEnrolled(data){
     for(const item of data){
       const user = await User.findOne({ username: item.username });
+      if(!user){
+        return false;
+      }
       const studentUserId = await Student.findOne({ userId: user._id });
       if(!studentUserId){
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
 }
 exports.gradingMutlipleSubmission = async (req, res) => {
   if (!req.file) {
@@ -46,9 +52,9 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   const workflow = checkData(data);
   const isEnrolledFlag = await isEnrolled(data);
   if(!workflow){ 
-    return res.status(400).send({message:"Duplicate username found in excel sheet so skip excel parsing."});
+    return res.status(400).send({message:"Duplicate username found or empty in excel sheet so skip excel parsing."});
   }
-  if(isEnrolledFlag){
+  if(!isEnrolledFlag){
     return res.status(400).send({message:"User is not enrolled in the course so skip excel parsing."});
   }
   const session = await mongoose.startSession();
