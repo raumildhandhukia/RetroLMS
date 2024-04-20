@@ -11,7 +11,27 @@ const fs = require("fs").promises;
 const xlsx = require("xlsx");
 const mongoose = require("mongoose");
 
-// Create a new submission
+function checkData(data){
+  val= new Set();
+  for(const item of data){
+    if(val.has(item.username)){
+      return false;
+    }
+    val.add(item.username);
+  }
+  return true;
+}
+
+async function isEnrolled(data){
+    for(const item of data){
+      const user = await User.findOne({ username: item.username });
+      const studentUserId = await Student.findOne({ userId: user._id });
+      if(!studentUserId){
+        return true;
+      }
+    }
+    return false;
+}
 exports.gradingMutlipleSubmission = async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
@@ -21,29 +41,31 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   const sheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[sheetName];
   const data = xlsx.utils.sheet_to_json(worksheet);
+
+  const courseId = Task.findOne({ _id: req.body.taskId });
+  const workflow = checkData(data);
+  const isEnrolledFlag = await isEnrolled(data);
+  if(!workflow){ 
+    return res.status(400).send({message:"Duplicate username found in excel sheet so skip excel parsing."});
+  }
+  if(isEnrolledFlag){
+    return res.status(400).send({message:"User is not enrolled in the course so skip excel parsing."});
+  }
   const session = await mongoose.startSession();
   session.startTransaction();
   skipUserNames = [];
   try {
+    const taskId = req.body.taskId;
     for (const item of data) {
-      const { taskId, points, username } = item;
+      const {points, username } = item;
       const user = await User.findOne({ username });
-      const userStudentId = user._id;
+      const studentUserId = await Student.findOne({ userId: user._id });
+      const userStudentId = studentUserId._id;
 
       if (!userStudentId || !taskId) {
         throw new Error("Missing userStudentId or taskId in some entries");
       }
 
-      // Check if the student already completed this task
-      const student = await Student.findOne(
-        {
-          userId: userStudentId,
-          completedTask: { $in: [taskId] },
-        },
-        null,
-        { session }
-      );
-      if (student) {
         skipUserNames.push(username);
         try {
           const submission = await Submission.findOne({
@@ -52,13 +74,10 @@ exports.gradingMutlipleSubmission = async (req, res) => {
           });
           if (submission) {
             const oldPoints = submission.points; // Existing points
-            // Step 3: Update the submission with new points
             submission.points = points;
             await submission.save();
-
-            // Step 4: Retrieve the associated student using studentId
             const student = await Student.findOne({
-              userId: userStudentId,
+              _id: userStudentId,
             });
             if (student) {
               const pointsDifference = points - oldPoints;
@@ -66,53 +85,21 @@ exports.gradingMutlipleSubmission = async (req, res) => {
               await student.save();
             }
           }
+          else{
+            res.status(400).send({message:`Username: ${username} not enrolled in given course so skip excel parsing`})
+          }
         } catch (error) {
           console.error(
             "Error updating submission model after for duplicate:",
             error
           );
         }
-      } else {
-        // Create a new submission document
-        const submission = new Submission({
-          studentId: userStudentId,
-          userStudentId,
-          taskId,
-          points: points,
-        });
-        await submission.save({ session });
-
-        // Update Task document by pushing new submission ID
-        await Task.findByIdAndUpdate(
-          taskId,
-          {
-            $push: { submissionId: submission._id },
-          },
-          { session }
-        );
-        try {
-          const updatedStudent = await Student.findOneAndUpdate(
-            { userId: userStudentId },
-            {
-              $push: { completedTask: taskId },
-              $inc: { currentCurrency: points },
-            },
-            { new: true, session }
-          );
-        } catch (error) {
-          console.error(
-            "Error updating student model after submission:",
-            error
-          );
-        }
-      }
     }
     await session.commitTransaction();
     if (skipUserNames.length > 0) {
-      res.send(`Marks Updated for ${skipUserNames.join(", ")}.`);
+      res.send({message:`Marks Updated for marks of ${skipUserNames.length} students.`});
     } else {
-      res.send(
-        "Submissions processed, tasks updated, and student tasks marked as completed for all users"
+      res.send({ message: "Submissions processed, tasks updated, and student tasks marked as completed for all users"}
       );
     }
   } catch (error) {

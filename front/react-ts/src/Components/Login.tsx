@@ -23,6 +23,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const roleRef = useRef("");
   const showCreatePasswordRef = useRef(false);
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -91,6 +92,8 @@ const Login: React.FC = () => {
           }
       } else {
         console.error("Login failed");
+        setErrorMessage("Login failed");
+
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -142,6 +145,7 @@ return (
             Sign In
           </button>
         </form>
+        {errorMessage.length > 0 && <div className="validation-message">{errorMessage}</div>}
       </div>
 
     </div>
