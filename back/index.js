@@ -1,17 +1,16 @@
 // Load Environment Variables
 require("dotenv").config();
-
-const express = require("express");
+const PORT = process.env.PORT || 8080;
 const cors = require("cors");
-const mongooseConnection = require("./db");
-
-const authMiddleware = require("./middleware/authMiddleware");
 const dbController = require("./controllers/dbController");
 
-const app = express();
-module.exports = app;
+const express = require("express");
+const http = require("http");
+const socketIo = require("socket.io");
 
-const PORT = process.env.PORT || 8080;
+const app = express();
+
+const { storeNotification } = require("./controllers/notificationController");
 
 // Middleware for JSON request and response
 app.use(express.json());
@@ -28,16 +27,10 @@ app.use(
 dbController.connectToDatabase();
 
 //Importing Routes Files
-const adminRoutes = require("./routes/adminRoutes");
-const instructorRoutes = require("./routes/instructorRoutes");
-const studentRoutes = require("./routes/studentRoutes");
 const commonRoutes = require("./routes/commonRoutes");
 const authRoutes = require("./routes/authRoutes");
 
 //Defining Route Paths
-app.use("/admin", authMiddleware, adminRoutes);
-app.use("/instructor", authMiddleware, instructorRoutes);
-app.use("/student", authMiddleware, studentRoutes);
 app.use("", commonRoutes);
 app.use("", authRoutes);
 
@@ -48,6 +41,25 @@ app.get("/", (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+const server = http.createServer(app);
+const io = socketIo(server);
+
+io.on("connection", (socket) => {
+  socket.on("disconnect", () => {});
+
+  socket.on("buyItem", (data) => {
+    storeNotification(data);
+    io.emit(data.courseId, { message: data.message });
+  });
+
+  socket.on("manageRequest", (data) => {
+    storeNotification(data);
+    io.emit(data.studentId, { message: data.message });
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
 });
+
+module.exports = app;

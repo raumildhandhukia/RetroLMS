@@ -12,8 +12,8 @@ import CreateCourse from './CreateCourse';
 import DeletePrompt from './DeletePrompt';
 import Profile from './Profile';
 import Students from './Students';
+import PushNotification from '../Notifications/PushNotifications';
 import NotificationList from '../Notifications/NotificationList';
-
 export interface Course {
     _id: string;
     title: string;
@@ -30,6 +30,8 @@ export interface ISidebarItem {
 const Dashboard: React.FC = () => {
     const [role, setRole] = useState<string>('');
     const [currency, setCurrency] = useState<number|null>(null);
+    const [fullName, setFullName] = useState<string>('');
+    const [studentId, setStudentId] = useState<string>('');
 
     useEffect(() => {
     const checkAuthentication = async () => {
@@ -64,6 +66,8 @@ const Dashboard: React.FC = () => {
             const data = await response.json();
             setRole(data.role);
             setCurrency(data.currency);
+            setFullName(data.profile.firstName + " " + data.profile.lastName);
+            setStudentId(data.studentId)
 
           } else {
             console.log("User not found");
@@ -211,6 +215,7 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="container flex">
+          <PushNotification courseId={selectedCourse || ''} role={role} IDs={{studentId:studentId, instructorId:''}}/>
           <div className="w-20 bg-gray-100 h-lvh flex flex-col" style={{
             position: 'fixed',
           }}>
@@ -245,12 +250,11 @@ const Dashboard: React.FC = () => {
                         }>{item}</div>)}
                     </div>
                     <div className='detail-container' style={{marginLeft:'47vh'}}>
-
-
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
-                    {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse} studentBalance={currency || 0}/>}
+                    {selectedItem === 'Notifications' && <NotificationList />}
+                    {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse} studentBalance={currency || 0} fullName={fullName}/>}
                     {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{setSelectedItem('Home');}}
                             handleBackToDashboard={ () => {
                                 setSelectedComponent(null);
@@ -264,13 +268,20 @@ const Dashboard: React.FC = () => {
                             />
                     }
                     {selectedItem === 'Students' && <Students courseId={selectedCourse}/>}
-                    {selectedItem === 'Notifications' && <NotificationList />}
+                    
                     </div>
                 </div>
                
             </div>) : (
             
-            (<div style={{
+            
+            
+            
+            (
+            
+            selectedItem ==='CreateCourse' ? ( <CreateCourse />) :
+            
+            <div style={{
                 marginLeft:'20vh'
             
             }}>

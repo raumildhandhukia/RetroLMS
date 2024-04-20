@@ -16,6 +16,7 @@ const middleware = require("../middleware/authMiddleware");
 const multer = require("multer");
 const onlyRolesMiddleware = require("../middleware/onlyRolesMiddleware");
 const upload = multer({ dest: "uploads/" });
+const notificationController = require("../controllers/notificationController");
 
 // Route for all users to view the leaderboard
 router.post("/leaderboard", courseController.getLeaderBoard);
@@ -36,10 +37,12 @@ router.get("/profile", async (req, res) => {
     }
     let currency = null;
     let resetPassword = false;
+    let studentId = null;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
       resetPassword = student.resetPassword;
+      studentId = student._id;
     }
     res.status(200).json({
       profile: user.profile,
@@ -47,6 +50,7 @@ router.get("/profile", async (req, res) => {
       role: user.role,
       currency: currency,
       resetPassword: resetPassword,
+      studentId: studentId,
     });
   } catch (error) {
     console.error(error);
@@ -74,7 +78,10 @@ router.get(
   courseController.getEnrolledStudents
 );
 
-router.get("/getEnrolledStudentsByCourseId/:courseId", courseController.getEnrolledStudentsByCourseIdExcel);
+router.get(
+  "/getEnrolledStudentsByCourseId/:courseId",
+  courseController.getEnrolledStudentsByCourseIdExcel
+);
 //Method to delete the course and also to remove it from the enrolledCourses array of all students.
 router.delete("/courses", courseController.deleteCourse);
 
@@ -163,5 +170,9 @@ router.get(
   "/getTransactionsByItem/:itemId",
   itemController.getTransactionByItem
 );
+
+// ======================= Routes for Notification ====================== //
+router.get("/notifications", notificationController.getNotifications);
+router.post("/updateNotifications", notificationController.updateNotifications);
 
 module.exports = router;
