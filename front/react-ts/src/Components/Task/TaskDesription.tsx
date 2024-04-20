@@ -3,6 +3,9 @@ import "nes.css/css/nes.min.css";
 // import "./TaskDescription.css";
 import DeletePrompt from "./DeletePrompt";
 import Grading from "./Grading";
+import Loader from "../Other/Loader";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface TaskDescriptionProps {
   selectedTask: {
@@ -139,12 +142,12 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
 
 const handleFileChange = async (event:any) => {
   const file = event.target.files[0];
-  debugger;
   if (!file) return;
 
   const formData = new FormData();
   formData.append('file', file);
   formData.append('taskId', taskId);
+  setIsLoading(true);
 
   try {
       const response = await fetch('http://localhost:8080/gradingMutipleSubmission', {
@@ -152,17 +155,23 @@ const handleFileChange = async (event:any) => {
           body: formData,
       });
       console.log(response)
+      const result = await response.json();
       if (response.ok) {
-          const result = await response.json();
-          alert('File uploaded successfully: ' + JSON.stringify(result));
+          toast.info('File uploaded successfully: ' + JSON.stringify(result.message), {
+            position: toast.POSITION.TOP_CENTER,
+          });
       } else {
-          alert('Failed to upload file. Status: ' + response.status);
+          toast.info('Currupt File !!! ' + result.message, {
+            position: toast.POSITION.TOP_CENTER,
+          });
       }
   } catch (error:any) {
-      console.error('Error uploading file:', error);
-      alert('Error uploading file: ' + error.message);
+      toast.info('Error uploading file: ' + error.message, {
+            position: toast.POSITION.TOP_CENTER,
+          });
   } finally {
       event.target.value = null;
+      setIsLoading(false);
   }
   };
      const renderDescriptionPage = () => (
@@ -259,9 +268,9 @@ const handleFileChange = async (event:any) => {
 
                     {role === 'instructor' ? (<>
                         
-                        <button type="button" className={`nes-btn is-primary ${isLoading && 'is-disabled'}`}
+                        <button type="button" className={`nes-btn is-primary`}
                                 onClick={handleUpdateTask} disabled={isLoading}>
-                            {isLoading ? 'Updating Task...' : 'Update Task'}
+                            Update Task
                         </button>
 
                         <button type='button' className='nes-btn is-error' onClick={handleDelete} >Delete</button>
@@ -288,11 +297,32 @@ const handleFileChange = async (event:any) => {
                 </div>
             </div>);
 
+const renderLoadingPage = () => (
+    <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100vh',
+        height: '80vh',
+    }}>
+        <div className="" style={{
+            width: '50%',
+            height: '50%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+        }}>
+            <Loader style={{color:'black'}}/>
+        </div>
+    </div>
+);
+
 return (
     <div className="task-description-container" >
         <div className="nes-container with-title is-centered" style={{marginTop:"auto", minWidth:'100vh', minHeight:'80vh'}} >
             <p className="title">{title}{isGrading && ' Grading Panel'}</p>
             {
+              isLoading ? renderLoadingPage() :
             !isGrading ?
                 !isDeleating ? 
                     renderDescriptionPage() : 

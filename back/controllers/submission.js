@@ -50,12 +50,12 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   const isEnrolledFlag = await isEnrolled(data);
   if (!workflow) {
     return res.status(400).send({
-      message: "Duplicate username found in excel sheet so skip excel parsing.",
+      message: "Duplicate username(s) found in excel.",
     });
   }
   if (isEnrolledFlag) {
     return res.status(400).send({
-      message: "User is not enrolled in the course so skip excel parsing.",
+      message: "User(s) is not enrolled in the course.",
     });
   }
   const session = await mongoose.startSession();
@@ -106,7 +106,7 @@ exports.gradingMutlipleSubmission = async (req, res) => {
     await session.commitTransaction();
     if (skipUserNames.length > 0) {
       res.send({
-        message: `Marks Updated for marks of ${skipUserNames.length} students.`,
+        message: `Marks Updated for ${skipUserNames.length} students.`,
       });
     } else {
       res.send({
