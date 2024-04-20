@@ -7,6 +7,8 @@ import ItemDescription from './ItemDescription';
 import ItemCard from './ItemCard';
 import './ItemCard.css';
 import RequestList from './RequestList';
+import io from "socket.io-client";
+import { send } from 'process';
 
 interface ItemListProps {
     items: Item[];
@@ -14,11 +16,12 @@ interface ItemListProps {
     role: string;
     update: Function;
     studentBalance: number;
+    fullName: string;
 }
 
 
 
-const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, studentBalance }) => {
+const ItemList: React.FC<ItemListProps> = ({ items, fullName, courseId, role, update, studentBalance }) => {
     const [createItem, setCreateItem] = React.useState<boolean>(false);
     const [showItem, setShowItem] = React.useState<boolean>(false);
     const [selectedItem, setSelectedItem] = React.useState<Item | null>(null);
@@ -49,6 +52,11 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
       <ItemDescription selectedItem={selectedItem} update={update} role={role} handleBack={handleBack}/>
     );
 
+    const sendNotification = (selectedItem:Item) => {
+        const socket = io("http://localhost:8080", { transports: ["websocket"] });
+        socket.emit("buyItem", { message: `${fullName} requested ${selectedItem?.itemName}`, courseId: courseId});
+    };
+
     const handleBuyRequest = async (selectedItem:Item) => {
     try {
       const response = await fetch("http://localhost:8080/requestItem", {
@@ -63,7 +71,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
         })
       });
       if (response.ok) {
-        // getTransction();
+        sendNotification(selectedItem);
       }
     } catch (error) {
       console.error("Error buying item.", error);
