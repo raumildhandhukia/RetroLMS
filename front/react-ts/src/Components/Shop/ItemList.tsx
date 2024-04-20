@@ -7,6 +7,8 @@ import ItemDescription from './ItemDescription';
 import ItemCard from './ItemCard';
 import './ItemCard.css';
 import RequestList from './RequestList';
+import io from "socket.io-client";
+import { send } from 'process';
 
 interface ItemListProps {
     items: Item[];
@@ -14,11 +16,12 @@ interface ItemListProps {
     role: string;
     update: Function;
     studentBalance: number;
+    fullName: string;
 }
 
 
 
-const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, studentBalance }) => {
+const ItemList: React.FC<ItemListProps> = ({ items, fullName, courseId, role, update, studentBalance }) => {
     const [createItem, setCreateItem] = React.useState<boolean>(false);
     const [showItem, setShowItem] = React.useState<boolean>(false);
     const [selectedItem, setSelectedItem] = React.useState<Item | null>(null);
@@ -49,6 +52,11 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
       <ItemDescription selectedItem={selectedItem} update={update} role={role} handleBack={handleBack}/>
     );
 
+    const sendNotification = (selectedItem:Item) => {
+        const socket = io("http://localhost:8080", { transports: ["websocket"] });
+        socket.emit("buyItem", { message: `${fullName} requested ${selectedItem?.itemName}`, courseId: courseId});
+    };
+
     const handleBuyRequest = async (selectedItem:Item) => {
     try {
       const response = await fetch("http://localhost:8080/requestItem", {
@@ -63,7 +71,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
         })
       });
       if (response.ok) {
-        // getTransction();
+        sendNotification(selectedItem);
       }
     } catch (error) {
       console.error("Error buying item.", error);
@@ -91,6 +99,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
         </div>
       </div>
       {role === 'instructor' && (
+        
         <div className="flex items-start ml-6" style={{ marginTop: "10px" }}>
           <button type='button' className='nes-btn is-primary' onClick={handleAddItem}>Add Item</button>
         </div>
@@ -101,24 +110,64 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
 
   const renderShopComponent = () => (
   <div className='nes-container is-rounded with-title'>
-    <p className='title'>Shop</p>
-    <div className="item-list-content ">
-      {
-      items.map((item, index) => (
-        <ItemCard key={`item-${index}`} item={item} role={role} studentBalance={studentBalance}
-          handleItemDescription={handleItemDescription} handleItemRequest={handleItemRequest}
-          handleItemBuy={handleBuyRequest} />
-      ))
-      
-      }
-    </div>
-    {role === 'instructor' && (
-      <div className="flex items-start ml-6" style={{ marginTop: "10px" }}>
-        <button type='button' className='nes-btn is-primary' onClick={handleAddItem}>Add Item</button>
+      <p className='title'>Shop</p>
+      <div className="item-list-content">
+        {
+        items.map((item, index) => (
+          <ItemCard key={`item-${index}`} item={item} role={role} studentBalance={studentBalance}
+            handleItemDescription={handleItemDescription} handleItemRequest={handleItemRequest}
+            handleItemBuy={handleBuyRequest} />
+        ))
+        }
       </div>
-    )}
-  </div>
-);
+      {role === 'instructor' && (
+        <div className='' style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100vh',
+          }}>
+            <img style={{width:'80px', height:'80px'}} src={require('../Leaderboard/avatar0.png')} alt="My Icon" />
+            <div className="nes-container is-rounded" style={{
+              fontSize:'1.5vh',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              textAlign: 'left',
+              maxHeight: '70px',
+              marginLeft:'10px',
+              marginTop:'10px'
+            }}>
+              <strong style={{marginRight:'' }}>Dont be tough on your students, give them some sweet perks. !!!</strong>
+            
+                  <button type='button' style={{
+                    width: '30%',
+                  }} className='nes-btn is-primary' onClick={handleAddItem}>Add Item</button>
+         
+            </div>     
+            </div>
+
+      )}
+    {role === 'student' && <div className='' style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100vh',
+          }}>
+            <img style={{width:'80px', height:'80px'}} src={require('../Leaderboard/avatar0.png')} alt="My Icon" />
+            <div className="nes-container is-rounded" style={{
+              fontSize:'1.5vh',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              textAlign: 'left',
+              maxHeight: '60px',
+              marginLeft:'10px',
+              marginTop:'10px'
+            }}>
+              <strong style={{marginBottom:'-5px' }}>Better stockpile some coins for those sweet perks. Credit cards won't buy you everything !!!</strong>
+            </div>     
+            </div>  }     
+      </div>
+    );
 
 
     const renderAddItemComponent = () => (

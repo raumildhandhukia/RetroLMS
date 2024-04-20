@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Loader from "../Loader";
+import Loader from "../Other/Loader";
 import { render } from "@testing-library/react";
 // import './Leaderboard.css';
 
@@ -11,6 +11,24 @@ interface StudentScore  {
     name: string;
     score: number;
   }
+
+const getPNGbyRank = (rank: number) => {
+  if (rank === 1) {
+    return require('./rankImagesPNG/rank1.png');
+  } else if (rank === 2) {
+    return require('./rankImagesPNG/rank2.png');
+  } else if (rank === 3) {
+    return require('./rankImagesPNG/rank3.png');
+    } else if (rank === 4) {
+    return require('./rankImagesPNG/rank4.png');
+    } else if (rank === 5) {
+    return require('./rankImagesPNG/rank5.png');
+  } else {
+    return require('./rankImagesPNG/other.png');
+  } 
+
+}
+
 const Leaderboard: React.FC<LBProps> = ({courseId}) => {
   const [data, setData] = useState<StudentScore[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,7 +63,7 @@ const Leaderboard: React.FC<LBProps> = ({courseId}) => {
 const renderLeaderboard = () => {
   return (
     <div className="nes-container with-title is-dark" style={{
-      height: '80vh',
+      minHeight: '80vh',
     }}>
       <p className="title" style={{
         color: 'yellow',
@@ -60,8 +78,12 @@ const renderLeaderboard = () => {
             width: '80%',
             textAlign: 'center'
           }}>
-            <p className="title" style={{color:'red'}}>{index + 1}</p>
-              <p style={{color:'yellow', margin:'-10px 0px 8px 0px'}}>{student.name}</p>
+            <p className="title" style={{color:'red', marginLeft:'5px'}}>{index + 1}</p>
+            <img src={getPNGbyRank(index + 1)} alt="Rank" style={{
+              width: '40px',
+              margin: '-15px 0px -5px 0px',
+            }}/>
+              <p style={{color:'yellow', margin:'-30px 0px 18px 0px'}}>{student.name}</p>
           </div>
           <div className="nes-container is-rounded with-title is-dark" style={{
             textAlign: 'center',
@@ -69,7 +91,7 @@ const renderLeaderboard = () => {
             <p className="title" style={{
               color: 'red',
             }}>Score</p>
-            <p style={{color:'yellow', margin:'-10px 0px 8px 0px'}}>{student.score}</p>
+            <p style={{color:'yellow', margin:'0px 0px 8px 0px'}}>{student.score}</p>
           </div>
         </div>
       ))}
@@ -80,8 +102,8 @@ const renderLeaderboard = () => {
   const renderNoData = () => {
     return (
         <div className="nes-container is-rounded with-title is-dark" style={{
-          width:'108vh',
-          height:'78vh',
+          minWidth:'108vh',
+          minHeight:'78vh',
           
           }}>
           <p className="title" style={{color:"yellow"}}>Leaderboard</p>
@@ -91,7 +113,7 @@ const renderLeaderboard = () => {
             </div>
           </section>
           <img className="imgInvert" style={{
-            filter: 'invert(1)',
+            filter: 'invert(0.9)',
             width:'80px',
             }} src={require('./avatar0.png')} alt="My Icon" />
           <section className="message -right">

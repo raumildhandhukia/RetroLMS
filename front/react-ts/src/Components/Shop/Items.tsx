@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
 import ItemList from "./ItemList";
-import Loader from "../Loader";
+import Loader from "../Other/Loader";
 
 export interface Item {
     _id: string;
@@ -18,9 +18,10 @@ interface ItemProps {
   role: string;
   courseId: string;
   studentBalance: number;
+  fullName: string;
 }
 
-const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
+const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance, fullName }) => {
     const [items, setItems] = useState<Item[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
     // const [courseName, setCourseName] = useState<string>('SER517');
@@ -85,7 +86,7 @@ const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
       <>
       { 
       loading ? renderLoader() :
-      <ItemList items={items} courseId={courseId} role={role} update = {updateItemList} studentBalance={studentBalance} />
+      <ItemList items={items} courseId={courseId} role={role} update = {updateItemList} studentBalance={studentBalance} fullName={fullName} />
       }
       </>
     );

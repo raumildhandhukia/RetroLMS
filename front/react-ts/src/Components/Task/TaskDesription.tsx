@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "nes.css/css/nes.min.css";
-import "./TaskDescription.css";
+// import "./TaskDescription.css";
 import DeletePrompt from "./DeletePrompt";
 import Grading from "./Grading";
 
@@ -134,50 +134,112 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
         fileInputRef.current.click();
     }
 };
+    
+
 
 const handleFileChange = async (event:any) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const file = event.target.files[0];
+  if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('taskId', taskId);
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('taskId', taskId);
 
-    try {
-        const response = await fetch('http://localhost:8080/gradingMutipleSubmission', {
-            method: 'POST',
-            body: formData,
-        });
-        console.log(response)
-        if (response.ok) {
-            const result = await response.json();
-            alert('File uploaded successfully: ' + JSON.stringify(result));
-        } else {
-            alert('Failed to upload file. Status: ' + response.status);
-        }
-    } catch (error:any) {
-        console.error('Error uploading file:', error);
-        alert('Error uploading file: ' + error.message);
-    }
+  try {
+      const response = await fetch('http://localhost:8080/gradingMutipleSubmission', {
+          method: 'POST',
+          body: formData,
+      });
+      console.log(response)
+      if (response.ok) {
+          const result = await response.json();
+          alert('File uploaded successfully: ' + JSON.stringify(result));
+      } else {
+          alert('Failed to upload file. Status: ' + response.status);
+      }
+  } catch (error:any) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file: ' + error.message);
+  }
 };
+    const renderDescriptionPage = () => (
+            <div style={{
+                width: '100vh',
+            }}>
+                <div className="field-container-two">
+                    <div className="nes-field">
+                        <label htmlFor="title_field">Title:</label>
+                        {!isEditing ?
+                        <p onDoubleClick={handleEditMode}>{task.title}</p>
+                        :
+                        <input
+                            type="text"
+                            id="title_field"
+                            className="nes-input"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                        }
+                    </div>
+      
+                    <div className="nes-field">
+                        <label htmlFor="points_field">Max Points:</label>
+                        {!isEditing ?
+                        <p onDoubleClick={handleEditMode}>{task.point}</p>
+                        :
+                        <input
+                            type="number"
+                            id="points_field"
+                            className="nes-input"
+                            value={point}
+                            onChange={(e) => setPoint(e.target.value)}
+                        />}
+                    </div>
+                </div>
+                <div className="nes-field description-field">
+                    <label htmlFor="description_field">Description:</label>
+                    {!isEditing ?
+                    <p style={{
+                        textAlign: 'left',
+                        minHeight: '40vh',
+                    }} onDoubleClick={handleEditMode}>{task.details}</p>
+                    :
+                    <textarea
+                        id="description_field"
+                        className="nes-textarea"
+                        value={details}
+                        onChange={(e) => setDetails(e.target.value)}
+                        rows={12}
+                    />}
+                </div>
+                <div className="nes-field description-field">
+            
+                    {!isEditing ?
+                    <div style={{display:role==='instructor'?"block":"none"}}>
+                        <div className="nes-badge is-splited" style={{width:'40%'}}>
+                        <span className="is-dark">Graded</span>
+                            <span className={graded ? 'is-primary' : 'is-error' }>
+                                {graded ? 'YES' : 'NO'}
+                            </span>
+                    </div>  
+                    </div>
+                    : null}
+                </div>
+            </div>);
 
-
-  const renderDescriptionPage = () => (
-    <div>
-      <div className="field-container">
-        <div className="nes-field">
-          <label htmlFor="title_field">Title:</label>
-          {!isEditing ? (
-            <p onDoubleClick={handleEditMode}>{task.title}</p>
-          ) : (
-            <input
-              type="text"
-              id="title_field"
-              className="nes-input"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          )}
+    return (
+      <div>
+    <div className="task-description-container" >
+        <div className="nes-container with-title is-centered" style={{marginTop:"auto", minWidth:'100vh', minHeight:'80vh'}} >
+            <p className="title">{title}{isGrading && ' Grading Panel'}</p>
+            {
+            !isGrading ?
+                !isDeleating ? 
+                    renderDescriptionPage() : 
+                        <DeletePrompt task={task} redirectToTaskList={onClickBack}/> : 
+                            <Grading taskId={task._id}/>
+            }
+            
         </div>
         <div className="nes-field">
           <label htmlFor="deadline_field">Deadline:</label>
@@ -325,25 +387,6 @@ const handleFileChange = async (event:any) => {
     </div>
   );
 
-  return (
-    <div className="task-description-container">
-      <div
-        className="nes-container with-title is-centered"
-        style={{ marginTop: "auto" }}
-      >
-        <p className="title">{title}</p>
-        {!isGrading ? (
-          !isDeleating ? (
-            renderDescriptionPage()
-          ) : (
-            <DeletePrompt task={task} redirectToTaskList={onClickBack} />
-          )
-        ) : (
-          <Grading taskId={task._id} />
-        )}
-      </div>
-    </div>
-  );
 };
 
 export default TaskDescription;

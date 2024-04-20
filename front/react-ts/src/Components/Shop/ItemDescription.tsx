@@ -5,7 +5,7 @@ import { Item } from './Items'; // Import the Item interface
 import DeletePrompt from './DeletePrompt';
 import RequestList from './RequestList';
 import TreansactionBadge from './TransactionBadge';
-import Loader from '../Loader';
+import Loader from '../Other/Loader';
 
 interface ItemDescriptionProps {
     selectedItem: Item|null;

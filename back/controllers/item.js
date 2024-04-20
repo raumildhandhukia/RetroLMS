@@ -135,17 +135,18 @@ exports.updateTransaction = async (req, res) => {
       await student.save();
     }
     transaction.status = req.body.status;
-    transaction.save();
+    await transaction.save();
     if (transaction.status === "Approval") {
       const difference = student.currentCurrency - transaction.price;
       if (difference < 0) {
         transaction.status = "Reject";
+        await transaction.save();
       } else {
         student.currentCurrency = difference;
         await student.save();
       }
-      res.status(200).json(updatedTransaction);
     }
+    res.status(200).json(transaction);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

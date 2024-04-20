@@ -57,30 +57,27 @@ const AddTask: React.FC<AddTaskProps> = ({showTaskList, courseId, update}) => {
     };
 
     return (
-        <div>
+        <div style={{width:'100vh'}}>
+            <div className='field-container-two'>
             <div className="nes-field mt-5">
-                <label htmlFor="title"><span className='text-[#305974]'>Task Name</span></label>
-                <input type="text" id="title" className="nes-input is-dark" value={title}
+                <label htmlFor="title"><span className=''>Task Name</span></label>
+                <input type="text" id="title" className="nes-input" value={title}
                        onChange={(e) => setTitle(e.target.value)}/>
-            </div>
-            {/* Task Deadline Input */}
-            <div className="nes-field mt-5">
-                <label htmlFor="deadline"><span className='text-[#305974]'>Task Deadline</span></label>
-                <input type="text" id="deadline" className="nes-input is-dark" value={deadline}
-                       onChange={(e) => setDeadline(e.target.value)}/>
-            </div>
-            {/* Task Details Input */}
-            <div className="nes-field mt-5">
-                <label htmlFor="details"><span className='text-[#305974]'>Task Details</span></label>
-                <input type="text" id="details" className="nes-input is-dark" value={details}
-                       onChange={(e) => setDetails(e.target.value)}/>
             </div>
             {/* Task Point Input */}
             <div className="nes-field mt-5">
-                <label htmlFor="point"><span className='text-[#305974]'>Task Points</span></label>
-                <input type="number" id="point" className="nes-input is-dark" value={point}
+                <label htmlFor="point"><span className=''>Task Points</span></label>
+                <input type="number" id="point" className="nes-input" value={point}
                        onChange={(e) => setPoint(e.target.value)}/>
             </div>
+            </div>
+            {/* Task Details Input */}
+            <div className="nes-field mt-5">
+                <label htmlFor="details"><span className=''>Task Details</span></label>
+                <textarea  id="details" className="nes-input" value={details}
+                       onChange={(e) => setDetails(e.target.value)}/>
+            </div>
+            
             {/* Error Message */}
             {errorMessage && <p className="nes-text is-error">{errorMessage}</p>}
             {/* Add Task Button */}

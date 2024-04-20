@@ -31,6 +31,8 @@ const StudentPoints: React.FC<StudentPointsProps> = ({ studentName, points, subm
         }
     };
 
+    
+
     return (
         <div className="nes-container with-title is-centered" onBlur={handleOnBlur}
         key={submissionId} style={{marginBottom:"10px" }}>
