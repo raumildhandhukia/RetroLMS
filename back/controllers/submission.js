@@ -25,7 +25,11 @@ function checkData(data) {
 async function isEnrolled(data) {
   for (const item of data) {
     const user = await User.findOne({ username: item.username });
+    if (!user) {
+      return true;
+    }
     const studentUserId = await Student.findOne({ userId: user._id });
+
     if (!studentUserId) {
       return true;
     }
@@ -36,7 +40,6 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-
   const workbook = xlsx.readFile(req.file.path);
   const sheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[sheetName];

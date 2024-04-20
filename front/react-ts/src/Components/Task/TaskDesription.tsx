@@ -139,6 +139,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
 
 const handleFileChange = async (event:any) => {
   const file = event.target.files[0];
+  debugger;
   if (!file) return;
 
   const formData = new FormData();
@@ -160,8 +161,10 @@ const handleFileChange = async (event:any) => {
   } catch (error:any) {
       console.error('Error uploading file:', error);
       alert('Error uploading file: ' + error.message);
+  } finally {
+      event.target.value = null;
   }
-};
+  };
      const renderDescriptionPage = () => (
             <div style={{
                 width: '100vh',
