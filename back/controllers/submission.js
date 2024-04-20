@@ -11,20 +11,10 @@ const fs = require("fs").promises;
 const xlsx = require("xlsx");
 const mongoose = require("mongoose");
 
-<<<<<<< HEAD
 function checkData(data) {
   val = new Set();
   for (const item of data) {
     if (val.has(item.username)) {
-=======
-function checkData(data){
-  if(data.length == 0){
-    return false;
-  }
-  val= new Set();
-  for(const item of data){
-    if(val.has(item.username)){
->>>>>>> 81c4be8d9f101584fb5db48ebc70810255a23733
       return false;
     }
     val.add(item.username);
@@ -32,33 +22,15 @@ function checkData(data){
   return true;
 }
 
-<<<<<<< HEAD
 async function isEnrolled(data) {
   for (const item of data) {
     const user = await User.findOne({ username: item.username });
-    if (!user) {
-      return true;
-    }
     const studentUserId = await Student.findOne({ userId: user._id });
     if (!studentUserId) {
       return true;
     }
   }
   return false;
-=======
-async function isEnrolled(data){
-    for(const item of data){
-      const user = await User.findOne({ username: item.username });
-      if(!user){
-        return false;
-      }
-      const studentUserId = await Student.findOne({ userId: user._id });
-      if(!studentUserId){
-        return false;
-      }
-    }
-    return true;
->>>>>>> 81c4be8d9f101584fb5db48ebc70810255a23733
 }
 exports.gradingMutlipleSubmission = async (req, res) => {
   if (!req.file) {
@@ -73,7 +45,6 @@ exports.gradingMutlipleSubmission = async (req, res) => {
   const courseId = Task.findOne({ _id: req.body.taskId });
   const workflow = checkData(data);
   const isEnrolledFlag = await isEnrolled(data);
-<<<<<<< HEAD
   if (!workflow) {
     return res.status(400).send({
       message: "Duplicate username found in excel sheet so skip excel parsing.",
@@ -83,13 +54,6 @@ exports.gradingMutlipleSubmission = async (req, res) => {
     return res.status(400).send({
       message: "User is not enrolled in the course so skip excel parsing.",
     });
-=======
-  if(!workflow){ 
-    return res.status(400).send({message:"Duplicate username found or empty in excel sheet so skip excel parsing."});
-  }
-  if(!isEnrolledFlag){
-    return res.status(400).send({message:"User is not enrolled in the course so skip excel parsing."});
->>>>>>> 81c4be8d9f101584fb5db48ebc70810255a23733
   }
   const session = await mongoose.startSession();
   session.startTransaction();
