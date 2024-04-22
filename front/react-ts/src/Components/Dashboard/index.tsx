@@ -232,10 +232,11 @@ const Dashboard: React.FC = () => {
             <div className="flex flex-1 p-10 flex-col" style={{
 
             }}>
-            {selectedCourse ? (<div>
+            {selectedCourse ? (
+                <div>
                     <div style={{position:'fixed', marginLeft:'20vh', marginBottom:'20%'}}>
                     <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
-                    <hr/>
+                    <hr style={{width:'32vh'}}/>
                      {/* {role === 'student' ? (
                         <div className='text-2xl'>Balance: $ {currency}</div>
                      ) : null} */} {/* Removed this part temporarily as it is not re-rendering */}
@@ -243,13 +244,22 @@ const Dashboard: React.FC = () => {
                 
                 <div className='main-content'>
                     
-                    <div style={{position:'fixed', marginLeft:'20vh', marginTop:'10vh'}}>
-                        {menuItems.map((item, index) => <div className='text-1xl custom-styling' 
+                    <div style={{
+                        position:'fixed', marginLeft:'20vh', marginTop:'10vh', 
+                        display:'flex', flexDirection:'column', alignItems:'left',
+                        
+                        }}>
+                        {menuItems.map((item, index) => 
+                        <div className='nes-btn' 
+                        style={{
+                            width:'100%',
+                            marginBottom:'30px',
+                        }}
                         onClick={
                             () => handleItemClick(item)
                         }>{item}</div>)}
                     </div>
-                    <div className='detail-container' style={{marginLeft:'47vh'}}>
+                    <div className='detail-container' style={{marginLeft:'53vh'}}>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}

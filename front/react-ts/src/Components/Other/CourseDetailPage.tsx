@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.bubble.css'; // Import Quill CSS
+import './DangerHTML.css';
 
 interface Course {
     _id: string;
@@ -99,7 +100,7 @@ const editCourseDetails = async () => {
                     ) : <div>
                             <h1 className="text-3xl">{title}</h1>
                             <h1 className="text-3xl">{courseKey}</h1>
-                            <div dangerouslySetInnerHTML={{ __html: editedDetails }}></div>
+                            <div className='dangerHTML' dangerouslySetInnerHTML={{ __html: editedDetails }}></div>
                         </div>
                         }
                     
