@@ -129,9 +129,17 @@ const RequestList: React.FC<RequestListProps> = ({
 return (
   <div className='nes-container with-title request-container is-dark' style={{ width: '63vw', minHeight:'80vh' }}>
     <p className="title">Request List</p>
+
+        <div style={{
+            fontSize: '0.8rem',
+        }}>
+            <p>Note: Student coins are only deducted upon approval of the request. If the request has already been 
+                approved and then reset, students will receive their coins back.</p>
+        </div>
+
     <ol className="nes-list is-decimal">
       {transactions.map((transaction) => (
-        <ul key={transaction?._id} className="nes-container with-title is-rounded is-dark" style={{width:"100vh"}}>
+        <ul key={transaction?._id} className="nes-container with-title is-rounded is-dark" style={{width:"59vw"}}>
           <p className="title">{transaction?.username}</p>
           {transaction.status === 'Approval' ? <p style={{color:'lime'}}>Approved</p> : transaction.status === 'Awaiting' ? <p style={{color:'cyan'}}>Awaiting</p> : <p style={{color:'red'}}>Rejected</p>}
           <div className="nes-btn-group" style={{ marginTop: '25px', marginBottom:'10px' }}>
@@ -159,6 +167,7 @@ return (
       
     </ol>
     <button className="nes-btn back-button" onClick={() => handleBack()}>Back</button>
+
   </div>
 );
 

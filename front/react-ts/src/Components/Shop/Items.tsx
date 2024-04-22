@@ -86,7 +86,7 @@ const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance, fullName }
       <>
       { 
       loading ? renderLoader() :
-      <ItemList items={items} courseId={courseId} role={role} update = {updateItemList} studentBalance={studentBalance} fullName={fullName} />
+      <ItemList items={items} courseId={courseId} role={role} update = {updateItemList} fullName={fullName} />
       }
       </>
     );

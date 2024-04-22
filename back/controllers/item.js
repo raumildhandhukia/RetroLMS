@@ -247,7 +247,7 @@ exports.getTransactionByItem = async (req, res) => {
         const student = await studentPromise;
         const userPromise = User.findOne({ _id: student.userId });
         const user = await userPromise;
-        const username = user.username;
+        const username = user.profile.firstName + " " + user.profile.lastName;
         const transactionWithUsername = {
           ...transaction.toObject(),
           username,

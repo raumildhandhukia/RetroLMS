@@ -176,7 +176,7 @@ const handleFileChange = async (event:any) => {
   };
      const renderDescriptionPage = () => (
             <div style={{
-                width: '100vh',
+                minWidth: '100vh',
             }}>
                 <div className="field-container-two">
                     <div className="nes-field">
@@ -253,7 +253,7 @@ const handleFileChange = async (event:any) => {
                 {/* Error Message */}
                 {errorMessage && <p className="nes-text is-error">{errorMessage}</p>}
                 {/* Add Task Button */}
-                <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '10px'}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '20px', fontSize:'8px'}}>
                     <button type="button" className='nes-btn is-error' onClick={() => {
                         onClickBack();
                     }}>
@@ -319,7 +319,7 @@ const renderLoadingPage = () => (
 
 return (
     <div className="task-description-container" >
-        <div className="nes-container with-title is-centered" style={{marginTop:"auto", minWidth:'100vh', minHeight:'80vh'}} >
+        <div className="nes-container with-title is-centered" style={{marginTop:"auto", minWidth:'100vh', minHeight:'70vh'}} >
             <p className="title">{title}{isGrading && ' Grading Panel'}</p>
             {
               isLoading ? renderLoadingPage() :
