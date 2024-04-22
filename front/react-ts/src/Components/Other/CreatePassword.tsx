@@ -10,13 +10,37 @@ const CreatePassword: React.FC = (props) => {
     const [showErrorString, setShowErrorString] = useState<boolean>(false);
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
+    const [makeStudentEditable, setMakeStudentEditable] = useState<boolean>(false);
     const navigate = useNavigate();
     const location = useLocation();
     const data = location.state;
 
     useEffect(() => {
-        setFirstName(data.firstName);
-        setLastName(data.lastName);
+        if (!data) {
+            navigate('/login');
+        } else {
+
+            setFirstName(data.firstName);
+            setLastName(data.lastName);
+            const checkAuth = async () => {
+                try {
+                    const response = await fetch('http://localhost:8080/check-auth', {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    if (!response.ok) {
+                        navigate('/login');
+                    } else {
+                        const data = await response.json();
+                        setMakeStudentEditable(data.makeStudentEditable);
+                    }
+                } catch (error) {
+                    console.error('Error checking authentication:', error);
+                }
+            }
+
+            checkAuth();
+        }
     }, []);
 
     const updatePassword = async () => {
@@ -63,8 +87,8 @@ const CreatePassword: React.FC = (props) => {
     return (
     <div className="nes-container is-dark with-title flex-container">
         <div className="center-container">
-
-            <h1>Personal Information & Password Creation</h1>
+            { makeStudentEditable &&
+            <div className='names'>
                 <div className="nes-container is-dark with-title" style={{marginTop:"50px"}}>
                     <p className="title">First Name</p>
                     <input 
@@ -87,6 +111,8 @@ const CreatePassword: React.FC = (props) => {
                         value={lastName} 
                     />
                 </div>
+                </div>
+                }
                 <div className="nes-container is-dark with-title" style={{marginTop:"50px"}}>
                     <p className="title">Password</p>
                     <input 

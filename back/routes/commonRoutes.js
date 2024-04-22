@@ -38,11 +38,15 @@ router.get("/profile", async (req, res) => {
     let currency = null;
     let resetPassword = false;
     let studentId = null;
+    let makeStudentEditable = false;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
       resetPassword = student.resetPassword;
       studentId = student._id;
+    } else if (user.role === "instructor") {
+      const instructor = await Instructor.findOne({ userId: user._id });
+      makeStudentEditable = instructor.makeStudentEditable;
     }
     res.status(200).json({
       profile: user.profile,
@@ -51,12 +55,15 @@ router.get("/profile", async (req, res) => {
       currency: currency,
       resetPassword: resetPassword,
       studentId: studentId,
+      makeStudentEditable,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+router.post("/updateInstrutor", userController.updateInstructor);
 router.post("/createcourse", courseController.createCourse);
 router.post("/editCourse", courseController.editCourse);
 

@@ -14,7 +14,7 @@ const instructorSchema = new mongoose.Schema(
         ref: "Course",
       },
     ],
-    resetPasswordConfig: {
+    makeStudentEditable: {
       type: Boolean,
       default: false,
     },

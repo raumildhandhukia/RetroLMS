@@ -1,4 +1,6 @@
 const User = require("../models/userModel.js");
+const Instructor = require("../models/instructorModel.js");
+const JWT = require("jsonwebtoken");
 
 const userController = {
   // Get all users
@@ -9,7 +11,23 @@ const userController = {
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }
+  },
+  updateInstructor: async (req, res) => {
+    try {
+      const token = req.cookies.jwt;
+      const decoded = JWT.decode(token);
+      const username = decoded.username;
+      const user = await User.findOne({ username });
+      const userId = user._id;
+      const instructor = await Instructor.findOne({ userId });
+      const { makeStudentEditable } = req.body;
+      instructor.makeStudentEditable = makeStudentEditable;
+      await instructor.save();
+      res.status(200).json(instructor);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  },
 };
 
 module.exports = userController;
