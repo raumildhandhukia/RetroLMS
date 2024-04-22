@@ -3,6 +3,42 @@ const Transaction = require("../models/transactionModel");
 const Student = require("../models/studentModel");
 const User = require("../models/userModel");
 const JWT = require("jsonwebtoken");
+const { sendMail } = require("./mail");
+const Course = require("../models/courseModel");
+const Instructor = require("../models/instructorModel");
+
+const sendMailToProfessor = async ({
+  receiptientName,
+  receiptientEmail,
+  itemName,
+  itemPrice,
+  studentName,
+  studentCurrency,
+  courseName,
+}) => {
+  const mailOptions = ({ name, receiptientEmail, subject, htmlBody }) => ({
+    from: {
+      name,
+      address: process.env.SENDER_GMAIL,
+    },
+    to: [receiptientEmail],
+    subject,
+    html: htmlBody,
+  });
+  const options = mailOptions({
+    name: "RetroLMS Admin",
+    receiptientEmail,
+    subject: "Purchase Request",
+    htmlBody:
+      `<strong>Dear ${receiptientName},</strong>` +
+      `<p><strong>${studentName}</strong> from <strong>${courseName}</strong> has requested to purchase ${itemName} for ${itemPrice} coins.</p>` +
+      `<p>They currently have ${studentCurrency} coins.</p>` +
+      "<p>Please login to the RetroLMS platform to approve or reject the request.</p>" +
+      "<p>Best Regards,</p>" +
+      "<strong>RetroLMS Admin</strong>",
+  });
+  await sendMail(options);
+};
 
 exports.createItem = async (req, res) => {
   try {
@@ -98,11 +134,35 @@ exports.requestItem = async (req, res) => {
       userId: user._id,
     });
     const studentId = student._id;
+    const studentName = user.profile.firstName + " " + user.profile.lastName;
+    const studentCurrency = student.currentCurrency;
     const { itemId, price } = req.body;
+    const item = await Item.findById(itemId);
+    const itemName = item.itemName;
+    const itemPrice = item.itemPrice;
+    const courseId = item.courseId;
+    const course = await Course.findById(courseId);
+    const courseName = course.courseKey + ": " + course.title;
+    const instructorId = course.instructorId;
+    const instructor = await Instructor.findById(instructorId);
+    const instructorUser = await User.findById(instructor.userId);
+    const instructorName =
+      instructorUser.profile.firstName + " " + instructorUser.profile.lastName;
+    const instructorEmail = instructorUser.profile.email;
+
     const transaction = await Transaction.create({
       itemId,
       studentId,
       price,
+    });
+    sendMailToProfessor({
+      receiptientName: instructorName,
+      receiptientEmail: instructorEmail,
+      itemName,
+      itemPrice,
+      studentName,
+      studentCurrency,
+      courseName,
     });
     res.status(201).json(transaction);
   } catch (error) {
