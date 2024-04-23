@@ -235,32 +235,35 @@ const Dashboard: React.FC = () => {
             }}>
             {selectedCourse ? (
                 <div>
-                    <div style={{position:'fixed', marginLeft:'21vh', marginBottom:'20%'}}>
-                    <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
-                    <hr style={{width:'32vh'}}/>
+                    {/* <div style={{position:'fixed', marginLeft:'21vh', marginBottom:'20%'}}> */}
+                    {/* <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
+                    <hr style={{width:'32vh'}}/> */}
                      {/* {role === 'student' ? (
                         <div className='text-2xl'>Balance: $ {currency}</div>
                      ) : null} */} {/* Removed this part temporarily as it is not re-rendering */}
-                    </div>
+                    {/* </div> */}
                 
                 <div className='main-content'>
                     
                     <div style={{
-                        position:'fixed', marginLeft:'21vh', marginTop:'11vh', 
+                        position:'fixed', marginLeft:'21vh', marginTop:'2vh', 
                         display:'flex', flexDirection:'column', alignItems:'left',
                         
                         }}>
+                        <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
+                    <hr style={{width:'23vh'}}/>
                         {menuItems.map((item, index) => 
                         <div className='nes-btn' 
                         style={{
-                            width:'100%',
-                            marginBottom:'3vh',
+                            width:'23vh',
+                            margin: '0 auto 3vh auto',
+                            fontSize: '1.5vh',
                         }}
                         onClick={
                             () => handleItemClick(item)
                         }>{item}</div>)}
                     </div>
-                    <div className='detail-container' style={{marginLeft:'57vh'}}>
+                    <div className='detail-container' style={{marginLeft:'50vh'}}>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
