@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'nes.css/css/nes.min.css';
 import "./ItemList.css";
 import { Item } from './Items';
@@ -7,22 +7,49 @@ import ItemDescription from './ItemDescription';
 import ItemCard from './ItemCard';
 import './ItemCard.css';
 import RequestList from './RequestList';
+import io from "socket.io-client";
+import { send } from 'process';
+
+const coin = require('./spinningCoin.gif')
 
 interface ItemListProps {
     items: Item[];
     courseId: string;
     role: string;
     update: Function;
-    studentBalance: number;
+    fullName: string;
 }
 
 
 
-const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, studentBalance }) => {
+const ItemList: React.FC<ItemListProps> = ({ items, fullName, courseId, role, update }) => {
     const [createItem, setCreateItem] = React.useState<boolean>(false);
     const [showItem, setShowItem] = React.useState<boolean>(false);
     const [selectedItem, setSelectedItem] = React.useState<Item | null>(null);
     const [showItemRequests, setShowItemRequests] = React.useState<boolean>(false);
+    const [studentBalance, setStudentBalance] = React.useState<number>(0);
+
+    useEffect(() => {
+        const getProfile = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/profile", {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const profile = await response.json();
+                    setStudentBalance(profile.currency);
+                }
+            } catch (error) {
+                console.error("Error fetching profile.", error);
+            }
+        }
+        getProfile();
+    }
+    ,[]);
     
 
     const handleItemDescription = (item: Item) => {
@@ -49,6 +76,11 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
       <ItemDescription selectedItem={selectedItem} update={update} role={role} handleBack={handleBack}/>
     );
 
+    const sendNotification = (selectedItem:Item) => {
+        const socket = io("http://localhost:8080", { transports: ["websocket"] });
+        socket.emit("buyItem", { message: `${fullName} requested ${selectedItem?.itemName}`, courseId: courseId});
+    };
+
     const handleBuyRequest = async (selectedItem:Item) => {
     try {
       const response = await fetch("http://localhost:8080/requestItem", {
@@ -63,7 +95,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
         })
       });
       if (response.ok) {
-        // getTransction();
+        sendNotification(selectedItem);
       }
     } catch (error) {
       console.error("Error buying item.", error);
@@ -103,6 +135,20 @@ const ItemList: React.FC<ItemListProps> = ({ items, courseId, role, update, stud
   const renderShopComponent = () => (
   <div className='nes-container is-rounded with-title'>
       <p className='title'>Shop</p>
+      {role === 'student' && <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        width: '100vh',
+      }}>
+        <p className=''>Balance: </p>
+        <img style={{
+                    width:'22px',
+                    height:'22px',
+                    marginTop:'-1px',
+                }} src={coin} alt='coin-spinning'/>
+        <strong style={{marginLeft:'5px'}}>{studentBalance}</strong>
+
+      </div>}
       <div className="item-list-content">
         {
         items.map((item, index) => (

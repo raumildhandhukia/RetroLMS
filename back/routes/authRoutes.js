@@ -12,6 +12,7 @@ const authMiddleware = require("../middleware/authMiddleware.js");
 const JWT = require("jsonwebtoken");
 const Task = require("../models/taskModel.js");
 const Submission = require("../models/submissionModel.js");
+const Course = require("../models/courseModel.js");
 
 router.use(cookieParser());
 
@@ -117,10 +118,17 @@ router.post("/login", async (req, res) => {
     res.cookie("jwt", token, { httpOnly: true });
     let currency = null;
     let resetPassword = false;
+    let makeStudentEditable = false;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
       resetPassword = student.resetPassword;
+      const courseEnrolled = student.enrolledCourses;
+      const course = await Course.find({ _id: { $in: courseEnrolled } });
+      const instructor = await Instructor.find({
+        _id: { $in: course.instructorId },
+      });
+      makeStudentEditable = instructor.makeStudentEditable;
     }
     res.status(201).json({
       profile: user.profile,
@@ -128,6 +136,7 @@ router.post("/login", async (req, res) => {
       role: user.role,
       currency: currency,
       resetPassword: resetPassword,
+      makeStudentEditable,
     });
     // res.json({ token });
   } catch (error) {
@@ -163,17 +172,26 @@ router.get("/check-auth", async (req, res) => {
     }
     let currency = null;
     let resetPassword = false;
+    let makeStudentEditable = false;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
       resetPassword = student.resetPassword;
+      const courseEnrolled = student.enrolledCourses;
+      const course = await Course.find({ _id: { $in: courseEnrolled } });
+      const firstCourse = course[0];
+      const instructor = await Instructor.findOne({
+        _id: firstCourse.instructorId,
+      });
+      makeStudentEditable = instructor.makeStudentEditable;
     }
     res.status(200).json({
       profile: user.profile,
       username: user.username,
       role: user.role,
-      currency: currency,
-      resetPassword: resetPassword,
+      currency,
+      resetPassword,
+      makeStudentEditable,
     });
 
     // If verification succeeds, the JWT is valid

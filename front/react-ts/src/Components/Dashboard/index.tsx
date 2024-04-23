@@ -12,7 +12,8 @@ import CreateCourse from './CreateCourse';
 import DeletePrompt from './DeletePrompt';
 import Profile from './Profile';
 import Students from './Students';
-
+import PushNotification from '../Notifications/PushNotifications';
+import NotificationList from '../Notifications/NotificationList';
 export interface Course {
     _id: string;
     title: string;
@@ -21,7 +22,7 @@ export interface Course {
 }
 
 export interface ISidebarItem {
-    name: "Account" | "Logout" | "MyCourses" | "Dashboard" | "Notifications";
+    name: "Account" | "Logout" | "MyCourses" | "Dashboard";
 }
 
 
@@ -29,8 +30,6 @@ export interface ISidebarItem {
 const Dashboard: React.FC = () => {
     const [role, setRole] = useState<string>('');
     const [currency, setCurrency] = useState<number|null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [loaderMessage, setLoaderMessage] = useState<string>('');
     useEffect(() => {
         setLoaderMessage("Checking Authorization....");
         setIsLoading(false);
@@ -69,6 +68,8 @@ const Dashboard: React.FC = () => {
             const data = await response.json();
             setRole(data.role);
             setCurrency(data.currency);
+            setFullName(data.profile.firstName + " " + data.profile.lastName);
+            setStudentId(data.studentId)
 
           } else {
             console.log("User not found");
@@ -124,8 +125,7 @@ const Dashboard: React.FC = () => {
         { name: "Account" },
         { name: "Dashboard"},
         { name: "MyCourses" },
-        { name: "Logout" },
-        { name: "Notifications"}
+        { name: "Logout" }
     ]
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
@@ -145,8 +145,8 @@ const Dashboard: React.FC = () => {
 
    
     const menuItems = role === 'student' ? 
-                    ['Home', 'Task', 'Leaderboard', 'Shop'] : 
-                    ['Home', 'Task', 'Leaderboard', 'Shop', 'Students', 'Delete'];
+                    ['Home', 'Notifications', 'Task', 'Leaderboard', 'Shop'] : 
+                    ['Home', 'Notifications', 'Task', 'Leaderboard', 'Shop', 'Students', 'Delete'];
 
     const handleCourseCreate = () => {
         setSelectedItem('CreateCourse');
@@ -222,11 +222,7 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="container flex">
-            {isLoading ? (
-            <div className="loading-container" style={{ textAlign: 'center', paddingTop: '50px' }}>
-                <p>{loaderMessage}</p>
-            </div>
-            ) : (
+
           <div className="w-20 bg-gray-100 h-lvh flex flex-col" style={{
             position: 'fixed',
           }}>
@@ -243,10 +239,11 @@ const Dashboard: React.FC = () => {
             <div className="flex flex-1 p-10 flex-col" style={{
 
             }}>
-            {selectedCourse ? (<div>
+            {selectedCourse ? (
+                <div>
                     <div style={{position:'fixed', marginLeft:'20vh', marginBottom:'20%'}}>
                     <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
-                    <hr/>
+                    <hr style={{width:'32vh'}}/>
                      {/* {role === 'student' ? (
                         <div className='text-2xl'>Balance: $ {currency}</div>
                      ) : null} */} {/* Removed this part temporarily as it is not re-rendering */}
@@ -254,37 +251,54 @@ const Dashboard: React.FC = () => {
                 
                 <div className='main-content'>
                     
-                    <div style={{position:'fixed', marginLeft:'20vh', marginTop:'10vh'}}>
-                        {menuItems.map((item, index) => <div className='text-1xl custom-styling' 
+                    <div style={{
+                        position:'fixed', marginLeft:'20vh', marginTop:'10vh', 
+                        display:'flex', flexDirection:'column', alignItems:'left',
+                        
+                        }}>
+                        {menuItems.map((item, index) => 
+                        <div className='nes-btn' 
+                        style={{
+                            width:'100%',
+                            marginBottom:'30px',
+                        }}
                         onClick={
                             () => handleItemClick(item)
                         }>{item}</div>)}
                     </div>
-                    <div className='detail-container' style={{marginLeft:'47vh'}}>
+                    <div className='detail-container' style={{marginLeft:'53vh'}}>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
-                    {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse} studentBalance={currency || 0}/>}
-                    {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{
-                        setSelectedItem('Home');
-                    }}
-                    handleBackToDashboard={ () => {
-                        setSelectedComponent(null);
-                        const updatedCourses = courses.filter(course => course._id !== selectedCourse);
-                        setCourses(updatedCourses);
-                        setSelectedCourse('');
-                        setSelectedItem('');
-                        setSidebarOpen(false);
-                    }}
-                    courseId={selectedCourse}
-                    />}
+                    {selectedItem === 'Notifications' && <NotificationList />}
+                    {selectedItem === 'Shop' && <Items role={role} courseId={selectedCourse} studentBalance={currency || 0} fullName={fullName}/>}
+                    {selectedItem === 'Delete' && <DeletePrompt handleBack={()=>{setSelectedItem('Home');}}
+                            handleBackToDashboard={ () => {
+                                setSelectedComponent(null);
+                                const updatedCourses = courses.filter(course => course._id !== selectedCourse);
+                                setCourses(updatedCourses);
+                                setSelectedCourse('');
+                                setSelectedItem('');
+                                setSidebarOpen(false);
+                            }}
+                            courseId={selectedCourse}
+                            />
+                    }
                     {selectedItem === 'Students' && <Students courseId={selectedCourse}/>}
+                    
                     </div>
                 </div>
                
             </div>) : (
-            selectedItem === 'CreateCourse' ? (<CreateCourse/>) : 
-            (<div style={{
+            
+            
+            
+            
+            (
+            
+            selectedItem ==='CreateCourse' ? ( <CreateCourse />) :
+            
+            <div style={{
                 marginLeft:'20vh'
             
             }}>

@@ -23,6 +23,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const roleRef = useRef("");
   const showCreatePasswordRef = useRef(false);
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -38,9 +39,10 @@ const Login: React.FC = () => {
           const data = await response.json();
           const role = data.role;
           const showCreatePassword = data.resetPassword;
+          const makeStudentEditable = data.makeStudentEditable;
           if (role === "student") {
       if (showCreatePassword) {
-          navigate("/createPassword", { state: { firstName: data.profile.firstName, lastName: data.profile.lastName } });
+          navigate("/createPassword", { state: { firstName: data.profile.firstName, lastName: data.profile.lastName, makeStudentEditable } });
       } else {
         navigate("/dashboard");
       }
@@ -82,7 +84,7 @@ const Login: React.FC = () => {
         showCreatePasswordRef.current = data.resetPassword;
         if (roleRef.current === "student") {
           if (showCreatePasswordRef.current) {
-              navigate("/createPassword", { state: { firstName: data.profile.firstName, lastName: data.profile.lastName } });
+              navigate("/createPassword", { state: { firstName: data.profile.firstName, lastName: data.profile.lastName, makeStudentEditable:data.makeStudentEditable } });
           } else {
               navigate("/dashboard");
             }
@@ -91,6 +93,8 @@ const Login: React.FC = () => {
           }
       } else {
         console.error("Login failed");
+        setErrorMessage("Login failed");
+
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -142,6 +146,7 @@ return (
             Sign In
           </button>
         </form>
+        {errorMessage.length > 0 && <div className="validation-message">{errorMessage}</div>}
       </div>
 
     </div>

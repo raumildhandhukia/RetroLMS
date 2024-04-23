@@ -4,6 +4,7 @@ import Loader from '../Other/Loader';
 import { Item } from './Items';
 import coin from './spinningCoin.gif'
 
+
 interface ItemProps {
   item: Item;
   role: string;
@@ -27,6 +28,9 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
     const [transactionState, setTransactionState] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
 
+    
+
+
     const getTransction = async () => {
                 try {
                 const response = await fetch(`http://localhost:8080/getTrasactionsByItemByStudent/${item?._id}`, {
@@ -37,7 +41,7 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                     credentials: 'include'
                 });
                 if (!response.ok) {
-                    throw new Error('Failed to fetch items');
+                    
                 } else {
                     const transaction: Transaction = await response.json();
                     setTransaction(transaction);
@@ -73,7 +77,7 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                 <span style={{
                     color:'cyan'
                 }}>{item.itemName}</span>
-                <p style={{color:'cyan', minHeight:'50px'}}>{item.itemDescription}</p>
+                <p style={{color:'cyan'}}>{item.itemDescription}</p>
                 <div style={{
                     display:'flex',
                     justifyContent:'center',
