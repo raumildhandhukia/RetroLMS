@@ -218,7 +218,7 @@ const Dashboard: React.FC = () => {
           <PushNotification courseId={selectedCourse || ''} role={role} IDs={{studentId:studentId, instructorId:''}}/>
           <div className="w-20 bg-gray-100 h-lvh flex flex-col" style={{
             position: 'fixed',
-            width: '20vh',
+            width: '21vh',
           }}>
              <img src={asulogo} />
               {sidebarItems.map(sidebarItem =>
@@ -235,7 +235,7 @@ const Dashboard: React.FC = () => {
             }}>
             {selectedCourse ? (
                 <div>
-                    <div style={{position:'fixed', marginLeft:'20vh', marginBottom:'20%'}}>
+                    <div style={{position:'fixed', marginLeft:'21vh', marginBottom:'20%'}}>
                     <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
                     <hr style={{width:'32vh'}}/>
                      {/* {role === 'student' ? (
@@ -246,7 +246,7 @@ const Dashboard: React.FC = () => {
                 <div className='main-content'>
                     
                     <div style={{
-                        position:'fixed', marginLeft:'20vh', marginTop:'11vh', 
+                        position:'fixed', marginLeft:'21vh', marginTop:'11vh', 
                         display:'flex', flexDirection:'column', alignItems:'left',
                         
                         }}>
@@ -260,7 +260,7 @@ const Dashboard: React.FC = () => {
                             () => handleItemClick(item)
                         }>{item}</div>)}
                     </div>
-                    <div className='detail-container' style={{marginLeft:'56vh'}}>
+                    <div className='detail-container' style={{marginLeft:'57vh'}}>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
