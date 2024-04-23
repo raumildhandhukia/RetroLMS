@@ -218,6 +218,7 @@ const Dashboard: React.FC = () => {
           <PushNotification courseId={selectedCourse || ''} role={role} IDs={{studentId:studentId, instructorId:''}}/>
           <div className="w-20 bg-gray-100 h-lvh flex flex-col" style={{
             position: 'fixed',
+            width: '20vh',
           }}>
              <img src={asulogo} />
               {sidebarItems.map(sidebarItem =>
@@ -245,7 +246,7 @@ const Dashboard: React.FC = () => {
                 <div className='main-content'>
                     
                     <div style={{
-                        position:'fixed', marginLeft:'20vh', marginTop:'10vh', 
+                        position:'fixed', marginLeft:'20vh', marginTop:'11vh', 
                         display:'flex', flexDirection:'column', alignItems:'left',
                         
                         }}>
@@ -253,13 +254,13 @@ const Dashboard: React.FC = () => {
                         <div className='nes-btn' 
                         style={{
                             width:'100%',
-                            marginBottom:'30px',
+                            marginBottom:'3vh',
                         }}
                         onClick={
                             () => handleItemClick(item)
                         }>{item}</div>)}
                     </div>
-                    <div className='detail-container' style={{marginLeft:'53vh'}}>
+                    <div className='detail-container' style={{marginLeft:'56vh'}}>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
