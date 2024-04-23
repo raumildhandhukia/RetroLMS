@@ -155,6 +155,9 @@ exports.requestItem = async (req, res) => {
       studentId,
       price,
     });
+    student.currentCurrency -= price;
+    student.lockedCurrency += price;
+    await student.save();
     sendMailToProfessor({
       receiptientName: instructorName,
       receiptientEmail: instructorEmail,
@@ -187,25 +190,28 @@ exports.updateTransaction = async (req, res) => {
     const transaction = await Transaction.findById(req.params.transactionId);
     const studentId = transaction.studentId;
     const student = await Student.findOne({ _id: studentId });
-    if (
-      transaction.status === "Approval" &&
-      (req.body.status === "Reject" || req.body.status === "Awaiting")
+    if (transaction.status === "Approval" && req.body.status === "Awaiting") {
+      student.lockedCurrency -= transaction.price;
+      await student.save();
+    } else if (
+      transaction.status === "Reject" &&
+      req.body.status === "Awaiting"
     ) {
-      student.currentCurrency += transaction.price;
+      student.lockedCurrency += transaction.price;
+      student.currentCurrency -= transaction.price;
       await student.save();
     }
     transaction.status = req.body.status;
     await transaction.save();
     if (transaction.status === "Approval") {
-      const difference = student.currentCurrency - transaction.price;
-      if (difference < 0) {
-        transaction.status = "Reject";
-        await transaction.save();
-      } else {
-        student.currentCurrency = difference;
-        await student.save();
-      }
+      student.lockedCurrency -= transaction.price;
+      await student.save();
+    } else if (transaction.status === "Reject") {
+      student.currentCurrency += transaction.price;
+      student.lockedCurrency -= transaction.price;
+      await student.save();
     }
+
     res.status(200).json(transaction);
   } catch (error) {
     res.status(400).json({ message: error.message });

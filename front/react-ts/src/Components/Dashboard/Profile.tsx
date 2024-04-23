@@ -16,6 +16,7 @@ interface Prof {
         email: string;
     };
     currency: number | null;
+    locked : number | null;
     makeStudentEditable: boolean;
 }
 
@@ -91,14 +92,14 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
                 <div>
                     <hr className='nes-line' />
                     <div className="nes-container is-dark with-title">
-                    <p className="title">Balance</p>
-                    <div style={{
-                        display: 'inline-flex',
-                    }}>
-                        <img src={coin} alt="coin" style={{width: '25px', height:'25px'}}/>
-                        <p style={{marginTop:'2px', marginLeft:'5px'}} className='nes-text'>{profile?.currency}</p>
+                        <p className="title">Balance</p>
+                        <div style={{
+                            display: 'inline-flex',
+                        }}>
+                            <img src={coin} alt="coin" style={{width: '25px', height:'25px'}}/>
+                            <p style={{marginTop:'2px', marginLeft:'5px'}} className='nes-text'>{profile?.currency}</p>
+                        </div>
                     </div>
-                </div>
                 </div>
                 
             ) : null}

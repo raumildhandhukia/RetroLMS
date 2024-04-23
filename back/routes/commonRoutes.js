@@ -36,12 +36,14 @@ router.get("/profile", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     let currency = null;
+    let locked = null;
     let resetPassword = false;
     let studentId = null;
     let makeStudentEditable = false;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
+      locked = student.lockedCurrency;
       resetPassword = student.resetPassword;
       studentId = student._id;
     } else if (user.role === "instructor") {
@@ -56,6 +58,7 @@ router.get("/profile", async (req, res) => {
       resetPassword: resetPassword,
       studentId: studentId,
       makeStudentEditable,
+      locked,
     });
   } catch (error) {
     console.error(error);
