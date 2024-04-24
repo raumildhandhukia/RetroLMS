@@ -68,7 +68,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
 
   const handleUpdateTask = async () => {
     if (isEditing) {
-      if (!title || !deadline || !details || !point) {
+      if (!title || !details || !point) {
         setErrorMessage("All fields are required.");
         return;
       }
