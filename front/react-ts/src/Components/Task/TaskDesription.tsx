@@ -6,7 +6,11 @@ import Grading from "./Grading";
 import Loader from "../Other/Loader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import * as XLSX from 'xlsx';
 
+interface Student{
+  userName: string;
+}
 interface TaskDescriptionProps {
   selectedTask: {
     _id: string;
@@ -19,6 +23,7 @@ interface TaskDescriptionProps {
   onClickBack: Function;
   updateTasks: Function;
   role: string;
+  courseId: string;
 }
 
 // Assuming this component is now for editing, not just displaying
@@ -27,6 +32,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
   onClickBack,
   updateTasks,
   role,
+  courseId
 }) => {
   const [title, setTitle] = useState(task.title);
   const [details, setDetails] = useState(task.details);
@@ -40,7 +46,30 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
   const [graded, setGraded] = useState(task.graded);
   const [gradePoints, setGradePoints] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const taskId = task._id;;
+  const [students, setStudents] = useState<Student[]>([]);
+  const taskId = task._id;
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/getEnrolledStudents/${courseId}`, {
+                method: "GET",
+                credentials: "include",
+            });
+            if (!response.ok) {
+                throw new Error("Failed to fetch students");
+            }
+            const students = await response.json();
+            setStudents(students);
+        } catch (error) {
+            console.error("Error fetching students:", error);
+        } finally {
+          setIsLoading(false);
+        }
+    };
+    fetchStudents();
+}
+, []); 
 
   useEffect(() => {
     const getGrades = async () => {
@@ -68,7 +97,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
 
   const handleUpdateTask = async () => {
     if (isEditing) {
-      if (!title || !deadline || !details || !point) {
+      if (!title || !details || !point) {
         setErrorMessage("All fields are required.");
         return;
       }
@@ -116,6 +145,43 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
     }
   };
 
+  const handleSampleCsvDownload  = () => {
+    const studentObj=students.map(student => {
+      return {
+      username: student.userName,
+      points: 0,
+    }})
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(studentObj);
+
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+
+    const wbout: ArrayBuffer = s2ab(XLSX.write(wb, { bookType: 'xlsx', type: 'binary' }));
+
+    function s2ab(s: string): ArrayBuffer {
+        const buffer: ArrayBuffer = new ArrayBuffer(s.length);
+        const view: Uint8Array = new Uint8Array(buffer);
+        for (let i = 0; i < s.length; i++) {
+            view[i] = s.charCodeAt(i) & 0xFF;
+        }
+        return buffer;
+    }
+
+    const blob: Blob = new Blob([wbout], { type: 'application/octet-stream' });
+    const url: string = window.URL.createObjectURL(blob);
+    const a: HTMLAnchorElement = document.createElement('a');
+    a.href = url;
+    a.download = 'Students.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);  
+    }, 0);
+
+    
+        
+  }
   const handleEditMode = () => {
     setIsEditing(true);
   };
@@ -267,6 +333,10 @@ const handleFileChange = async (event:any) => {
                                 onClick={handleUpdateTask} disabled={isLoading}>
                             Update Task
                         </button>
+                        <button type="button" className={`nes-btn is-primary`}
+                                onClick={handleSampleCsvDownload} disabled={isLoading}>
+                            Download Sample
+                        </button>
 
                         <button type='button' className='nes-btn is-error' onClick={handleDelete} >Delete</button>
                         <button type='button' className='nes-btn is-success' onClick={handleGrade} >Grade</button>
@@ -285,6 +355,7 @@ const handleFileChange = async (event:any) => {
               >
                 Upload Excel
               </button>
+              
             </div>
 
                     </>) : null}

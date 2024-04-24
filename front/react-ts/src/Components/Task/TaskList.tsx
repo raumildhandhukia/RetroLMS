@@ -45,7 +45,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
     if (selectedTask) {
       return (
 
-          <TaskDescription selectedTask={selectedTask} onClickBack={onClickBack} updateTasks={updateTasks} role={role}/> 
+          <TaskDescription selectedTask={selectedTask} onClickBack={onClickBack} updateTasks={updateTasks} role={role} courseId={courseId}/> 
           
       );
     } else {
