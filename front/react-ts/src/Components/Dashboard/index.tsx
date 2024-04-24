@@ -246,11 +246,11 @@ const Dashboard: React.FC = () => {
                 <div className='main-content'>
                     
                     <div style={{
-                        position:'fixed', marginLeft:'21vh', marginTop:'2vh', 
+                        position:'fixed', marginLeft:'21vh', marginTop:'-1vh', 
                         display:'flex', flexDirection:'column', alignItems:'left',
                         
                         }}>
-                        <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
+                        <p className='text-2xl' style={{}}>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
                     <hr style={{width:'23vh'}}/>
                         {menuItems.map((item, index) => 
                         <div className='nes-btn' 
@@ -263,7 +263,7 @@ const Dashboard: React.FC = () => {
                             () => handleItemClick(item)
                         }>{item}</div>)}
                     </div>
-                    <div className='detail-container' style={{marginLeft:'50vh'}}>
+                    <div className='detail-container' style={{marginLeft:'48vh'}}>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}

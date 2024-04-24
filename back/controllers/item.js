@@ -191,7 +191,7 @@ exports.updateTransaction = async (req, res) => {
     const studentId = transaction.studentId;
     const student = await Student.findOne({ _id: studentId });
     if (transaction.status === "Approval" && req.body.status === "Awaiting") {
-      student.lockedCurrency -= transaction.price;
+      student.lockedCurrency += transaction.price;
       await student.save();
     } else if (
       transaction.status === "Reject" &&
