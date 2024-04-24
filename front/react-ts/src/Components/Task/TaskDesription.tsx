@@ -320,10 +320,6 @@ const handleFileChange = async (event:any) => {
                     }}>
                         Back
                     </button>
-                    <button type="button" className={`nes-btn is-primary`}
-                                onClick={handleSampleCsvDownload} disabled={isLoading}>
-                            Download Sample
-                    </button>
                     <div className="nes-badge is-splited" style={{width:'40%', display:role==='student'?"block":"none"}}>
                         <span className="is-dark">{graded?"Points":"Graded"}</span>
                             <span className={graded ? 'is-primary' : 'is-error' }>
@@ -336,6 +332,10 @@ const handleFileChange = async (event:any) => {
                         <button type="button" className={`nes-btn is-primary`}
                                 onClick={handleUpdateTask} disabled={isLoading}>
                             Update Task
+                        </button>
+                        <button type="button" className={`nes-btn is-primary`}
+                                onClick={handleSampleCsvDownload} disabled={isLoading}>
+                            Download Sample
                         </button>
 
                         <button type='button' className='nes-btn is-error' onClick={handleDelete} >Delete</button>
