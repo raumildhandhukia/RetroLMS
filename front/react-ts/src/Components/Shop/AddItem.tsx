@@ -14,8 +14,13 @@ const AddItem: React.FC<AddItemProps> = ({courseId, update, handleBack}) => {
   const [itemDescription, setItemDescription] = useState<string>('');
   const [itemPrice, setItemPrice] = useState<number>(0);
   const [itemExpiry, setItemExpiry] = useState<number>(0);
+  const [errorMeessege, setErrorMeessege] = useState<string>('');
 
   const handleAddItem = async () => {
+    if (!itemName || !itemDescription ) {
+      setErrorMeessege('Name and Description fields are required.');
+      return;
+    }
     try {
       const response = await fetch("http://localhost:8080/createItem", {
         method: "POST",
@@ -83,6 +88,10 @@ const AddItem: React.FC<AddItemProps> = ({courseId, update, handleBack}) => {
                   onChange={(e) => setItemDescription(e.target.value)}
                 />
               </div>
+          <div className='error-message'>
+            {errorMeessege && <p className="nes-text is-error">{errorMeessege}</p>}
+
+          </div>
         <div className='flex items-start my-10'>
           <button type="button" className='nes-btn is-success' onClick={()=>{
             handleBack();

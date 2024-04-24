@@ -3,6 +3,42 @@ const Transaction = require("../models/transactionModel");
 const Student = require("../models/studentModel");
 const User = require("../models/userModel");
 const JWT = require("jsonwebtoken");
+const { sendMail } = require("./mail");
+const Course = require("../models/courseModel");
+const Instructor = require("../models/instructorModel");
+
+const sendMailToProfessor = async ({
+  receiptientName,
+  receiptientEmail,
+  itemName,
+  itemPrice,
+  studentName,
+  studentCurrency,
+  courseName,
+}) => {
+  const mailOptions = ({ name, receiptientEmail, subject, htmlBody }) => ({
+    from: {
+      name,
+      address: process.env.SENDER_GMAIL,
+    },
+    to: [receiptientEmail],
+    subject,
+    html: htmlBody,
+  });
+  const options = mailOptions({
+    name: "RetroLMS Admin",
+    receiptientEmail,
+    subject: "Purchase Request",
+    htmlBody:
+      `<strong>Dear ${receiptientName},</strong>` +
+      `<p><strong>${studentName}</strong> from <strong>${courseName}</strong> has requested to purchase ${itemName} for ${itemPrice} coins.</p>` +
+      `<p>They currently have ${studentCurrency} coins.</p>` +
+      "<p>Please login to the RetroLMS platform to approve or reject the request.</p>" +
+      "<p>Best Regards,</p>" +
+      "<strong>RetroLMS Admin</strong>",
+  });
+  await sendMail(options);
+};
 
 exports.createItem = async (req, res) => {
   try {
@@ -98,11 +134,38 @@ exports.requestItem = async (req, res) => {
       userId: user._id,
     });
     const studentId = student._id;
+    const studentName = user.profile.firstName + " " + user.profile.lastName;
+    const studentCurrency = student.currentCurrency;
     const { itemId, price } = req.body;
+    const item = await Item.findById(itemId);
+    const itemName = item.itemName;
+    const itemPrice = item.itemPrice;
+    const courseId = item.courseId;
+    const course = await Course.findById(courseId);
+    const courseName = course.courseKey + ": " + course.title;
+    const instructorId = course.instructorId;
+    const instructor = await Instructor.findById(instructorId);
+    const instructorUser = await User.findById(instructor.userId);
+    const instructorName =
+      instructorUser.profile.firstName + " " + instructorUser.profile.lastName;
+    const instructorEmail = instructorUser.profile.email;
+
     const transaction = await Transaction.create({
       itemId,
       studentId,
       price,
+    });
+    student.currentCurrency -= price;
+    student.lockedCurrency += price;
+    await student.save();
+    sendMailToProfessor({
+      receiptientName: instructorName,
+      receiptientEmail: instructorEmail,
+      itemName,
+      itemPrice,
+      studentName,
+      studentCurrency,
+      courseName,
     });
     res.status(201).json(transaction);
   } catch (error) {
@@ -127,25 +190,29 @@ exports.updateTransaction = async (req, res) => {
     const transaction = await Transaction.findById(req.params.transactionId);
     const studentId = transaction.studentId;
     const student = await Student.findOne({ _id: studentId });
-    if (
-      transaction.status === "Approval" &&
-      (req.body.status === "Reject" || req.body.status === "Awaiting")
+    if (transaction.status === "Approval" && req.body.status === "Awaiting") {
+      student.lockedCurrency += transaction.price;
+      await student.save();
+    } else if (
+      transaction.status === "Reject" &&
+      req.body.status === "Awaiting"
     ) {
-      student.currentCurrency += transaction.price;
+      student.lockedCurrency += transaction.price;
+      student.currentCurrency -= transaction.price;
       await student.save();
     }
     transaction.status = req.body.status;
-    transaction.save();
+    await transaction.save();
     if (transaction.status === "Approval") {
-      const difference = student.currentCurrency - transaction.price;
-      if (difference < 0) {
-        transaction.status = "Reject";
-      } else {
-        student.currentCurrency = difference;
-        await student.save();
-      }
-      res.status(200).json(updatedTransaction);
+      student.lockedCurrency -= transaction.price;
+      await student.save();
+    } else if (transaction.status === "Reject") {
+      student.currentCurrency += transaction.price;
+      student.lockedCurrency -= transaction.price;
+      await student.save();
     }
+
+    res.status(200).json(transaction);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -186,7 +253,7 @@ exports.getTransactionByItem = async (req, res) => {
         const student = await studentPromise;
         const userPromise = User.findOne({ _id: student.userId });
         const user = await userPromise;
-        const username = user.username;
+        const username = user.profile.firstName + " " + user.profile.lastName;
         const transactionWithUsername = {
           ...transaction.toObject(),
           username,

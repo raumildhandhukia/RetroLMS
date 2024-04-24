@@ -1,29 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.bubble.css'; // Import Quill CSS
-import './RichEditor.css';
-import RichTextEditor from './RichTextEditor';
-const demo = {
-    id: "3",
-    title: "SER 517: Software Factory Capstone",
-    term: "2024 Spring",
-    instructor: {
-        name: "Dr. Nouh Alhindawi",
-        email: "nalhinda@asu.edu"
-    },
-    officeHours: "Tuesdays and Thursdays 11:00 - 12:00 - or by appointment",
-    zoomLink: "https://asu.zoom.us/j/4154409963",
-    ta: {
-        name: "James Smith",
-        email: "jsmit106@asu.edu"
-    },
-    grader: {
-        name: "Anmol Girish More",
-        email: "amore9@asu.edu"
-    },
-    syllabusLink: "/path-to-syllabus",
-    modulesLink: "/modules"
-}
+import './DangerHTML.css';
 
 interface Course {
     _id: string;
@@ -122,7 +100,7 @@ const editCourseDetails = async () => {
                     ) : <div>
                             <h1 className="text-3xl">{title}</h1>
                             <h1 className="text-3xl">{courseKey}</h1>
-                            <div dangerouslySetInnerHTML={{ __html: editedDetails }}></div>
+                            <div className='dangerHTML' dangerouslySetInnerHTML={{ __html: editedDetails }}></div>
                         </div>
                         }
                     

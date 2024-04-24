@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "nes.css/css/nes.min.css";
 import ItemList from "./ItemList";
-import Loader from "../Loader";
+import Loader from "../Other/Loader";
 
 export interface Item {
     _id: string;
@@ -18,9 +18,10 @@ interface ItemProps {
   role: string;
   courseId: string;
   studentBalance: number;
+  fullName: string;
 }
 
-const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
+const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance, fullName }) => {
     const [items, setItems] = useState<Item[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
     // const [courseName, setCourseName] = useState<string>('SER517');
@@ -39,7 +40,6 @@ const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
       const fetchItems = async () => {
         try {
           // const courseId = '65ee276576ac94ef4a77bdba'; // Replace with the actual courseName
-          console.log(courseId)
           const response = await fetch(`http://localhost:8080/items/course/${courseId}`, {
             method: 'GET',
             headers: {
@@ -47,14 +47,12 @@ const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
             },
             credentials: 'include'
           });
-          // console.log(response)
   
           if (!response.ok) {
             throw new Error('Failed to fetch items');
           }
 
           const items: Item[] = await response.json();
-          console.log(items)
           setItems(items)
         } catch (error) {
           console.error('Error fetching tasks:', error);
@@ -85,7 +83,7 @@ const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance }) => {
       <>
       { 
       loading ? renderLoader() :
-      <ItemList items={items} courseId={courseId} role={role} update = {updateItemList} studentBalance={studentBalance} />
+      <ItemList items={items} courseId={courseId} role={role} update = {updateItemList} fullName={fullName} />
       }
       </>
     );

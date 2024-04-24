@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import './CoursesSidebar.css';
+import coin from '../Shop/spinningCoin.gif';
 
 interface CoursesSidebarProps {
     onClose: () => void;
@@ -15,12 +16,12 @@ interface Prof {
         email: string;
     };
     currency: number | null;
-    resetPasswordConfig: boolean;
+    locked : number | null;
+    makeStudentEditable: boolean;
 }
 
 const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
     const [profile, setProfile] = useState<Prof | null>(null);
-    // const [resetPasswordConfig, setResetPasswordConfig] = useState<boolean>(false);
     const profileRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -43,21 +44,41 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
         // setResetPasswordConfig(profile?.resetPasswordConfig || false);
 
         // Add event listener to close sidebar when clicking outside
-        const handleClickOutside = (event: MouseEvent) => {
-            if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-                onClose();
-            }
-        };
+        // const handleClickOutside = (event: MouseEvent) => {
+        //     if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        //         onClose();
+        //     }
+        // };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        // document.addEventListener('mousedown', handleClickOutside);
+        // return () => {
+        //     document.removeEventListener('mousedown', handleClickOutside);
+        // };
     }, [onClose]);
 
-    // const handleResetPasswordConfig = () => {
-    //     setResetPasswordConfig(!resetPasswordConfig);
-    // }
+    const handleMakeStudentEditFullName = async () => {
+        if (profile) {
+            setProfile({
+                ...profile,
+                makeStudentEditable: !profile.makeStudentEditable,
+            });
+            debugger;
+            const res = await fetch("http://localhost:8080/updateInstrutor", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    makeStudentEditable: !profile.makeStudentEditable,
+                }),
+                credentials: "include",
+            });
+
+            if (!res.ok) {
+                console.error("Failed to update student editable status");
+            }
+        }
+    }
 
     return (
         <div className='main-container' ref={profileRef}>
@@ -71,14 +92,30 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
                 <div>
                     <hr className='nes-line' />
                     <div className="nes-container is-dark with-title">
-                    <p className="title">Balance</p>
-                    <p className='nes-text'>$ {profile?.currency}</p>
-                </div>
+                        <p className="title">Balance</p>
+                        <div style={{
+                            display: 'inline-flex',
+                        }}>
+                            <img src={coin} alt="coin" style={{width: '25px', height:'25px'}}/>
+                            <p style={{marginTop:'2px', marginLeft:'5px'}} className='nes-text'>{profile?.currency}</p>
+                        </div>
+                    </div>
+                    {/* <div className="nes-container is-dark with-title">
+                        <p className="title">Locked</p>
+                        <div style={{
+                            display: 'inline-flex',
+                        }}>
+                            <img src={coin} alt="coin" style={{width: '25px', height:'25px'}}/>
+                            <p style={{marginTop:'2px', marginLeft:'5px'}} className='nes-text'>{profile?.locked}</p>
+                        </div>
+                    </div> */}
                 </div>
                 
             ) : null}
             <hr className='nes-line' />
-            <div className="nes-container is-dark with-title">
+            <div className="nes-container is-dark with-title" style={{
+                fontSize: '0.8rem',
+            }}>
                     <p className="title">Profile</p>
 
                     <div className="nes-container is-rounded is-dark">
@@ -93,16 +130,24 @@ const Profile: React.FC<CoursesSidebarProps> = ({ onClose }) => {
                         <p>Email: {profile?.profile.email}</p>
                     </div>
             </div>
-            {/* <hr className='nes-line' />
-            <div className="nes-container is-dark with-title">
+            {profile?.role === 'instructor' && <>
+            <hr className='nes-line' />
+            <div className="nes-container is-dark with-title" style={{
+                fontSize: '0.8rem',
+            }}>
                 <label>
-                    <input type="checkbox" className="nes-checkbox is-dark" checked={resetPasswordConfig} onChange={handleResetPasswordConfig}/>
-                    <span>Create password when students logges in for first time?</span>
+                    <input type="checkbox" className="nes-checkbox is-dark" 
+                    checked={profile?.makeStudentEditable} onChange={handleMakeStudentEditFullName}/>
+                    <span>Make Student Name Editable</span>
                 </label>
-            </div> */}
+            </div>
+            </>
+            }
             <hr className='nes-line' />
 
-            <div className="nes-container is-dark with-title">
+            <div className="nes-container is-dark with-title" style={{
+                fontSize: '0.8rem',
+            }}>
                 <p className="title">Role</p>
                 <p className='nes-text'>{profile?.role === 'student' ? 'Student' : 'Instructor'}</p>
             </div>

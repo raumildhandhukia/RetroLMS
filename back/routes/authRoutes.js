@@ -1,7 +1,7 @@
 const User = require("../models/userModel.js");
 const Instructor = require("../models/instructorModel.js");
 const Student = require("../models/studentModel.js");
-const Admin = require("../models/userModel.js");
+const Admin = require("../models/adminModel.js");
 const { faker } = require("@faker-js/faker");
 const express = require("express");
 const router = express.Router();
@@ -12,6 +12,7 @@ const authMiddleware = require("../middleware/authMiddleware.js");
 const JWT = require("jsonwebtoken");
 const Task = require("../models/taskModel.js");
 const Submission = require("../models/submissionModel.js");
+const Course = require("../models/courseModel.js");
 
 router.use(cookieParser());
 
@@ -33,7 +34,7 @@ function generateRandomUser() {
   };
 }
 
-async function generateRespectiveObject(role, userId) {
+async function generateRespectiveObject(pwd,role, userId) {
   if (role == "admin") {
     const newMod = new Admin({
       userId,
@@ -43,6 +44,7 @@ async function generateRespectiveObject(role, userId) {
   } else if (role == "instructor") {
     const newMod = new Instructor({
       userId,
+      instructorPassword: pwd
     });
     await newMod.save();
     return newMod.id;
@@ -76,12 +78,11 @@ router.post("/signup", async (req, res) => {
     });
     // Save the user to the database
     await newUser.save();
-    const roleId = await generateRespectiveObject(role, newUser.id);
+    const roleId = await generateRespectiveObject(password,role, newUser.id);
     res.status(201).json({
       message: `Role: ${role}, Username: ${username}. User created successfully. ${role}_ID = ${roleId}`,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       message: "Internal Server Error",
     });
@@ -117,10 +118,17 @@ router.post("/login", async (req, res) => {
     res.cookie("jwt", token, { httpOnly: true });
     let currency = null;
     let resetPassword = false;
+    let makeStudentEditable = false;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
       resetPassword = student.resetPassword;
+      const courseEnrolled = student.enrolledCourses;
+      const course = await Course.find({ _id: { $in: courseEnrolled } });
+      const instructor = await Instructor.find({
+        _id: { $in: course.instructorId },
+      });
+      makeStudentEditable = instructor.makeStudentEditable;
     }
     res.status(201).json({
       profile: user.profile,
@@ -128,10 +136,10 @@ router.post("/login", async (req, res) => {
       role: user.role,
       currency: currency,
       resetPassword: resetPassword,
+      makeStudentEditable,
     });
     // res.json({ token });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -163,17 +171,26 @@ router.get("/check-auth", async (req, res) => {
     }
     let currency = null;
     let resetPassword = false;
+    let makeStudentEditable = false;
     if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
       currency = student.currentCurrency;
       resetPassword = student.resetPassword;
+      const courseEnrolled = student.enrolledCourses;
+      const course = await Course.find({ _id: { $in: courseEnrolled } });
+      const firstCourse = course[0];
+      const instructor = await Instructor.findOne({
+        _id: firstCourse.instructorId,
+      });
+      makeStudentEditable = instructor.makeStudentEditable;
     }
     res.status(200).json({
       profile: user.profile,
       username: user.username,
       role: user.role,
-      currency: currency,
-      resetPassword: resetPassword,
+      currency,
+      resetPassword,
+      makeStudentEditable,
     });
 
     // If verification succeeds, the JWT is valid
@@ -213,7 +230,6 @@ router.post("/studentSignup", async (req, res) => {
         })
       );
     } catch (error) {
-      console.error(error);
       return res.status(500).json({ message: "Error creating student" });
     }
   }
@@ -240,7 +256,6 @@ router.post("/updateStudent", async (req, res) => {
     student.save();
     res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -257,7 +272,6 @@ router.post("/regeneratePassword", async (req, res) => {
     student.save();
     res.status(200).json({ message: "Password Generated", password });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

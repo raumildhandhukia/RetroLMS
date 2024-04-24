@@ -8,13 +8,16 @@ const instructorSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    instructorPassword: {
+      type: String,
+    },
     coursesTeaching: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
       },
     ],
-    resetPasswordConfig: {
+    makeStudentEditable: {
       type: Boolean,
       default: false,
     },

@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import TransactionBadge from './TransactionBadge';
-import Loader from '../Loader';
+import Loader from '../Other/Loader';
 import { Item } from './Items';
+import coin from './spinningCoin.gif'
+
 
 interface ItemProps {
   item: Item;
@@ -26,6 +28,9 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
     const [transactionState, setTransactionState] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
 
+    
+
+
     const getTransction = async () => {
                 try {
                 const response = await fetch(`http://localhost:8080/getTrasactionsByItemByStudent/${item?._id}`, {
@@ -36,7 +41,7 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                     credentials: 'include'
                 });
                 if (!response.ok) {
-                    throw new Error('Failed to fetch items');
+                    
                 } else {
                     const transaction: Transaction = await response.json();
                     setTransaction(transaction);
@@ -64,6 +69,7 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
     const renderShopComponent = () => (
         <div 
             className="nes-container is-centered is-rounded is-dark item-card"
+            style={{}}
             onClick={() => handleItemDescription(item)}>
             { loading ? <Loader style={{color:'white'}}/> :
             <>
@@ -72,9 +78,21 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                     color:'cyan'
                 }}>{item.itemName}</span>
                 <p style={{color:'cyan'}}>{item.itemDescription}</p>
+                <div style={{
+                    display:'flex',
+                    justifyContent:'center',
+                    alignItems:'center'
+                }}>
+                <img style={{
+                    width:'22px',
+                    height:'22px'
+                }} src={coin} alt='coin-spinning'/>
                 <span style={{
+                    marginTop:'4px',
+                    marginLeft:'3px',
                     color:'gold'
-                }}>${item.itemPrice}</span>
+                }}>{item.itemPrice}</span>
+                </div>
             </div>
             {
                 role === "instructor" ? (
@@ -93,6 +111,9 @@ const ItemCard: React.FC<ItemProps> = ({ item, role, handleItemDescription, hand
                 }} className={`nes-btn buy-button` + (studentBalance < item.itemPrice ? ' is-disabled' : '')}
                 onClick={(e)=>{
                     e.stopPropagation();
+                    if (studentBalance < item.itemPrice) {
+                        return;
+                    }
                     setTransactionState('Awaiting');
                     handleItemBuy(item);
                 }}>Buy</button>

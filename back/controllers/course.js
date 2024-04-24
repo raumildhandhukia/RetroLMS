@@ -8,7 +8,7 @@ const Task = require("../models/taskModel");
 const Item = require("../models/itemModel");
 const JWT = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const { Parser } = require('json2csv');
+const { Parser } = require("json2csv");
 
 const courseController = {
   getEnrolledStudents: async (req, res) => {
@@ -29,7 +29,6 @@ const courseController = {
       );
       res.status(200).json(studentsData);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -46,7 +45,6 @@ const courseController = {
       await Transaction.deleteMany({ _id: { $in: transactionIds } });
       res.status(200).json({ message: "Student deleted successfully" });
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -88,7 +86,6 @@ const courseController = {
         course,
       });
     } catch (error) {
-      console.error("Error creating course:", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -122,7 +119,6 @@ const courseController = {
       await Course.findByIdAndUpdate(courseId, { title, courseKey, details });
       res.status(200).json({ message: "Course updated successfully." });
     } catch (err) {
-      console.error("Error updating course:", err);
       res.status(500).json({ error: "Internal server error" });
     }
   },
@@ -130,7 +126,6 @@ const courseController = {
   enrollCourse: async (req, res) => {
     try {
       const { courseId } = req.body;
-      console.log(courseId);
       const jwt = req.cookies && req.cookies.jwt;
       const decoded = JWT.decode(jwt);
       const username = decoded.username;
@@ -154,7 +149,6 @@ const courseController = {
         student: updatedStudent,
       });
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -196,7 +190,6 @@ const courseController = {
 
       res.status(200).json({ message: "Course deleted successfully" });
     } catch (error) {
-      console.error("Error deleting course:", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -241,7 +234,6 @@ const courseController = {
       );
       return res.status(200).json(coursesTS);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -269,18 +261,20 @@ const courseController = {
           .status(404)
           .json({ message: "No students found enrolled in this course" });
       }
-      console.log(students)
       const excelData = students.map((student) => {
         return {
-          name: student.userId.profile.firstName + " " + student.userId.profile.lastName,
+          name:
+            student.userId.profile.firstName +
+            " " +
+            student.userId.profile.lastName,
           username: student.userId.username,
           password: student.studentPassword,
-        }
-      })
+        };
+      });
       const json2csvParser = new Parser();
       const csv = json2csvParser.parse(excelData);
-      res.header('Content-Type', 'text/csv');
-      res.attachment('filename.csv');
+      res.header("Content-Type", "text/csv");
+      res.attachment("filename.csv");
       res.status(200).send(csv);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -318,7 +312,6 @@ const courseController = {
 
   //   getLeaderBoard: async (req, res) => {
   //     const { courseId } = req.body;
-  //     console.log(courseId);
   //     try {
   //       let matchStage = {};
   //       if (courseId) {
@@ -388,7 +381,6 @@ const courseController = {
   //         res.status(500).send("CourseId is empty");
   //       }
   //     } catch (error) {
-  //       console.error("Failed to retrieve leaderboard:", error);
   //       res.status(500).send("Error retrieving leaderboard");
   //     }
   //   },

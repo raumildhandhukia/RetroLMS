@@ -39,7 +39,6 @@ const AddTask: React.FC<AddTaskProps> = ({showTaskList, courseId, update}) => {
                     title, details, point, courseId, deadline
                 })
             });
-            console.log(response)
             setIsLoading(false);
             if (!response.ok) {
                 const responseData = await response.json();

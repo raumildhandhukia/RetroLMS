@@ -18,7 +18,7 @@
 .overlay-courses {
     position: fixed;
     top: 0;
-    left: 161px;
+    left: 20vh;
     bottom: 0;
     width: 400px; 
     background-color: white;
@@ -31,7 +31,7 @@
 .overlay-profile {
     position: fixed;
     top: 0;
-    left: 161px;
+    left: 20vh;
     bottom: 0;
     width: 75vh;
     background-color: white;

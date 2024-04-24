@@ -55,7 +55,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
 
   const renderTaskList = () => (
     <div className="">
-      {role === 'instructor' && (
+      {role === 'instructor' ? (
           <div className='' style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -78,12 +78,30 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
                   Add Task
             </button>
                 </div>
-            </div>
-
-          
-            
+            </div>  
           </div>
-        ) }
+        ) : (
+          <div className='' style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100vh',
+          }}>
+            <img style={{width:'80px', height:'80px'}} src={require('../Leaderboard/avatar0.png')} alt="My Icon" />
+            <div className="nes-container is-rounded" style={{
+              fontSize:'1.5vh',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              textAlign: 'left',
+              maxHeight: '60px',
+              marginLeft:'10px',
+              marginTop:'10px'
+            }}>
+              <strong style={{marginBottom:'-5px' }}>{tasks.length > 0 ? "Finally you're here. I hope you have something to work on. Let's get those coins !!!" : 
+              "Enjoy the calm before the storm; your task tsunami's on its way!"}</strong>
+            </div>            
+          </div>
+        )}
     
               {tasks.map((task) => (
                 <div style={{
@@ -108,11 +126,6 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, courseName ,courseId, update
                 </div>
                 </div>
               ))}
-   
-            
-       
-          
-          
         </div>
         );
     

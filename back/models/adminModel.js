@@ -6,6 +6,7 @@ const adminSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  
 });
 
 const Admin = mongoose.model("Admin", adminSchema);

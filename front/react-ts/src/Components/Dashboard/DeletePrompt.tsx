@@ -25,10 +25,8 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({
             });
 
             if (!response.ok) {
-                console.log('Failed to delete course')
             }
         } catch (error) {
-            console.error('Error deleting course:', error);
         }
     }
 
@@ -55,7 +53,10 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({
                     handleBack();
                 }} style={{marginLeft:"10vh"}}>No</button>
             </div>
-            <img style={{width: '100px', marginLeft:'88%'}} src={require('../Shop/avatar.png')} alt="My Icon" />
+            <img style={{
+                width: '100px', 
+                marginLeft:'88%'
+                }} src={require('../Shop/avatar.png')} alt="My Icon" />
           </section>
         </div>
       </div>
