@@ -34,7 +34,7 @@ function generateRandomUser() {
   };
 }
 
-async function generateRespectiveObject(userObject,role, userId) {
+async function generateRespectiveObject(pwd,role, userId) {
   if (role == "admin") {
     const newMod = new Admin({
       userId,
@@ -44,7 +44,7 @@ async function generateRespectiveObject(userObject,role, userId) {
   } else if (role == "instructor") {
     const newMod = new Instructor({
       userId,
-      instructorPassword: userObject.password
+      instructorPassword: pwd
     });
     await newMod.save();
     return newMod.id;
@@ -78,7 +78,7 @@ router.post("/signup", async (req, res) => {
     });
     // Save the user to the database
     await newUser.save();
-    const roleId = await generateRespectiveObject(newUser,role, newUser.id);
+    const roleId = await generateRespectiveObject(password,role, newUser.id);
     res.status(201).json({
       message: `Role: ${role}, Username: ${username}. User created successfully. ${role}_ID = ${roleId}`,
     });

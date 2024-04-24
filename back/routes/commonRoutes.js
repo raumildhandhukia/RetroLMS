@@ -27,6 +27,10 @@ router.get("/allusers", userController.getAllUsers);
 
 router.get("/getAllInstructors", userController.getInstructors);
 
+router.delete("/deleteInstructor/:username", userController.deleteInstructor);
+
+router.post("/updateInstructorDetails/:username",userController.updateInstructorObject)
+
 router.get("/profile", async (req, res) => {
   try {
     jwt = req.cookies && req.cookies.jwt;
