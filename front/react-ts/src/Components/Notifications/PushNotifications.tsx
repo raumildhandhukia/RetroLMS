@@ -18,7 +18,6 @@ const PushNotification:React.FC<NotificationProps> = ({courseId, role, IDs}) => 
     const socket = io("http://localhost:8080", { transports: ["websocket"] });
     const instructorPush = () => {
         socket.on("connection", () => {
-        console.log("Connected to Socket io");
       });
 
       socket.on(courseId, (data:any) => {
@@ -29,7 +28,6 @@ const PushNotification:React.FC<NotificationProps> = ({courseId, role, IDs}) => 
     };
     const studentPush = () => {
         socket.on("connection", () => {
-        console.log("Connected to Socket io");
       });
 
       socket.on(IDs.studentId, (data:any) => {

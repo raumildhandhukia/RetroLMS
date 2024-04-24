@@ -119,7 +119,6 @@ const Students:React.FC<StudentProps> = ({courseId}) => {
             }
             setUpdateStudents(!updateStudents);
             setStudentCount(1);
-            console.log("Generated students:", students)
         } catch (error) {
             console.error("Error generating students:", error);
         } finally {

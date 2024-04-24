@@ -25,10 +25,8 @@ const DeletePrompt: React.FC<DeletePromptProps> = ({
             });
 
             if (!response.ok) {
-                console.log('Failed to delete course')
             }
         } catch (error) {
-            console.error('Error deleting course:', error);
         }
     }
 

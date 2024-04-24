@@ -40,7 +40,6 @@ const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance, fullName }
       const fetchItems = async () => {
         try {
           // const courseId = '65ee276576ac94ef4a77bdba'; // Replace with the actual courseName
-          console.log(courseId)
           const response = await fetch(`http://localhost:8080/items/course/${courseId}`, {
             method: 'GET',
             headers: {
@@ -48,14 +47,12 @@ const Items: React.FC<ItemProps> = ({ role, courseId, studentBalance, fullName }
             },
             credentials: 'include'
           });
-          // console.log(response)
   
           if (!response.ok) {
             throw new Error('Failed to fetch items');
           }
 
           const items: Item[] = await response.json();
-          console.log(items)
           setItems(items)
         } catch (error) {
           console.error('Error fetching tasks:', error);

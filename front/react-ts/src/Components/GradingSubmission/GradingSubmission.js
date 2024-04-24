@@ -13,7 +13,6 @@ const GradingSubmission = () => {
         });
         if (response.ok) {
           const tasks = await response.json();
-          console.log("Tasks:", tasks);
           // Handle tasks data as needed (e.g., update state)
         } else {
           console.log("Failed to fetch tasks");

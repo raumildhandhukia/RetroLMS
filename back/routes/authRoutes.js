@@ -82,7 +82,6 @@ router.post("/signup", async (req, res) => {
       message: `Role: ${role}, Username: ${username}. User created successfully. ${role}_ID = ${roleId}`,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       message: "Internal Server Error",
     });
@@ -140,7 +139,6 @@ router.post("/login", async (req, res) => {
     });
     // res.json({ token });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -231,7 +229,6 @@ router.post("/studentSignup", async (req, res) => {
         })
       );
     } catch (error) {
-      console.error(error);
       return res.status(500).json({ message: "Error creating student" });
     }
   }
@@ -258,7 +255,6 @@ router.post("/updateStudent", async (req, res) => {
     student.save();
     res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -275,7 +271,6 @@ router.post("/regeneratePassword", async (req, res) => {
     student.save();
     res.status(200).json({ message: "Password Generated", password });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

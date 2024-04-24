@@ -28,12 +28,11 @@ const authMiddleware = (allowedRoles) => {
         // Check if the role is one of the allowed values
         if (allowedRoles.includes(role)) {
           // Add role and username to the request object
-          const { courseId } = req.params
+          const { courseId } = req.params;
           const username = decoded.username;
           const user = await User.findOne({ username });
           const userId = user.id;
           const course = await Course.findById(courseId);
-          console.log(course);
           if (!course)
             return res.status(404).json({ message: "Course not found" });
 
@@ -51,12 +50,10 @@ const authMiddleware = (allowedRoles) => {
           });
           if (instructor) return next(); // Instructor is teaching the course, proceed
           // If neither, return an error
-          res
-            .status(403)
-            .json({
-              message: "User is not enrolled in or teaching the course",
-            });
-        //   next(); // Authorized, proceed to the next middleware or route handler
+          res.status(403).json({
+            message: "User is not enrolled in or teaching the course",
+          });
+          //   next(); // Authorized, proceed to the next middleware or route handler
         } else {
           // If role is invalid, send an unauthorized response
           return res.status(401).json({

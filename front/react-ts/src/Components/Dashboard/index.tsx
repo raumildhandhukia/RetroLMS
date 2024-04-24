@@ -49,7 +49,6 @@ const Dashboard: React.FC = () => {
           navigate("/createPassword");
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
       }
     };
 
@@ -70,10 +69,8 @@ const Dashboard: React.FC = () => {
             setStudentId(data.studentId)
 
           } else {
-            console.log("User not found");
           }
         } catch (error) {
-          console.error("Error checking for profile", error);
         }
       };
   
@@ -106,10 +103,8 @@ const Dashboard: React.FC = () => {
                 throw new Error('Failed to fetch courses');
             }
             const res: Course[] = await response.json();
-            console.log("Fetched courses:", res);
             setCourses(res);
         } catch (error) {
-            console.error('Error fetching courses:', error);
         }
     };
     getCourses();
@@ -165,17 +160,14 @@ const Dashboard: React.FC = () => {
             if (response.ok) {
                 navigate('/login');
             } else {
-                console.log('Error logging out');
             }
         } catch (error) {
-            console.error('Error logging out', error);
         }
     }
     
     const handleIconClick = (iconName: string) => {
         switch (iconName) {
             case 'Account':
-                console.log('Account clicked');
                 setSelectedComponent(
                 <div className='overlay-profile'><Profile 
                     onClose={handleCloseSidebar} 

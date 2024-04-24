@@ -37,7 +37,6 @@ const NotificationList:React.FC<NotificationProps> = () => {
                     
                 }
                 const notifications: Notification[] = await response.json();
-                console.log(notifications)
                 setNotifications(notifications);
             } catch (error) {
                 console.error('Error fetching notifications:', error);
