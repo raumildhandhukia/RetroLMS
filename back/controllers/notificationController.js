@@ -28,9 +28,7 @@ const storeNotification = async (data) => {
       });
       await notification.save();
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const getNotifications = async (req, res) => {

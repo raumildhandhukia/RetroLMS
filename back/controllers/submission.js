@@ -96,12 +96,7 @@ exports.gradingMutlipleSubmission = async (req, res) => {
             message: `Username: ${username} not enrolled in given course so skip excel parsing`,
           });
         }
-      } catch (error) {
-        console.error(
-          "Error updating submission model after for duplicate:",
-          error
-        );
-      }
+      } catch (error) {}
     }
     await session.commitTransaction();
     if (skipUserNames.length > 0) {
@@ -116,16 +111,12 @@ exports.gradingMutlipleSubmission = async (req, res) => {
     }
   } catch (error) {
     await session.abortTransaction();
-    console.error("Error processing file:", error);
     res.status(500).send(`Error processing file: ${error.message}`);
   } finally {
     session.endSession();
     try {
       await fs.unlink(req.file.path);
-      console.log("File deleted successfully");
-    } catch (err) {
-      console.error("Failed to delete file:", err);
-    }
+    } catch (err) {}
   }
 };
 
@@ -161,7 +152,6 @@ exports.gradingSingleSubmission = async (req, res) => {
       );
     } catch (error) {
       // If an error occurs while updating the Task, rollback the Submission creation
-      console.error("Error updating task with submission ID:", error);
       if (savedSubmission) {
         await Submission.findByIdAndDelete(savedSubmission._id);
       }
@@ -176,7 +166,6 @@ exports.gradingSingleSubmission = async (req, res) => {
       submission: savedSubmission,
     });
   } catch (error) {
-    console.error("Error adding submission:", error);
     // If the initial submission creation fails, no need for rollback as it wasn't created
     res.status(500).json({ message: "Internal Server Error" });
   }

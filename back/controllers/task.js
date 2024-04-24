@@ -43,7 +43,6 @@ exports.addTask = async (req, res) => {
       );
     } catch (courseUpdateError) {
       // If an error occurs during the course update, log it and return an error response
-      console.error("Error updating course with new task:", courseUpdateError);
       await Task.findByIdAndDelete(savedTask._id);
       return res.status(500).json({
         message: "Error updating course with new task.",
@@ -55,7 +54,6 @@ exports.addTask = async (req, res) => {
       message: `Task: ${taskObj.title} created successfully.`,
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({
       message: "Internal Server Error",
     });
@@ -86,10 +84,8 @@ exports.getAllTasks = async (req, res) => {
   try {
     jwt = req.cookies && req.cookies.jwt;
     const decoded = JWT.decode(jwt);
-    console.log(decoded);
     const username = decoded.username;
     const user = await User.findOne({ username });
-    console.log(user);
     if (user.role === "student") {
       // If the user is a student, fetch enrolled courses
       const student = await Student.findOne({

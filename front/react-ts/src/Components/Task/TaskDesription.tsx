@@ -116,10 +116,6 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
     }
   };
 
-  const handleExcelUpload = () => {
-    console.log(taskId);
-  };
-
   const handleEditMode = () => {
     setIsEditing(true);
   };
@@ -154,7 +150,6 @@ const handleFileChange = async (event:any) => {
           method: 'POST',
           body: formData,
       });
-      console.log(response)
       const result = await response.json();
       if (response.ok) {
           toast.info('File uploaded successfully: ' + JSON.stringify(result.message), {

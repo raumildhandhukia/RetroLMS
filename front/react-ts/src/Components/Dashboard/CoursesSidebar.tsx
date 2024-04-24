@@ -24,20 +24,23 @@ const handleAddCourse = () => {
   const [showAllCourses, setShowAllCourses] = useState(true);
   const corusesRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Add event listener to close sidebar when clicking outside
-        const handleClickOutside = (event: MouseEvent) => {
-            if (corusesRef.current && !corusesRef.current.contains(event.target as Node)) {
-                onClose();
-            }
-        };
+  // const handleClickOutside = (event: MouseEvent) => {
+  //   if (corusesRef.current && !corusesRef.current.contains(event.target as Node)) {
+  //     debugger;
+  //       onClose();
+  //   }
+  // };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [onClose]
-  );
+  // useEffect(() => {
+  //   // Add event listener to close sidebar when clicking outside
+        
+
+  //       document.addEventListener('mousedown', handleClickOutside);
+  //       return () => {
+  //           document.removeEventListener('mousedown', handleClickOutside);
+  //       };
+  //   }, [onClose]
+  // );
 
   return (
     <div ref={corusesRef}>

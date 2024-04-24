@@ -28,6 +28,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, fullName, courseId, role, up
     const [selectedItem, setSelectedItem] = React.useState<Item | null>(null);
     const [showItemRequests, setShowItemRequests] = React.useState<boolean>(false);
     const [studentBalance, setStudentBalance] = React.useState<number>(0);
+    const [updateCurrency, setUpdateCurrency] = React.useState<boolean>(false);
 
     useEffect(() => {
         const getProfile = async () => {
@@ -49,7 +50,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, fullName, courseId, role, up
         }
         getProfile();
     }
-    ,[]);
+    ,[updateCurrency]);
     
 
     const handleItemDescription = (item: Item) => {
@@ -95,6 +96,7 @@ const ItemList: React.FC<ItemListProps> = ({ items, fullName, courseId, role, up
         })
       });
       if (response.ok) {
+        setUpdateCurrency(!updateCurrency);
         sendNotification(selectedItem);
       }
     } catch (error) {

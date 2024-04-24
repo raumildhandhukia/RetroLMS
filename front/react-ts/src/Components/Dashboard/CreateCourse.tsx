@@ -38,7 +38,6 @@ const CreateCourse: React.FC = () => {
     navigate('/login');
       
     } catch (error: any) { // Type assertion or annotation to specify error type
-      console.error('Error creating course:', error.message);
       setErrorMessage(error.message || 'Something went wrong!');
     }
   };

@@ -35,7 +35,11 @@ const getButtonStyles = (status: string, buttonName: string) => {
             return 'nes-btn is-warning';
         } else if (status === 'Reject' && buttonName === 'Reset') {
             return 'nes-btn is-warning';
-        } else {
+
+        } else if (status === 'Awaiting' && buttonName === 'Awaiting') {
+            return 'nes-btn is-disabled';
+        }
+        else {
             return 'nes-btn';
         }
     }

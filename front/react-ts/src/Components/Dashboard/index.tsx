@@ -50,7 +50,6 @@ const Dashboard: React.FC = () => {
           navigate("/createPassword");
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
       }
     };
 
@@ -71,10 +70,8 @@ const Dashboard: React.FC = () => {
             setStudentId(data.studentId)
 
           } else {
-            console.log("User not found");
           }
         } catch (error) {
-          console.error("Error checking for profile", error);
         }
       };
   
@@ -107,10 +104,8 @@ const Dashboard: React.FC = () => {
                 throw new Error('Failed to fetch courses');
             }
             const res: Course[] = await response.json();
-            console.log("Fetched courses:", res);
             setCourses(res);
         } catch (error) {
-            console.error('Error fetching courses:', error);
         }
     };
     getCourses();
@@ -166,17 +161,14 @@ const Dashboard: React.FC = () => {
             if (response.ok) {
                 navigate('/login');
             } else {
-                console.log('Error logging out');
             }
         } catch (error) {
-            console.error('Error logging out', error);
         }
     }
     
     const handleIconClick = (iconName: string) => {
         switch (iconName) {
             case 'Account':
-                console.log('Account clicked');
                 setSelectedComponent(
                 <div className='overlay-profile'><Profile 
                     onClose={handleCloseSidebar} 
@@ -219,6 +211,7 @@ const Dashboard: React.FC = () => {
           <PushNotification courseId={selectedCourse || ''} role={role} IDs={{studentId:studentId, instructorId:''}}/>
           <div className="w-20 bg-gray-100 h-lvh flex flex-col" style={{
             position: 'fixed',
+            width: '21vh',
           }}>
              <img src={asulogo} />
               {sidebarItems.map(sidebarItem =>
@@ -235,32 +228,35 @@ const Dashboard: React.FC = () => {
             }}>
             {selectedCourse ? (
                 <div>
-                    <div style={{position:'fixed', marginLeft:'20vh', marginBottom:'20%'}}>
-                    <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
-                    <hr style={{width:'32vh'}}/>
+                    {/* <div style={{position:'fixed', marginLeft:'21vh', marginBottom:'20%'}}> */}
+                    {/* <p className='text-2xl'>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
+                    <hr style={{width:'32vh'}}/> */}
                      {/* {role === 'student' ? (
                         <div className='text-2xl'>Balance: $ {currency}</div>
                      ) : null} */} {/* Removed this part temporarily as it is not re-rendering */}
-                    </div>
+                    {/* </div> */}
                 
                 <div className='main-content'>
                     
                     <div style={{
-                        position:'fixed', marginLeft:'20vh', marginTop:'10vh', 
+                        position:'fixed', marginLeft:'21vh', marginTop:'-1vh', 
                         display:'flex', flexDirection:'column', alignItems:'left',
                         
                         }}>
+                        <p className='text-2xl' style={{}}>{courses.filter(course => course._id === selectedCourse)[0].courseKey}</p>
+                    <hr style={{width:'23vh'}}/>
                         {menuItems.map((item, index) => 
                         <div className='nes-btn' 
                         style={{
-                            width:'100%',
-                            marginBottom:'30px',
+                            width:'23vh',
+                            margin: '0 auto 3vh auto',
+                            fontSize: '1.5vh',
                         }}
                         onClick={
                             () => handleItemClick(item)
                         }>{item}</div>)}
                     </div>
-                    <div className='detail-container' style={{marginLeft:'53vh'}}>
+                    <div className='detail-container' style={{marginLeft:'48vh'}}>
                     {selectedItem === 'Home' && <CourseDetailPage course={courses.filter(course => course._id === selectedCourse)[0]} updateCourses={updateCourses}/>}
                     {selectedItem === 'Leaderboard' && <Leaderboard courseId={selectedCourse}/>}
                     {selectedItem === 'Task' && <Tasks courseId = {selectedCourse} role={role}/>}
