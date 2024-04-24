@@ -1,10 +1,11 @@
 # Gamification Platform Readme
 
 ## Project Overview
+Gamification of LMS
 
 ### Description
 
-Gamification has become a popular strategy for increasing engagement and motivation in various contexts. This project aims to develop a web-based platform that enables instructors to easily implement gamification elements into their courses. The platform allows instructors to create courses, define tasks for students, assign points, maintain leaderboards, and set up a virtual shop where students can exchange earned points for perks.
+The platform allows instructors to create courses, define tasks for students, assign coins, maintain leaderboards, and set up a virtual shop where students can exchange earned coins for perks.
 
 ### Requirements
 
@@ -12,9 +13,9 @@ Gamification has become a popular strategy for increasing engagement and motivat
 - Each course using gamification has its own set of students, shop items, leaderboards, and point balances.
 
 #### 2. User Types
-- **Students:** View currency balance, submitted tasks, earned currency per task, leaderboards, shop items, and purchase perks.
+- **Students:** View currency balance, submitted tasks, earned currency per task, leaderboards, and purchase perks.
 - **Instructors:** Create/view courses, add students, define shop items with prices, add tasks and associated point values, and assign points to students.
-- **Admins:** Can perform all actions of instructors and view courses created by any instructor.
+- **Admins:** Can mangage instructor accounts.
 
 #### 3. Automation
 - Automatically generate course leaderboards when point values change.
