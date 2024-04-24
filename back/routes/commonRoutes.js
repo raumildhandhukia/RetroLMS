@@ -25,6 +25,8 @@ router.post("/leaderboard", courseController.getLeaderBoard);
 
 router.get("/allusers", userController.getAllUsers);
 
+router.get("/getAllInstructors", userController.getInstructors);
+
 router.get("/profile", async (req, res) => {
   try {
     jwt = req.cookies && req.cookies.jwt;

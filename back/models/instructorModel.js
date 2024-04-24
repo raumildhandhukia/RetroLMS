@@ -8,6 +8,9 @@ const instructorSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    instructorPassword: {
+      type: String,
+    },
     coursesTeaching: [
       {
         type: mongoose.Schema.Types.ObjectId,

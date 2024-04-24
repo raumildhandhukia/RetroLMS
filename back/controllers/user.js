@@ -28,6 +28,14 @@ const userController = {
       res.status(400).json({ message: error.message });
     }
   },
+  getInstructors: async (req, res) => {
+    try {
+      const instructors = await User.find({ role: "instructor" });
+      res.status(200).json(instructors);
+    } catch (error) {
+      console.error("Failed to retrieve instructors:", error);
+      res.status(500).send("Error retrieving instructors");
+    }
+  },
 };
-
 module.exports = userController;

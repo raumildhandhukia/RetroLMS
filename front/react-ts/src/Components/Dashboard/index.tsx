@@ -14,6 +14,7 @@ import Profile from './Profile';
 import Students from './Students';
 import PushNotification from '../Notifications/PushNotifications';
 import NotificationList from '../Notifications/NotificationList';
+import AdminTable from './AdminTable';
 export interface Course {
     _id: string;
     title: string;
@@ -140,8 +141,8 @@ const Dashboard: React.FC = () => {
 
    
     const menuItems = role === 'student' ? 
-                    ['Home', 'Notifications', 'Task', 'Leaderboard', 'Shop'] : 
-                    ['Home', 'Notifications', 'Task', 'Leaderboard', 'Shop', 'Students', 'Delete'];
+                    ['Home', 'Notifications', 'Task', 'Leaderboard', 'Shop'] : (role === 'instructor' ? ['Home', 'Notifications', 'Task', 'Leaderboard', 'Shop', 'Students', 'Delete'] : ['Home', 'Create-Course', 'Create-Instructor'])
+                    
 
     const handleCourseCreate = () => {
         setSelectedItem('CreateCourse');
@@ -296,9 +297,13 @@ const Dashboard: React.FC = () => {
             
             }}>
                 <p className="text-3xl">Dashboard</p>
+                {role === 'admin' ? (
+                            <AdminTable/>
+                     ) : null} 
                 <div className='w-full flex flex-wrap mt-10'>
                     {courses.map(course => <Card {...course} onCardClick={handleCourseClick}/>)}
                 </div>
+                
             </div>
             )
         ) }
