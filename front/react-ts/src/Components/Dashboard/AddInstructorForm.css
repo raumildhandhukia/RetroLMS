@@ -1,0 +1,47 @@
+.custom-green-button {
+    background-color: #4CAF50; /* A more vivid green */
+    border-color: #3e8e41; /* A darker green border for some depth */
+}
+
+/* Optionally, adjust the hover state */
+.custom-green-button:hover {
+    background-color: #45a049;
+}
+
+.add-instructor-form .input-group {
+    margin-bottom: 20px;
+}
+
+.add-instructor-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.add-instructor-form input[type="text"],
+.add-instructor-form input[type="email"] {
+    width: 100%; /* Ensures all inputs are of the same width */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.add-instructor-form button[type="submit"],
+.add-instructor-form button[type="button"] {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Specifically for layouts involving multiple buttons or actions */
+.add-instructor-form .password-group {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.add-instructor-form .error {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+

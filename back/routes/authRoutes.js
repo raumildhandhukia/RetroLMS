@@ -1,7 +1,7 @@
 const User = require("../models/userModel.js");
 const Instructor = require("../models/instructorModel.js");
 const Student = require("../models/studentModel.js");
-const Admin = require("../models/userModel.js");
+const Admin = require("../models/adminModel.js");
 const { faker } = require("@faker-js/faker");
 const express = require("express");
 const router = express.Router();
@@ -34,7 +34,7 @@ function generateRandomUser() {
   };
 }
 
-async function generateRespectiveObject(role, userId) {
+async function generateRespectiveObject(pwd,role, userId) {
   if (role == "admin") {
     const newMod = new Admin({
       userId,
@@ -44,6 +44,7 @@ async function generateRespectiveObject(role, userId) {
   } else if (role == "instructor") {
     const newMod = new Instructor({
       userId,
+      instructorPassword: pwd
     });
     await newMod.save();
     return newMod.id;
@@ -77,7 +78,7 @@ router.post("/signup", async (req, res) => {
     });
     // Save the user to the database
     await newUser.save();
-    const roleId = await generateRespectiveObject(role, newUser.id);
+    const roleId = await generateRespectiveObject(password,role, newUser.id);
     res.status(201).json({
       message: `Role: ${role}, Username: ${username}. User created successfully. ${role}_ID = ${roleId}`,
     });

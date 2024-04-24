@@ -1,0 +1,27 @@
+/* CustomTableStyles.css */
+.table-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.nes-table {
+    width: 80%;  /* Set the width of the table */
+    max-width: 800px;  /* Optional: limits the table's max width */
+}
+
+.nes-table th.name-column, 
+.nes-table td.name-column {
+    width: 80%;  /* Allocates more space to the Name column */
+}
+
+.nes-table th.actions-column, 
+.nes-table td.actions-column {
+    width: 80%;  /* Allocates more space to the Actions column */
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns children (button) to the right */
+    margin: 20px; /* Adjust spacing as needed */
+}
