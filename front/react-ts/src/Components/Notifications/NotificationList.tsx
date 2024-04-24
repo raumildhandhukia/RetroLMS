@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import Loader from '../Other/Loader';
 
 interface NotificationProps {
+    role: string;
+    courseId: string;
 }
 
 interface Notification {
@@ -14,7 +16,7 @@ interface Notification {
 const avatar = require('../Leaderboard/avatar0.png');
 
 
-const NotificationList:React.FC<NotificationProps> = () => {
+const NotificationList:React.FC<NotificationProps> = ({role, courseId}) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [updateNotifications, setUpdateNotifications] = useState<boolean>(false);
@@ -26,11 +28,15 @@ const NotificationList:React.FC<NotificationProps> = () => {
     const fetchNotifications = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/notifications`, {
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    credentials: 'include'
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        courseId,
+                        role
+                    })
                 });
 
                 if (!response.ok) {

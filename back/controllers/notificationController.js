@@ -23,6 +23,7 @@ const storeNotification = async (data) => {
       const userId = instructor.userId;
       const notification = new Notification({
         userId: userId,
+        courseId: data.courseId,
         message: data.message,
         read: false,
       });
@@ -38,7 +39,14 @@ const getNotifications = async (req, res) => {
     const username = decoded.username;
     const user = await User.findOne({ username });
     const userId = user._id;
-    const notifications = await Notification.find({ userId });
+    const courseId = req.body.courseId;
+    const role = req.body.role;
+    let notifications;
+    if (role === "instructor") {
+      notifications = await Notification.find({ userId, courseId });
+    } else {
+      notifications = await Notification.find({ userId });
+    }
     notifications.sort((a, b) => b.createdAt - a.createdAt);
     res.status(200).send(notifications);
   } catch (error) {

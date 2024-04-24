@@ -29,7 +29,10 @@ router.get("/getAllInstructors", userController.getInstructors);
 
 router.delete("/deleteInstructor/:username", userController.deleteInstructor);
 
-router.post("/updateInstructorDetails/:username",userController.updateInstructorObject)
+router.post(
+  "/updateInstructorDetails/:username",
+  userController.updateInstructorObject
+);
 
 router.get("/profile", async (req, res) => {
   try {
@@ -187,7 +190,7 @@ router.get(
 );
 
 // ======================= Routes for Notification ====================== //
-router.get("/notifications", notificationController.getNotifications);
+router.post("/notifications", notificationController.getNotifications);
 router.post("/updateNotifications", notificationController.updateNotifications);
 
 module.exports = router;
