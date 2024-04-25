@@ -274,7 +274,9 @@ const handleFileChange = async (event:any) => {
                     {!isEditing ?
                     <p style={{
                         textAlign: 'left',
-                        minHeight: '40vh',
+                        height: '40vh',
+                        overflow: 'auto',
+                        wordWrap: 'break-word',
                     }} onDoubleClick={handleEditMode}>{task.details}</p>
                     :
                     <textarea
@@ -331,7 +333,7 @@ const handleFileChange = async (event:any) => {
                         
                         <button type="button" className={`nes-btn is-primary`}
                                 onClick={handleUpdateTask} disabled={isLoading}>
-                            Update Task
+                            {isEditing? 'Save' : 'Update Task'}
                         </button>
                         <button type="button" className={`nes-btn is-primary`}
                                 onClick={handleSampleCsvDownload} disabled={isLoading}>
