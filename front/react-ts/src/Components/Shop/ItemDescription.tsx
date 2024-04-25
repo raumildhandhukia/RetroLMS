@@ -191,6 +191,8 @@ const getTransction = async () => {
                         {!isEditing ?
                         <p style={{
                           height: '35vh',
+                          overflow: 'auto',
+                          wordWrap: 'break-word',
                         }}>{description}</p>
                         :
                         <textarea
@@ -218,7 +220,7 @@ const getTransction = async () => {
                             
                             <button type="button" className={'nes-btn is-primary'}
                                     onClick={handleEditMode}>
-                                Edit
+                                {isEditing ? 'Save' : 'Edit'}
                             </button>
 
                             <button type='button' className='nes-btn is-primary' onClick={handleDeleteMode} >Delete</button>
