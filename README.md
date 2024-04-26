@@ -80,3 +80,55 @@ The platform allows instructors to create courses, define tasks for students, as
 
 - Taiga: https://tree.taiga.io/project/sergroup14-asugame/
 
+## Installation Guide
+
+1. Clone the GitHub repository
+
+`git clone https://github.com/raumildhandhukia/CanvasGamificationTeam14.git`
+
+2. Navigate to the `/front/react-ts` directory
+
+`cd front/react-ts`
+
+3. Install necessary packages required for the frontend
+
+`npm install`
+
+4. Start the React server
+
+`npm start`
+
+5. Make sure you are back in the project’s home directory 
+
+`cd ../../`
+
+6. Navigate to the /back directory
+
+`cd /back`
+
+7. Install the backend related libraries
+
+`npm install`
+
+8. Create a `.env` file in this directory (/back) and add the following to it
+
+```
+DB_URL=mongodb+srv://admin:admin@atlascluster.wzoqspj.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster
+JWT_SECRET_KEY=team14@asu
+SENDER_GMAIL=<YOUR_GMAIL_ADDRESS>
+SENDER_GMAIL_APP_PASSWORD=<YOUR_GMAIL_APP_PASSWORD>
+```
+Note: In order to find your `GMAIL_APP_PASSWORD`, follow the below steps
+
+8.1. Go to your [Google Account](https://myaccount.google.com/)
+
+8.2. Search for “App Passwords” and select the first option
+
+8.3. Choose an appropriate app name and copy the 16 digit code generated. 
+
+8.4. Paste it as the SENDER_GMAIL_APP_PASSWORD env variable without any spaces
+
+9. Run the backend server
+
+`node index.js`
+
