@@ -227,7 +227,7 @@ const getTransction = async () => {
                             <button type='button' className='nes-btn is-primary' onClick={handleRequestClick} >Requests</button>
 
                         </>) : transaction ? <TreansactionBadge status={transaction.status} bagdeType='split'/> :
-                              <button type="button" className='nes-btn is-primary' onClick={()=>{handleBuyRequest()}} >Buy</button>}
+                              null}
                         
                     </div>
                 </div>   
